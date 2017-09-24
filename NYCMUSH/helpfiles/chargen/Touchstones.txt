@@ -1,0 +1,10 @@
+Some supernatural templates have touchstones, people, places, or even objects representing some aspect of their present or past that they must cling to in order to maintain a balanced and rational outlook. While in chargen, use the commands below to set your touchstone or touchstones.
+
+Commands:
+	+touchstone <Text> (Set your touchstone as a changeling)
+	+touchstone <Name>=<Text> (Set a touchstone as a vampire)
+	+touchstone <Phys or Spirit>=<Text. (Set a touchstone as a werewolf, phys for physical and spirit for spiritual)
+	+touchstone (View your list of touchstones)
+	+touchstone/show <Touchstone>=<Person> (Show a touchstone to someone else.)
+	+touchstone/del <Touchstone category or name> (Delete a touchstone.)
+	+touchstone/del (Delete your touchstone. Changeling only.)

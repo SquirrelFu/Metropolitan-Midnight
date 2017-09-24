@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load charactertags %}
+{% block content %}
+<head>
+<link rel='stylesheet' href='{% static "website/css/mpluspage.css"%}'/>
+</head>
+<img src='{% static "website/images/mplusheader.jpg" %}' class='mplusimage'/>
+<div class='mplustext'>
+Not everyone who knows the world is filled with mysteries and shadows is entirely far from humanity. Some are just a touch different, fundamentally human but with power undeniably more than
+the average human being has. Termed on an out of character basis, 'Mortal Plus' as the term has been known to be used in the Chronicles of Darkness fandom, these individuals while lesser
+in power are no less important to the game world as a whole. From the Atariya to Psychic Vampires, each can have a grand impact on the world around them through skill, their unique talents,
+and perhaps a bit of out of character luck.<br/><br/>
+Currently, the status of the Mortal Plus templates on this MUSH are as follows.<br/><br/>
+<table class='statusbox'>
+{% atariyastatus as atariya %}
+{% if atariya == "Open" %}
+<tr><td>Atariya: <span style='color:green'>Open</span></td></tr>
+{% elif atariya == "Closed" %}
+<tr><td>Atariya: <span style='color:red'>Closed</span></td></tr>
+{% elif atariya == "Restricted" %}
+<tr><td>Atariya: <span style='color:yellow'>Restricted</span></td></tr>
+{% endif %}
+{% dreamerstatus as dreamer %}
+{% if dreamer == "Open" %}
+<tr><td>Dreamers: <span style='color:green'>Open</span></td></tr>
+{% elif dreamer == "Closed" %}
+<tr><td>Dreamers: <span style='color:red'>Closed</span></td></tr>
+{% elif dreamstatus == Restricted %}
+<tr><td>Dreamers: <span style='color:yellow'>Restricted</span></td></tr>
+{% endif %}
+{% infectedstatus as infected %}
+{% if infected == "Open" %}
+<tr><td>Infected: <span style='color:green'>Open</span></td></tr>
+{% elif infected == "Closed" %}
+<tr><td>Infected: <span style='color:red'>Closed</span></td></tr>
+{% elif infected == "Restricted" %}
+<tr><td>Infected: <span style='color:yellow'>Restricted</span></td></tr>
+{% endif %}
+{% lostboysstatus as lostboys %}
+{% if lostboys == "Open" %}
+<tr><td>Lost Boys: <span style='color:green'>Open</span></td></tr>
+{% elif lostboys == "Closed" %}
+<tr><td>Lost Boys: <span style='color:red'>Closed</span></td></tr>
+{% elif lostboys == "Restricted" %}
+<tr><td>Lost Boys: <span style='color:yellow'>Restricted</span></td></tr>
+{% endif %}
+{% plainstatus as plain %}
+{% if plain == "Open" %}
+<tr><td>The Plain: <span style='color:green'>Open</span></td></tr>
+{% elif plain == "Closed" %}
+<tr><td>The Plain: <span style='color:red'>Closed</span></td></tr>
+{% elif plain == "Restricted" %}
+<tr><td>The Plain: <span style='color:yellow'>Restricted</span></td></tr>
+{% endif %}
+{% psyvampstatus as psyvamp %}
+{% if psyvamp == "Open" %}
+<tr><td>Psychic Vampires: <span style='color:green'>Open</span></td></tr>
+{% elif psyvamp == "Closed" %}
+<tr><td>Psychic Vampires: <span style='color:red'>Closed</span></td></tr>
+{% elif psyvamp == "Restricted" %}
+<tr><td>Psychic Vampires: <span style='color:yellow'>Restricted</span></td></tr>
+{% endif %}
+</table>
+<br/><br/>
+</div>
+<table style='width:100%;'>
+<tr><th class='sphereheader'>Sphere Info</th></tr>
+<tr><td>The Mortal Plus sphere, though far from unified, has some basic rules associated with it. First of all, one cannot mix two types of mortal plus merit sets. You cannot have an Atariya
+with Psychic Vampirism, an Infected that has been programmed as a Dreamer, or any other combination of two or more merit sets. This is due to the statement of such combinations not being
+intended for play, as per Hurt Locker on pg. 78. Furthermore, a sphere's lesser template is considered to <i>not</i> be mortal for the purposes of purchasing supernatural merits of any kind. While
+some templates do in fact get less power than might be desired, the fact that they can benefit from direct affiliation with a supernatural template in a way that is acceptable to said
+template's society is a massive advantage in and of itself. Wolfblooded in particular, while their tells are less powerful than some other associated templates' powers and they have no true 
+access to gifts, they nevertheless benefit from substantially greater acceptance in uratha society than ghouls in vampire society, or even proximi and sleepwalkers in mage society. Please
+note that taking the sleepwalker merit does not lock you out of an independet minor template as sleepwalker confers no extra powers beyond a passive ability to exist alongside mages without
+psychological trauma.<br/><br/></td></tr>
+<tr><th class='sphereheader'>House Rules</th></tr>
+<tr><td><a href='rules/' class='ruleslink'>Mortal Plus House Rules</a>
+</table>
+{% endblock %}

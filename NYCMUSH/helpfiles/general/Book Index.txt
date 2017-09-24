@@ -1,0 +1,4 @@
+Here on Metropolitan Midnight, we have a system that few if any others have. Specifically, a book index. This will allow you to look up whatever statistic you please (Except attributes and skills, mostly because those are fairly basic and easy to find) and find out on what page the statistic's entry starts. It will not however, tell you exactly what the statistic does. For that, you'll have to have the book or PDF on hand.
+
+Commands:
+	+bookref <Statistic>

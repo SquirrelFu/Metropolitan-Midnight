@@ -1,0 +1,11 @@
+There are a few commands in place to set the stats of players. For the most part however, these are "+pstat" and, "+xp". The former is used for setting player stats, with the switch generally referring to what you're trying to set. The latter is used for spending experience as well as awarding beats, checking beat logs, removing invalid beats, and approving beat logs. Possible x-splats to set (Each only exists on one template) are exhaustively: Family, Seeming, Incarnation, Compact or Conspiracy, Path, Decree, Lineage, or Auspice. Possibly y-splats are: Hunger, Court, Agenda, Order, Guild, Refinement, or Tribe. Possible z-splats are: Entitlement, Legacy, Judge, Role, Bloodline, or Lodge. Commands are as follows.
+
+Commands:
+	+pstat/template <Character>=<Template> (Sets a character's template)
+	+pstat/merit <Character>/<Merit>=<Rank> (Sets a character's merit to a given rank)
+	+pstat/attribute <Character>/<Attribute>=<Rating> (Mostly like the merit command, but for attributes)
+	+pstat/skill <Character>/<Skill>=<Rating> (See above, for skills.)
+	+pstat/xsplat <Character>=<xsplat> (Self-explanatory)
+	+pstat/ysplat <Character>=<ysplat> (Self-explanatory)
+	+pstat/zsplat <Character>=<zsplat> (Self-explanatory)
+	+pstat/powers <Character>/<Power Name>=<Rank> (Sets a character's power to a given rank)

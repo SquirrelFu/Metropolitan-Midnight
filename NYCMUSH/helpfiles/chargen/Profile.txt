@@ -1,0 +1,6 @@
+Setting the profile section on your character, as far as mundane aspects are concerned, involves a few commands. +fullname and +dob are both what you want to use. +doe is also in play for vampires representing date of embrace.
+
+Commands:
+	+fullname <Full Name> (Exactly what it says, first and last name)
+	+dob <Day as number> <Month as number> <Year> (Sets your character's date of birth.)
+	+doe <Day as number> <Month as number> <Year> (Sets your character's date of embrace, if a vampire.)

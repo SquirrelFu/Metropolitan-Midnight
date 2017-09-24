@@ -1,0 +1,8 @@
+The multi-descer is a system to allow quick and easy swapping out of descriptions. Any number of descriptions may be stored, and swapped out at any time or used in combination with other descriptions as necessary. Please note that there will be a single space automatically added between descriptions that are combined, and that the code for werewolves shifting will automatically swap out descriptions for whatever the last description set on that form was.
+
+Commands:
+	+desc [<Description>] (If used without a description to view, shows all descriptions you currently have stored.)
+	+desc/add <Name>=<Text> (Stores a description or description element, 'Text' under the name, 'Name'.)
+	+desc/set <Name> [+ <Name 2>].. (Sets your description to the combination of elements in the order entered, or to the single element given to the command.)
+Changeling Commands
+	+desc/fae (Works like +desc/set, but sets a changeling's mien.)

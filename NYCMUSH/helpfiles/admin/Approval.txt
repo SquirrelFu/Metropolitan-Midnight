@@ -1,0 +1,1 @@
+Approval is of course, that which one does to denote a character appropriate for play. The command itself is rather simple, "+approve" followed by the character name. This will enable the player to speak on the RP channel, as well as go in-character. Likewise, +unapprove exists, which will set the character as unapproved and teleport them to the OOC Nexus.

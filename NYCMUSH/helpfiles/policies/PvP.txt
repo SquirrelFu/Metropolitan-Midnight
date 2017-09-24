@@ -1,0 +1,19 @@
+PvP Rules
+
+Player versus player combat and conflict is an inevitable part of a MUSH. Individual characters will find themselves at odds, and it may even come to violence. However, the staff at Metropolitan Midnight also recognize that there is a great potential for violence and conflict motivated purely or even in majority by out of character reasons. Hence, some rules are in place to provide a framework to tell what is and isn't killing intent or a valid reason to engage in an attempt to kill another player's character.
+
+Reasons
+
+A reason is something akin to the concept of casus belli, or 'A case of war'. It is an explanation of why within an in-character context that your own character would reasonably wish another character dead. It must also be consistent with your characterization and personality. If it is established that a your character is a calm and reasonable individual, they cannot want to kill another character for the purpose of looking at their lover funny. A brawl may be appropriate if the situation escalates, but an out and out act of murder is simply using the look as an excuse rather than a reason.
+
+Notably however, attempting to kill another character always opens up your own character to the same. It's only fair that if you seek the other character's death that you accept the possibility of a similar consequence. The defender killing the attacker in the course of an attempt on their life is always considered a reason for the defender's player. The defender is defined as the individual whom a cause for death was levied against. The attacker, the individual who had levied the cause. Further, the defender seeking vengeance is also a valid reason provided it is within a week from the date of the initial attack. If a player decides to continue an extended vendetta or planning for a vendetta longer than a week, staff must be notified via +request.
+
+A point of note. Simply because these are considered valid in-character reasons for killing another character, they do not prevent the character doing the actual killing from reprisal against them. Laws are in place for mortals, and even for spheres that would willingly cover up such a death such as vampire, they often if not always have their own laws as well. Having a valid reason does not prevent you from being punished in-character, by in-character figures, for in-character reasons. Likewise, killing another character outside of your sphere is liable to get the entire sphere after you for being a threat to their kind.
+
+In short: In-character actions produce in-character consequences. A valid reason only prevents staff from viewing you as an OOC jerk.
+
+Attempts to Kill
+
+Attempts on another character's life ought to be fairly obvious on an out of character basis. By MUSH standard, you must either include killing another character as your intent at the beginning of combat, or else acquire consent from the other character in order to kill them as part of the scene. Killing someone unintentionally is possible, but only if the player of the victim consents. Dealing lethal damage to a character who is not a vampire or a werewolf in gauru form obviously runs this risk, but is not in and of itself an intent to kill. However, considering that aggravated damage is unusually difficult to heal and will kill a character if their health track is full of it, dealing aggravated damage in combat is always considered intent to kill.
+
+To be clear, intent to kill is not equivalent to a reason to kill. An attempt without a reason is a punishable offense.

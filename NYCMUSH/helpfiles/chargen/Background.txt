@@ -1,0 +1,6 @@
+To enter your character's backstory, use the command +bg, as noted below. Staff will then, upon application submission, review the sections of your backstory. Each section is numbered, rather than titled so for deleting or reviewing your backstory please use a number.
+
+Commands:
+	+bg/add <Text> (Add a new section with 'Text' as the body of it)
+	+bg/view <#> (View section number #)
+	+bg/rem <#> (Remove section number #)

@@ -1,0 +1,17 @@
+Breaking points, unlike on some other MUSHes, are in the hands of the players here. Any character may use the command, "+break" at any time to roll a breaking point, with different syntax depending on the template of the character. Bonuses and penalties from your integrity or equivalent trait are automatically added, as is the Ventrue clan weakness and touchstones for vampires, werewolves, and changelings, though one must contact staff if they wish to convert a failure into a dramatic failure as usual. If your template receives a choice of conditions after a certain result, you may use +break/<condition> to choose, and cannot roll a new breaking point until you do so. Please note, staff is aware of when you use this command and abusing it for beats or, as may be the case for dreamers beats and memory, is fronwed upon.
+
+Mortal Commands:
+	+break <Modifiers>=<Reason>
+	+break/<Guilty, Shaken, Spooked, Broken, Fugue, or Madness>
+Vampire Commands:
+	+break <Modifiers>=<Reason>/<Level>
+	+break/<Bestial, Wanton, or Competitive>
+Werewolf Commands:
+	+break <Modifiers>=<Reason>/<Flesh or Spirit>
+Changeling Commands:
+	+break <Modifiers>=<Reason>
+	+break/<Steadfast or Inspired>
+Demon Commands:
+	+break <Modifiers>=<Reason>
+Mage Commands:
+	+break <Modifiers>=<Reason>/<Enlightened, Understanding, or Falling>

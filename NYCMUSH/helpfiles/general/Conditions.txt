@@ -1,0 +1,14 @@
+The conditions system allows players to track conditions, as well as tilts, that currently affect their character. This system also allows players to log that they were hindered by a condition, or that they had shed a condition and automatically add beats to their weekly beat log. As with anything that grants beats, you must provide a reason for resolving a command or why you are claiming a beat from a given condition.
+
+Commands:
+	+cond <Name> (Add a condition with <name> to yourself as non-persistent, if possible)
+	+cond/persist <Name> (Add a conditin with <Name> to yourself as persistent, if possible)
+	+cond/fade <Name> (Remove a condition from yourself due to the passage of time. Does not award a beat.)
+	+cond/resolve <Name>=<Reason> (Remove a condition from yourself due to meeting the condition for resolution. Must provide a reason, awards a beat.)
+	+cond/persist (Shows all persistent conditions)
+	+cond (Shows all non-persistent conditions)
+	+tilt <Name> (Adds a tilt with the appropriate name to your sheet)
+	+tilt/clear (Removes all of your tilts)
+	+tilt/rem <Name> (Removes a tilt)
+	+tilt/lair (Shows all lair tilts available to Beasts. Minor traits listed first alphabetically, then major.)
+	+tilt/env (Shows all environmental tilts)

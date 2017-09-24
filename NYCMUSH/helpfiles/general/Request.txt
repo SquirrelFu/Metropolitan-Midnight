@@ -1,0 +1,4 @@
+The request system is a way to contact staff for a longer-term undertaking, or more involved off-screen actions than the hunting system may provide. There are a number of different job categories, also known as buckets. For now, staff strives to maintain the following buckets until further notice of new categories being added. GEN (General requests), XP (Experience point Spends), PLOT (Requests for plots to be run), TER (Territory-related requests), GRIPE (Complaints about other players or staff), MECH (Custom content), ROOM (Requests for grid additions, or errors in text), CODE (Errors in the game's coded systems), and APP (Applications for new characters).
+
+Commands:
+	+req/<Abbreviation> <Request Name>=<Request text>

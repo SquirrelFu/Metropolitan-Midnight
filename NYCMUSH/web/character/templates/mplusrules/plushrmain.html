@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+<link rel='stylesheet' href='{% static "website/css/houserules.css"%}'/>
+</head>
+<table class='bodytable'>
+<tr><th align='left'><a href='/mplus/' class='backarrow'> << Back </a></th></tr>
+<tr><td>Like many other MUSHes, Metropolitan Midnight employs some house rules in regards to how the game plays. Some of these of course, are due to the fact that tabletop RPGs are a
+much different format from MUSHes. Others are due to what we believe to be oversight in the way the game was created, others still are simply clarifications to unclear rules. For now,
+here are the rules we have chosen to enact in regards fo the Mortal Plus templates.<br/><br/>
+</td>
+</tr>
+<tr><th align='left' class='hrheader'>Atariya</th></tr>
+<tr><th align='left' class='ruleheader'>Nine Lives</th></tr>
+<tr><td>The only house rule applied to the Atariya, 'Template' for lack of a better word, is on the merit, Nine Lives (Hurt Locker pg. 80). Given that the subsequent merit, 
+Count Down (Same Page) implies that the character is unaware of how many 'Lives' they have left without it, we have decided to enforce the drawbacks of count down for all characters 
+who have the nine lives merit as it is nearly if not actually impossible to not make informed decisions based on how many lives your character has left.<br/><br/></td></tr>
+<tr><th align='left' class='hrheader'>Dreamers<br/></th></tr>
+<tr><th align='left' class='ruleheader'>Missing Time</th></tr>
+<tr><td>The missing time system obviously, cannot be enacted with 100% effectiveness on a MUSH. Hence, according to our house rules on time (See above) we have ruled that at the end of 
+every month the MUSH will automatically roll the requisite dicepools and inflict the custom, 'Latent Programming' condition on the character if a success occurs. This condition exists to 
+inform the dreamer's player that they have the opportunity to contact staff for a plot scene involving their programming activating. This can be done any time within the month, but must 
+be done before the current month passes.<br/><br/></td></tr>
+<tr><th align='left' class='hrheader'>Infected</th></tr>
+<tr><th align='left' class='ruleheader'>Transmission</th></tr>
+<tr><td>The infected are relatively unique, in that they are one of the two Hurt Locker templates which can pass on their template to other people. As such, we have decided to create a
+house rule regarding the transmission of whatever strain of disease the infected character possesses. Specifically, any requests to do so must be submitted to the plot bucket (+req/plot)
+prior to such happening. If it is found that a transmission was attempted despite a lack of request, any such transmission of the disease will be treated as null and void. This is due to the
+fact that it can significantly change the direction of a player's character if they are to become one of the infected. As such, staff wishes to prevent both setting-changing epidemics, as
+well as derailing a character against their player's wishes.<br/><br/></td></tr>
+<tr><th align='left' class='hrheader'>The Plain</th></tr>
+<tr><th align='left' class='ruleheader'>Consequences of Violence</th></tr>
+<tr><td>The merit, 'The Consequences of Violence' (Hurt Locker pg. 94) is powerful. In the context of a MUSH where many if not all opponents faced will be other players, it may even be too
+powerful. As such, a house rule is in place regarding its functionality. Specifically, those who attack the Plain encounter a breaking point. They do not take on the condition of facing a
+breaking point whenever they are violent for the rest of their existence, but anyone who attacks the Plain realizes that they are lashing out at someone who is utterly dedicated to not doing
+so in return and will suffer a breaking point as they come to grips with the idea of such an assault. Such a breaking point can only happen once per scene, however. If the character
+attacking the plain has tiers of breaking points, it is made at their current level of integrity equivalent. Werewolves conversely, face a breaking point towards spirit.<br/><br/></td></tr>
+<tr><th align='left' class='ruleheader'>You Are Being Recorded</th></tr>
+<tr><td>The merit, 'You are being recorded' (Hurt Locker pg. 93) of course, has its uses. It can stop a character attempting to inflict violence in their tracks, through threat of public
+exposure and thus disgrace. However, keep in mind the following. First, attempts to employ this power on a werewolf in hard death rage (Basu-Im for the technical) will receive a penalty
+equal to the werewolf's primal urge as per the writeup in werewolf core. Secondly, vampires in frenzy will not exit frenzy simply because of the supernatural compulsion levied against them.
+Rather, only if the goal of the frenzy is technically able to be completed without violence will they change what they are doing. If not, it will be treated as an automatic failure.<br/>
+<br/>
+</td></tr>
+<tr><th align='left' class='hrheader'>Lost Boys</th></tr>
+<tr><th align='left' class='ruleheader'>Serum</th></tr>
+<tr><td>The requirement of those who undergo the Delta Protocol surgery for anti-rejection drugs is immensely important to the character. While one can obviously attempt to ignore taking
+these drugs, referred to in-game as 'Serum', it is notable that a requirement has been put into place by staff for characters to explain how they are getting enough serum to sustain their
+current level of the merit, 'The Protocol' (Hurt Locker pg. 96). Hence, a given level of Protocol Fixer (Hurt Locker pg. 97) or else an explanation of sorts for how one is obtaining enough 
+serum must be in place prior to or at the time of raising the level of The Protocol.<br/><br/></td></tr>
+<tr><th align='left' class='hrheader'>Psychic Vampires</th></tr>
+<tr><th align='left' class='ruleheader'>Psychic Infection</th></tr>
+<tr><td>Similar to the house rule above regarding the Infected, psychic vampires must obtain a player's consent prior to employing the merit, 'Psychic Infection' on them. If one wishes to
+impart psychic vampirism onto an NPC major enough to be named, staff must be notified. Proxy infection of a notable NPC also counts as direct infection by the player's character. Hence, this
+too is forbidden without a request.<br/><br/></td></tr>
+</table>
+{% endblock %}

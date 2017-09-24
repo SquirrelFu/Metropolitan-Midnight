@@ -1,0 +1,1 @@
+The beat system is used to track any gains of beats from varying sources. Breaking-point related beats are automatically added, as is the daily gain of beats for those who have been active inside of the week.

@@ -1,0 +1,9 @@
+Character creation is a relatively simple process. Once in the chargen room, the commands +setstat, +setpower, and +template are used to set your relevant statistics. Below are the commands' exact syntax and what they do. Please note that not all templates with information boxes are player-accessible. Some simply exist so staff can create NPCs.
+
+Commands:
+	+setstat/<Relevant grouping such as hunger, court, clan, path, order, or anything else> <Actual grouping> (Sets a vital field about your character)
+	+setstat/<Archetype, such as mask or dirge, legend or life, blood or bone.> (Sets either of your archetypes)
+	+setstat/skill <Skill>=<Value> (Sets a skill.)
+	+setstat/attribute <Attribute>=<Value> (Sets an attribute)
+	+setpower <Power>=[<Value>] (Sets virtually any unusual ability, such as endowments for hunters, disciplines/devotions/rituals/scales for vampires, rotes/arcana for mages, etc.)
+	+template [<Template>] (Shows an info box with a list of all templates used as PCs and NPCs both. If a template is input, wipes your stats and sets that template as your current.)

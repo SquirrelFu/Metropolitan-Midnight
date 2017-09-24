@@ -1,0 +1,7 @@
+Time is a rather unclear thing, in terms of how long a scene, chapter, session, or other such things are. As it stands, we have condensed certain units of time with more dramatic implications on their passing into concrete units of time. The time units of story, chapter, and session are condensed as follows.
+
+Session: Considering that the given estimate for an individual's amount of roleplay per week is two to three scenes at moderate activity and a tabletop gaming session tends to run similarly long along with the fact that sessions are often weekly, we have decided to make a session equivalent to one week of real-world time.
+
+Chapter: In accordance with the estimation on sessions, chapters are to be considered. Smaller story arcs making up a larger one, such as a season of television, mark the rough structure of a chapter. On the MUSH, we find that four sessions is usually enough time to progress through a chapter. As such, we have made chapters equivalent to one month.
+
+Story: Finally, a story is equivalent to the time it takes for the seasons to change. Every time the seasons change in the real world (Anywhere from the 20th to 23rd of March, June, September, and December, varies based on year but averaged to the 21st on the MUSH) a story will have been considered to be complete. Abilities that can be used once per story will refresh then, rather than refreshing one story after their immediate use.

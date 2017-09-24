@@ -1,0 +1,5 @@
+Health is really pretty simple. +damage will add more damage, +heal will remove some. Your health levels are automatically calculated, and you are expected to track your own damage that is dealt to you by other players as well as NPCs during plots.
+
+Health-related commands:
+    +damage <type>=<amount>
+    +heal <type>=<amount>

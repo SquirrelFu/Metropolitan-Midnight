@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load wikitags %}
+{% block content %}
+
+<head>
+<link rel='stylesheet' href='{% static "website/css/charlist.css"%}'/>
+</head>
+<script>
+function openTab(evt, tabname) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+    
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the link that opened the tab
+    document.getElementById(tabname).style.display = "block";
+    evt.currentTarget.className += " active";
+    
+}
+</script>
+<div class='intro'>
+Here is a list of all characters currently active on the game. Please note that to prevent metagaming some players may opt-out of displaying their full supernatural template and instead
+may opt to simply display, "Supernatural" or, "Mortal+" as their template. Mortals will always appear as, "Mortal" however. Also note that due to avoiding potential awkwardness, we have 
+replaced real-world politicians with entirely fictional counterparts despite the setting otherwise being that of modern NYC
+</div>
+<ul class='tab' style='list-style-type:none;'>
+<li><a href="javascript:void(0)" class="tablinks active" onclick="openTab(event, 'Mortals')">Mortals</a></li>
+</ul>
+<div id='Mortals' class='tabcontent' style='display:block'>
+{% mortaldb as mortals %}
+{% for char in mortals %}
+{{char.name }}
+{% endfor %}
+</div>
+{% endblock %}

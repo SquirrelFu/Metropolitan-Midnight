@@ -1,0 +1,1 @@
+Welcome to Metropolitan Midnight's help system. Please choose a helpfile to use below by clicking on it if your client supports this feature, or using +help again with the category of the file, followed by a slash and the file's name if it does not.

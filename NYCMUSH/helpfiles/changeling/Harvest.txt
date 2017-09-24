@@ -1,0 +1,8 @@
+Changelings are in most circumstances, the most benevolent and passive of predators if what they do could even be considered predation. However, they have a catch to their more passive ways. They require intense, actively experienced emotion to regain glamour rather than something you can find just anywhere. Eliciting this is one option, a dicepool to pick an average person off the street and provoke a reaction from them for the glamour it generates. Conversely, reaping is also an option albeit a more dramatic one as it costs the changeling a dot of clarity yet restores their glamour pools completey. Alternatively, passive harvesting is a possibility in areas where emotions are likely to be present. Nightclubs, graveyards, even hospitals are possible locations where emotions flow freely. Some of these however, are likely to be restricted in access. Passive harvesting is Composure + Empathy and must be done in specific areas, whereas actively inciting emotion depends on the emotion being incited. Strength + Intimidation may be used for fear, Manipulation + Persuasion for lust, and Wits + Subterfuge for confusion.
+
+Commands:
+	+harvest/fear (Strength + Intimidation)
+	+harvest/lust (Manipulation + Persuasion)
+	+harvest/confusion (Wits + Subterfuge)
+	+harvest (Composure + Empathy)
+	+reap

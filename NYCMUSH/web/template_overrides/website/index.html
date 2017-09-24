@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load charactertags %}
+{% block content %}
+<head>
+<link rel='stylesheet' href='{% static "website/css/homepage.css"%}'/>
+</head>
+<img src='{% static "website/images/chroniclesheader.png"%}' class='mainheaderimage'/>
+<table class='bodytable'>
+<tr><td>Welcome to the website for Metropolitan Midnight! We're a Chronicles of Darkness MUSH set in New York City, in the modern era. Developed to facilitate as many character types as possible
+for play, staff works to ensure a fun and engaging atmosphere for all its players. Below and to the left are the statuses of the varying character venues we currently have. If open, character
+creation is unrestricted. If closed, no more characters of this type may be made. If restricted, there are partial limitations on the characters being created.
+</td>
+</tr>
+</table>
+<table class='statusbox'>
+<tr><th align='left''>Sphere Statuses</th></tr>
+{% beaststatus as beast %}
+{% if beast == "Open" %}
+<tr><td><a class='spherelink' href='/beast'>Beast: <span style='color:green'>Open</span></a></td></tr>
+{% elif beast == "Closed" %}
+<tr><td><a class='spherelink' href='/beast'>Beast: <span style='color:red'>Closed</span></a></td></tr>
+{% elif beast == "Restricted" %}
+<tr><td><a class='spherelink' href='/beast'>Beast: <span style='color:yellow'>Restricted</span></a></td></tr>
+{% endif %}
+{% demonstatus as demon %}
+{% if demon == "Open" %}
+<tr><td><a class='spherelink' href='/demon'>Demon: <span style='color:green'>Open</span></a></td></tr>
+{% elif demon == "Closed" %}
+<tr><td><a class='spherelink' href='/demon'>Demon: <span style='color:red'>Closed</span></a></td></tr>
+{% elif demon == "Restricted" %}
+<tr><td><a class='spherelink' href='/demon'>Demon: <span style='color:yellow'>Restricted</span></a></td></tr>
+{% endif %}
+{% huntstatus as hunter %}
+{% if hunter == "Open" %}
+<tr><td><a class='spherelink' href='/hunter'>Hunter: <span style='color:green'>Open</span></a></td></tr>
+{% elif hunter == "Closed" %}
+<tr><td><a class='spherelink' href='/hunter'>Hunter: <span style='color:red'>Closed</span></a></td></tr>
+{% elif hunter == "Restricted" %}
+<tr><td><a class='spherelink' href='/hunter'>Hunter: <span style='color:yellow'>Restricted</span></a></td></tr>
+{% endif %}
+{% magestatus as mage %}
+{% if mage == "Open" %}
+<tr><td><a class='spherelink' href='/mage'>Mage: <span style='color:green'>Open</span></a></td></tr>
+{% elif mage == "Closed" %}
+<tr><td><a class='spherelink' href='/mage'>Mage: <span style='color:red'>Closed</span></a></td></tr>
+{% elif mage == "Restricted" %}
+<tr><td><a class='spherelink' href='/mage'>Mage: <span style='color:yellow'>Restricted</span></a></td></tr>
+{% endif %}
+{% vampstatus as vampire %}
+{% if vampire == "Open" %}
+<tr><td><a class='spherelink' href='/vampire'>Vampire: <span style='color:green'>Open</span></a></td></tr>
+{% elif vampire == "Closed" %}
+<tr><td><a class='spherelink' href='/vampire'>Vampire: <span style='color:red'>Closed</span></a></td></tr>
+{% elif vampire == "Restricted" %}
+<tr><td><a class='spherelink' href='/vampire'>Vampire: <span style='color:yellow'>Restricted</span></a></td></tr>
+{% endif %}
+{% wolfstatus as werewolf %}
+{% if werewolf == "Open" %}
+<tr><td><a class='spherelink' href='/werewolf'>Werewolf: <span style='color:green'>Open</span></a></td></tr>
+{% elif werewolf == "Closed" %}
+<tr><td><a class='spherelink' href='/werewolf'>Werewolf: <span style='color:red'>Closed</span></a></td></tr>
+{% elif werewolf == "Restricted" %}
+<tr><td><a class='spherelink' href='/werewolf'>Werewolf: <span style='color:yellow'>Restricted</span></a></td></tr>
+{% endif %}
+<tr><th align='left'><a class='spherelink' href='/mplus'>Mortal Plus: Mixed</a></th></tr>
+</table>
+{% endblock %}

@@ -1,0 +1,7 @@
+The notes command allows you to store additional notes on your character, beyond what would be allowed by the system. It can contain things like items on your person versus items owned, specifics of customizable powers, and more. The commands below show how to use the system.
+
+Commands:
+	+note <Name> (View the note with the name input)
+	+note/add <Title>=<Text> (Add a note called, 'Title' with the text after the equals sign)
+	+note/del <Title> (Remove a note with the given title)
+	+note/show <Person>=<Note> (Show a note to a person)

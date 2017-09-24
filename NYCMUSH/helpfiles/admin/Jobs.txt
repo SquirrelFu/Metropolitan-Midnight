@@ -1,0 +1,11 @@
+The jobs system here is designed to aid people in obtaining help from staff in an orderly manner. Players have a limited amount of ability to manipulate a given job, while staff can process these jobs. The commands below indicate what a staff member may do in order to work through a given submitted job. Other commands for jobs common to all players may be found through +help general\request. That noted, new buckets must be at most five characters in their abbreviation and a deadline MUST be supplied.
+
+
+Commands:
+	+job/newbucket <Abbrev>=<Deadline> (Create a new job category, must specify deadline.)
+	+job/deadline <Bucket> (Set a new deadline on a bucket.)
+	+job/invite <Name> (Add a character to the job)
+	+job/unvinite <Name> (Remove a character from the job)
+	+job/approve <Job Number>=<Reason> (Approve a job for a given reason)
+	+job/deny <Job Number>=<Reason> (Deny a job for a given reason)
+	+job/cancel <Job Number>=<Reason> (Cancel a job for a given reason)

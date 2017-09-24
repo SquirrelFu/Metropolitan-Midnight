@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+<link rel='stylesheet' href='{% static "website/css/territory.css"%}'/>
+</head>
+<script>
+function openTab(evt, tabname) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+    
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the link that opened the tab
+    document.getElementById(tabname).style.display = "block";
+    evt.currentTarget.className += " active";
+    
+}
+</script>
+<div class='intro'>
+Here are the rules for controlling and interacting with territory. Territory control means you have a greater deal of influence in an area than other individuals. If you control an area, you
+can call on favors from the people who live in that area. More information is listed in the sections below.
+</div>
+<ul class='tab' style='list-style-type:none;'>
+<li><a href="javascript:void(0)" class="tablinks active" onclick="openTab(event, 'Resilience')">Resilience</a></li>
+<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'Rank')">Rank</a></li>
+<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'Health')">Health</a></li>
+<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'Mood')">Mood</a></li>
+<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'Control')">Control</a></li>
+</ul>
+<div id='Resilience' class='tabcontent' style='display:block'>
+Resilience is a territory attribute which governs how much pressure a given territory can take before substantial problems start to arise. Directly related to health, resilience is the
+product of one of two in-character things in the territory. The first possibility is that there is a large number of people who regularly pass through, or else reside in the territory. The
+other idea is that the people in the area are as the name of the trait itself implies, resilient. In other words, they bounce back more easily from whatever pressure is put on them even if
+there aren't quite so many of them in a given area to begin with. Resilience may be checked through simple observation of the area, generally by taking some time to walk through and get to
+know what the place is like. In game terms, using the command +area/check will let you know what the resilience of a given area is amongst other statistics. This will however, cost you one
+hour of downtime.
+</div>
+<div id='Rank' class='tabcontent'>
+Rank is the amount of influence consolidated in one piece of territory. By being the territory's holder, that person may in fact use their influence to acquire favors. Rank specifically,
+determines how far you can push a given territory before it's simply beyond the territory's own means. Rank can mean either a large population center with plenty of people to rally to a
+given cause, a business center with many businesses one can employ their influence over, or even a media center where technological resources flow like water. Regardless, rank is the general
+amount of usefulness a territory has.
+</div>
+<div id='Health' class='tabcontent'>
+Health is the amount of pressure a territory can have put on it. While resilience determines a territory's maximum health, health itself is the current condition of the territory. The maximum
+health of a territory is invariably equal to five times its rank, plus five on top of that. Hence a rank 1 territory will have 10 health, a rank 2 will have 15, and so on up until 30 health
+at rank 5. Every week, an area will replenish its resilience in health. However, attempting to aid an area's residents can replenish this faster. Aiding an area is an action that takes up
+5 hours of downtime, and adds the area's rank to its regeneration for the week as you use your influence to direct the resources of the area towards sustaining its regular inhabitants.
+</div>
+<div id='Mood' class='tabcontent'>
+Mood represents of course, the contentment of the territory's residents. It comes in five stages, ranging from, 'Great' at highest to 'Terrible' at lowest. Most zones will have a resting
+point for their mood at, 'Bad' (One step above, 'Terrible'). When attempting to invoke a territory's services for a favor, most territory holders will add the territory's mood as a bonus or
+penalty to their roll to do so. For the most part, the moods provide a dice bonus or penalty as follows in order from highest to lowest. Great (+3), Good (+1), Neutral (+/- 0), Bad (-1),
+Terrible (-3). Depending on how a holder controls their territory however, these modifiers will be changed from their base.
+</div>
+<div id='Control' class='tabcontent'>
+Control in general, refers to the method by which the Holder extracts favors from and assures the loyalty of the average resident of the area. This comes in three forms specifically: Respect,
+Fear, and Love.<br/><br/>
+
+Respect means that the people of the territory do not necessarily see you as beneficent or harmful, but rather see you as at least trustworthy or even well-connected and
+possessed of enough resources to do business with. To hold a territory through respect, one must have a number of points of visibility equal to or greater than the total rank of all
+territories which they control through respect. To establish a hold through Respect, either (Wits + Politics), (Manipulation + Streetwise), or even (Presence + Socialize) are all valid
+ways to attempt to garner an area's respect. The first is generally used for businesslike situations, the second for lower-class situations, and the third for upper-class situations.
+</div>
+{% endblock %}

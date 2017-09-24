@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<header>
+<link rel='stylesheet' href='{% static "website/css/magerules.css"%}'/>
+</header>
+<a href='/mage' class='backarrow'><b> << Back</b></a>
+<div class='rulesheader'>Character Concepts</div>
+<div class='rulesbody'>A handful of character types are not allowed, due to their problematic natures.
+It might be taken for granted by some, but the following character types will not currently be allowed
+and are likely to never be allowed.<br/>
+<ul>
+<li>Banishers</li>
+<li>Seers of the Throne</li>
+<li>Left-Handed Legacies</li>
+<li>Scelesti</li>
+<li>Liches</li>
+</ul></div>
+<div class='rulesheader'>Creative Thaumaturgy</div>
+<div class='rulesbody'>Creative Thaumaturgy is not allowed outside of uses specifically approved by staff members. If a given spell or usage
+of a given magical effect is broad enough to be classified, it will be listed on the site as a spell for all players to use. Although
+strictly not the same thing as Creative Thaumaturgy, the similar concept of custom rotes is limited as well. Specifically, once a rote is
+created outside of Creative Thaumaturgy that specific rote must be learned from either the creator of that rote, a grimoire scribed by the
+creator of that rote, or one whom has learned the rote already. Simply because a rote exists made by another player, it does not mean that
+you can learn it out of thin air.</div>
+{% endblock %}

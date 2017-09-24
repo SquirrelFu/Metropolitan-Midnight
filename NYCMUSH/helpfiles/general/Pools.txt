@@ -1,0 +1,9 @@
+Pools refers to the general concept of a spendable resource. Most resources such as vitae, essence, mana, and others fall under this category. The only true exception to the general standard format is Satiety as used by Beasts. Satiety is somewhere between a, 'Sanity' stat (See: +help sanity) and a pool itself. Each point of Satiety requires more dramatic acts to gain, and has more profound effects based on its level and the spending of each individual point. Willpower can even be considered a pool available to all templates, including mortals.
+
+Pool Management:
+    +<pool>/spend <number to be spent>=<reason>
+    +<pool>/gain <number to be gained>=<reason>
+    +willpower/virtue <Reason>
+    +willpower/vice <Reason>
+
+Please note that not all templates can regain their stat freely, many must act on-grid to do so via the hunting system. Further, pools that decrease over time such as satiety as well as pools that increase over time such as willpower will be adjusted automatically as appropriate.

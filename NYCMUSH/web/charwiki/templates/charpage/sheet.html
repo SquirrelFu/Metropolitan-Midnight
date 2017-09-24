@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% load wikitags %}
+<head>
+<link rel='stylesheet' href='{% static "website/css/charpage.css"%}'/>
+</head>
+<div class='header'>
+{{character.name}}
+</div>
+<div class='profile'>
+<img class='mainpicture' src='{% static "website/images/Silhouette small.png"%}'>
+<table class='vitals'>
+<tr>
+<td>
+<b>Full Name: </b> {{character.db.icname}}
+</td>
+</tr>
+<tr>
+<td>
+<b>Birthday: </b> {{character.db.dob_month| month_name}} {{character.db.dob_day}}
+</td>
+</tr>
+<tr>
+<td>
+{% with character|ismortalplus as mplusstatus %}
+{% if character.db.masquerade == True %}
+{% if mplusstatus %}
+<b>Template: </b> Mortal+
+{% elif character.db.template == "Mortal" %}
+<b>Template: </b> Mortal
+{% elif character.db.template != "Mortal" %}
+<b>Template: </b> Supernatural
+{% endif %}
+{% else %}
+{% if character.db.template == "Mortal" and mplusstatus %}
+{% for merit in character.db.meritlist %}
+{% if "Damn Lucky" in merit %}
+<b>Template: </b> Atariya
+{% elif "Subliminal Conditioning" in merit %}
+<b>Template: </b> Dreamer
+{% elif "Carrier" in merit %}
+<b>Template: </b> Infected
+{% elif "Plain Reader" in merit %}
+<b>Template: </b> Plain
+{% elif "The Protocol" in merit %}
+<b>Template: </b> Lost Boy
+{% elif "Psychic Vampirism" in merit %}
+<b>Template: </b> Psychic Vampire
+{% endif %}
+{% endfor %}
+{% elif character.db.template == "Mortal" %}
+<b>Template: </b> Mortal
+{% else %}
+<b>Template: </b> {{character.db.template}}
+{% endif %}
+{% endif %}
+{% endwith %}
+</td>
+</tr>
+</table>
+</div>
+{% endblock %}
