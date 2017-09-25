@@ -480,9 +480,13 @@ class Character(gendersub.GenderCharacter):
             self.PoolGain('Willpower',1)
             self.msg("You regain a point of willpower, and heal all bashing damage, as twenty-four hours have passed since your last refresh.")
             self.Heal(1,len(self.db.health_track) - 1)
-        if time.strftime("%A").lower() == "Sunday":
-            self.caller.db.timelog = []
-            self.caller.msg("As a new week begins, your downtime log is cleared.")
+        try:
+            if time.strftime("%A").lower() == "Sunday" and self.db.last_login.day + 7 <= datetime.now().day:
+                self.caller.db.timelog = []
+                self.caller.msg("As a new week begins, your downtime log is cleared.")
+                self.caller.db.downtime = 25
+        except ValueError:
+            pass
         
     def IsMortal(self):
         if self.db.template == "Mortal":
@@ -674,7 +678,7 @@ class Character(gendersub.GenderCharacter):
                 else:
                     if len(note) != 0:
                         self.db.meritlist.remove(merit)
-                        self.db.meritlist.append(tuple([name, rating,note]))
+                        self.db.meritlist.append(tuple([name, rating, note]))
                         return
                     else:
                         self.db.meritlist.remove(merit)

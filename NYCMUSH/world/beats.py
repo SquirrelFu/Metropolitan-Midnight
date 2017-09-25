@@ -16,7 +16,7 @@ class BeatCommand(default_cmds.MuxCommand):
         +beat/add <Type>=<Reason> Adds beats from a given situation, for a certain reason. Valid types include
         ST beats for running a plot, plot beats for participating in a plot and damage beats for taking enough
         damage to render your character unconscious. Beats for breaking points and conditions are automatically
-        added to your log when you resolve conditions.
+        added to your log when you resolve conditions, or else are hindered by them.
     """
     key = "+beat"
     aliases = "+beats"

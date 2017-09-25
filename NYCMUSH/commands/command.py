@@ -935,6 +935,7 @@ class SpendPool(default_cmds.MuxCommand):
     +<pool>/gain <Amount> (Gain a given amount of a pool, if your template allows free recovery)
     +willpower/virtue <Reason> (Recover all your willpower, due to your virtue being acted upon)
     +willpower/vice <Reason> (Recover one point of willpower, due to your vice being acted upon)
+    +essence/locus <Amount> (For werewolves, spend essence from a dedicated locus you or your pack owns)
     """
     #This command is used for EVERY pool, whether it's willpower or a supernatural pool.
     key = "+willpower"
@@ -1027,6 +1028,18 @@ class SpendPool(default_cmds.MuxCommand):
                         else:
                             self.caller.msg("Please enter a valid value to spend.")
                             return
+                    elif switches[0].lower() == "locus":
+                        modaction = " spends "
+                        if self.isint(arglist[0]):
+                            if int(arglist[0]) >= 1:
+                                for lair in self.caller.db.lairs:
+                                    for merit in lair:
+                                        if merit[0].lower() == "dedicated locus":
+                                            if lair.db.essence >= int(arglist[0]):
+                                                lair.db.essence -= int(arglist[0])
+                                            else:
+                                                self.caller.msg("Your dedicated locus doesn't have that much essence left!")
+                                        else:
                     else:
                         self.caller.msg("That's not a valid switch. Only spending is supported.")
                         return
@@ -1246,7 +1259,10 @@ class SpendPool(default_cmds.MuxCommand):
                 #Of course, this is concatenating all the other strings that indicate what the person was doing.
         else:
             if self.lhs != "":
-                stringout = self.caller.name + modaction + self.lhs + " " + cmdstring[1:len(cmdstring)]
+                if switches[0] == "locus":
+                    stringout = self.caller.name + modaction + self.lhs + " from a dedicated locus " + cmdstring[1:len(cmdstring)]
+                else:
+                    stringout = self.caller.name + modaction + self.lhs + " " + cmdstring[1:len(cmdstring)]
         if len(switches) > 0:
             if switches[0].lower() == "virtue" or switches[0].lower() == "vice":
                 pass
@@ -3093,7 +3109,7 @@ class Sheet(default_cmds.MuxCommand):
         healthrow.width=78
         outputstring += str(healthrow).replace("|","|" + color + "|||n").replace("-","|"+color+"-|n").replace("+","|"+color+"+|n")
         soctable = evtable.EvTable(border='table',header=False,width=78)
-        soctable.add_row('Experience: ' + str(target.db.beats/5) +", and " + str(target.db.beats%5) + " beats","Visibility: " + str(target.db.visibility),'Weekly Downtime: ' + str(target.db.downtime) + "/25")
+        soctable.add_row('Experience: ' + str(target.db.beats/5) +", and " + str(target.db.beats%5) + " beats",'Weekly Downtime: ' + str(target.db.downtime) + "/25")
         soctable.reformat(corner_bottom_left_char="\\",corner_bottom_right_char="/")
         outputstring += str(soctable)[78:].replace("|","|" + color + "|||n").replace("-","|"+color+"-|n").replace("+","|"+color+"+|n").replace("\\","|" + color + "\\|n").replace("-|n/","|" + color + "-/|n")
         self.caller.msg(outputstring)
