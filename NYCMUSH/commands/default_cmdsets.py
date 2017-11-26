@@ -37,6 +37,8 @@ from command import OOCMasq
 from world.territory import Hunt
 from world.territory import Extract
 from typeclasses.rooms import AddHallow
+from command import ManageSpheres
+from command import SetChannelColor
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
     """
     The `CharacterCmdSet` contains general in-game commands like `look`,
@@ -134,7 +136,7 @@ class WelcomeCmdSet(CmdSet):
         super(WelcomeCmdSet, self).at_cmdset_creation()
         self.add(command.TOS())
         self.duplicates = False
-class PlayerCmdSet(default_cmds.PlayerCmdSet):
+class AccountCmdSet(default_cmds.AccountCmdSet):
     """
     This is the cmdset available to the Player at all times. It is
     combined with the `CharacterCmdSet` when the Player puppets a
@@ -147,7 +149,7 @@ class PlayerCmdSet(default_cmds.PlayerCmdSet):
         """
         Populates the cmdset
         """
-        super(PlayerCmdSet, self).at_cmdset_creation()
+        super(AccountCmdSet, self).at_cmdset_creation()
         #
         # any commands you add below will overload the default ones.
         #
@@ -158,16 +160,16 @@ class AdminSet(CmdSet):
         super(AdminSet, self).at_cmdset_creation()
         self.add(command.Panic())
         self.add(command.CloseAll())
-        self.add(command.CloseSphere())
         self.add(command.OpenAll())
-        self.add(command.OpenSphere())
         self.add(command.MarkNPC())
+        self.add(ManageSpheres())
         self.add(command.SpaceArchMastery())
         self.add(StatOther())
         self.add(command.Hide())
         self.add(command.SetPosition())
         self.add(ManageXP())
         self.add(command.ApproveChar)
+        self.add(SetChannelColor())
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
     Command set available to the Session before being logged in.  This

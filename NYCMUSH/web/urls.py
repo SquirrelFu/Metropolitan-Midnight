@@ -16,6 +16,8 @@ from web.charwiki.views import charlist
 from web.charwiki.views import charpage
 from web.character.views import magepage
 from web.character.views import magerules
+from web.character.views import demonpage
+from web.character.views import beastcustom
 # eventual custom patterns
 custom_patterns = [
     url(r'^mplus/rules/$', mplusrules),
@@ -26,7 +28,9 @@ custom_patterns = [
     url(r'^character/$', charlist),
     url(r'^character/(?P<charname>.+)/$',charpage,name='characterpage'),
     url(r'^mage/$', magepage),
-    url(r'^mage/rules/$', magerules)
+    url(r'^mage/rules/$', magerules),
+    url(r'^demon/$',demonpage),
+    url(r'^beast/customs/$',beastcustom)
     ]
 
 # this is required by Django.

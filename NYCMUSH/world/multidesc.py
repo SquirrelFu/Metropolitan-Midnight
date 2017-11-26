@@ -16,7 +16,7 @@ class MultiDescCommand(default_cmds.MuxCommand):
         lhs = self.lhs
         rhs = self.rhs
         try:
-            screenwidth = self.caller.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+            screenwidth = self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
         except IndexError:
             screenwidth = 78
         displaywidth = screenwidth/4
@@ -93,9 +93,9 @@ class MultiDescCommand(default_cmds.MuxCommand):
                             for thing in wrapdesc:
                                 if thing == wrapdesc[len(wrapdesc) - 1]:
                                     desckeys += "||" + thing + " " * (displaywidth - len("|"+thing) - 1) +"||\n"
-                            if self.caller.player.sessions.get()[0].protocol_flags['MXP'] and self.caller.db.template != "Changeling":
+                            if self.caller.account.sessions.get()[0].protocol_flags['MXP'] and self.caller.db.template != "Changeling":
                                 desckeys += "\\" + "-" * (padwidth - 8) + "|lc+desc/set "+args+"|ltSet Description|le" + "-" * (padwidth - 8) + "/"
-                            elif self.caller.player.sessions.get()[0].protocol_flags['MXP'] and self.caller.db.template == "Changeling":
+                            elif self.caller.account.sessions.get()[0].protocol_flags['MXP'] and self.caller.db.template == "Changeling":
                                 desckeys += "\\" + "-" * (cellwidth - 5) + "|lc+desc/set "+args+"|ltSet as Mask|le" + "-" * (cellwidth - 6)
                                 desckeys += "-" * (cellwidth - 5) + "|lc+desc/fae " + args + "|ltSet as Mien|le" + "-" *  (cellwidth - 5) + "/"
                             else:

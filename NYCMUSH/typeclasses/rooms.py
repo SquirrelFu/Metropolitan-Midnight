@@ -33,12 +33,13 @@ class Room(DefaultRoom):
         self.db.eveningdesc = ""
         self.db.nightdesc = ""
     def return_appearance(self, looker):
+        sorted(self.contents)
         currenttime = datetime.now() - timedelta(hours=5)
         currenthour = currenttime.hour
         try:
             try:
-                if looker.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
-                    screenwidth = looker.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+                if looker.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
+                    screenwidth = looker.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
                 else:
                     screenwidth = 156
             except IndexError:
@@ -103,39 +104,39 @@ class Room(DefaultRoom):
                     if char.db.hidden == True and char != looker:
                         continue
                 if char.db.shortdesc:
-                    if char.db.shortdesc != "" and char.has_player:
+                    if char.db.shortdesc != "" and char.has_account:
                         outputstring += "|||n " + char.name + ": " + char.db.shortdesc + " " * ((screenwidth/2) - 1 - len("| " + char.name + ": "+ char.db.shortdesc)) + "|115||\n"
-                    elif char.has_player:
+                    elif char.has_account:
                         outputstring += "|||n " + char.name + " " * ((screenwidth)/2 - 1 - len("| " + char.name )) + "|115||\n" 
                 elif char == looker:
                     outputstring += "|||n " + char.name + ": |111Set your short description with +shortdesc!" + " " * ((screenwidth)/2 - 1 - len("| " + char.name + ": Set your short description with +shortdesc!")) + "|115||\n" 
-                elif char.has_player:
+                elif char.has_account:
                     outputstring += "|||n " + char.name + " " * ((screenwidth)/2 - 1 - len("| " + char.name )) + "|115||\n" 
         if len(self.exits) > 0:
             outputstring += "|115+" + "-" * (screenwidth/4 - len("Characters")/2 + 2) + "|nExits|115" + "-" * (screenwidth/4 - len("Characters")/2 + 1) + "+\n"
             exitstring = ""
-            for exititer in self.contents:
-                if inherits_from(exititer, Exit):
-                    if exitstring == "":
-                        outputstring += "|115|||n "
-                    if isinstance(exititer.aliases.get(),str):
-                        if isinstance(exititer.destination, Location):
-                            exitstring += exititer.name + " |222<" + exititer.aliases.get().upper() + ">|n   "
-                        else:
-                            exitstring+= exititer.name + " <" + exititer.aliases.get().upper() + ">   "
-                        if exititer == self.exits[-1] or ((self.exits.index(exititer) % 3) == 0 and self.exits.index(exititer) != 0):
-                            outputstring += exitstring
-                            outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115|||n\n"
-                            exitstring = ""
+            exitlist = sorted(self.exits)
+            for exititer in exitlist:
+                if exitstring == "":
+                    outputstring += "|115|||n "
+                if isinstance(exititer.aliases.get(),str):
+                    if isinstance(exititer.destination, Location):
+                        exitstring += exititer.name + " |222<" + exititer.aliases.get().upper() + ">|n   "
                     else:
-                        if isinstance(exititer.destination,Location):
-                            exitstring += exititer.name + "   "
-                        else:
-                            exitstring+= exititer.name + " <" + exititer.aliases.get().upper() + ">          "
-                        if exititer == self.exits[-1] or ((self.exits.index(exititer) % 3 )== 0 and self.exits.index(exititer) != 0):
-                            outputstring += exitstring
-                            outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115||\n"
-                            exitstring = ""
+                        exitstring+= exititer.name + " <" + exititer.aliases.get().upper() + ">   "
+                    if exititer == exitlist[-1] or ((exitlist.index(exititer) % 3) == 0 and exitlist.index(exititer) != 0):
+                        outputstring += exitstring
+                        outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115|||n\n"
+                        exitstring = ""
+                else:
+                    if isinstance(exititer.destination,Location):
+                        exitstring += exititer.name + "   "
+                    else:
+                        exitstring+= exititer.name + " <" + exititer.aliases.get().upper() + ">          "
+                    if exititer == exitlist[-1] or ((exitlist.index(exititer) % 3 )== 0 and exitlist.index(exititer) != 0):
+                        outputstring += exitstring
+                        outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115||\n"
+                        exitstring = ""
         outputstring += "|115\\" + "-" * ((screenwidth/2) - 2) + "/"
         return outputstring
         
@@ -180,22 +181,19 @@ class Chargen(Room):
         self.db.equip = create_script("world.inventory.EquipmentList",obj=self,key="EquipmentHandler",persistent=True)
 class Welcome(Room):
     def at_object_creation(self):
-        default_cmdsets = default_cmdsets
         super(Welcome, self).at_object_creation()
-        self.cmdset.add(default_cmdsets.WelcomeCmdSet(), permanent=True)
+        self.cmdset.add(commands.default_cmdsets.WelcomeCmdSet(), permanent=True)
 class GridSpace(Room):
     def at_object_creation(self):
-        default_cmdsets = default_cmdsets
         super(GridSpace, self).at_object_creation()
-        self.cmdset.add(default_cmdsets.GridCmdSet(), permanent=True)
+        self.cmdset.add(commands.default_cmdsets.GridCmdSet(), permanent=True)
 class Borough(Room):
     def at_object_creation(self):
         super(Borough, self).at_object_creation()
 class Location(Room):
     def at_object_creation(self):
-        default_cmdsets = default_cmdsets
         super(Location, self).at_object_creation()
-        self.cmdset.add(default_cmdsets.LocationCmdSet(), permanent=True)
+        self.cmdset.add(commands.default_cmdsets.LocationCmdSet(), permanent=True)
 class Hedge(Room):
     def at_object_creation(self):
         super(Hedge, self).at_object_creation()

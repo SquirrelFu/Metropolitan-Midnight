@@ -23,7 +23,6 @@ from evennia.utils import search
 from server.conf import settings
 from evennia.utils import evtable
 from evennia import DefaultCharacter
-from evennia.utils.prettytable import PrettyTable
 RSS_ENABLED = settings.RSS_ENABLED
 if RSS_ENABLED:
     try:
@@ -256,12 +255,12 @@ class Character(gendersub.GenderCharacter):
                 
                 
     def announce_move_from(self, destination):
-        if self.player.db.dark:
+        if self.account.db.dark:
             pass
         else:
             DefaultCharacter.announce_move_from(self, destination)
     def announce_move_to(self, source):
-        if self.player.db.dark:
+        if self.account.db.dark:
             pass
         else:
             DefaultCharacter.announce_move_to(self, source)
@@ -388,8 +387,8 @@ class Character(gendersub.GenderCharacter):
                     return False
         else:
             return False
-    def IsPlayerAdmin(self):
-        if self.locks.check_lockstring(self, "dumm:pperm(Wizards)") and self.dbid != 1:
+    def IsAccountAdmin(self):
+        if self.locks.check_lockstring(self, "dumm:pperm(Admin)") and self.dbid != 1:
             return True
         else:
             return False
@@ -573,7 +572,7 @@ class Character(gendersub.GenderCharacter):
         except KeyError:
             return
     def IsAdmin(self):
-        if self.locks.check_lockstring(self, "dumm:perm(Wizards)") and self.id != 1:
+        if self.locks.check_lockstring(self, "dumm:perm(Admin)") and self.id != 1:
             return True
         else:
             return False

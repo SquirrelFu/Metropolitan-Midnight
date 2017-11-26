@@ -219,7 +219,7 @@ class BoardCommand(default_cmds.MuxCommand):
                 try:
                     postindex = int(self.args.split("/")[1]) - 1
                     charactersearch = search.objects(boardlist[mainindex][postindex][1])[0]
-                    if charactersearch.player == self.caller.player or self.caller.IsAdmin():
+                    if charactersearch.account == self.caller.account or self.caller.IsAdmin():
                         self.caller.msg("The message titled "+boardlist[mainindex][postindex][0]+" has been removed.")
                         del boardlist[mainindex][postindex]
                         return
@@ -270,7 +270,7 @@ class BoardCommand(default_cmds.MuxCommand):
                         for char in charlist:
                             if char == self.caller:
                                 continue
-                            elif char.has_player:
+                            elif char.has_account:
                                 boardindex = int(self.args.split("/")[0]) - 1
                                 if len(boardsearch.db.boardperms[boardindex]) == 0:
                                     char.msg(self.caller.name +" has posted a new message to "+boardnames[boardindex] + " titled: " + self.args.split("/")[1].split("=")[0])
@@ -299,7 +299,7 @@ class BoardCommand(default_cmds.MuxCommand):
                     for char in charlist:
                         if char == self.caller:
                             continue
-                        elif char.has_player:
+                        elif char.has_account:
                             boardindex = int(self.args.split("/")[0]) - 1
                             if len(boardsearch.db.boardperms[boardindex]) == 0:
                                 char.msg(self.caller.name +" has posted a new message to "+boardnames[boardindex] + " titled: " + self.args.split("/")[1].split("=")[0])

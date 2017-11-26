@@ -33,7 +33,7 @@ class PlayerEmit(default_cmds.MuxCommand):
                 self.caller.msg("Please do not attempt to spoof the proving system.")
                 for char in charlist:
                     if char.IsAdmin():
-                        char.msg(self.caller.name + " (" + self.caller.player.name + ")" + " has tried to spoof the proving system!")
+                        char.msg(self.caller.name + " (" + self.caller.account.name + ")" + " has tried to spoof the proving system!")
                         continue
                 return
             if "-----roll-----" in self.args or "-----Roll-----" in self.args:
@@ -41,10 +41,10 @@ class PlayerEmit(default_cmds.MuxCommand):
                 charlist = DefaultCharacter.objects.filter_family()
                 for char in charlist:
                     if char.IsAdmin():
-                        char.msg(self.caller.name + " (" + self.caller.player.name + ")" + " has tried to spoof a dice roll!")
+                        char.msg(self.caller.name + " (" + self.caller.account.name + ")" + " has tried to spoof a dice roll!")
                         continue
                 return
         stuffhere = self.caller.location.contents
         for char in stuffhere:
-            if char.has_player:
+            if char.has_account:
                 char.msg(self.args.replace("%t","     ").replace("%r","\n"))

@@ -13,6 +13,7 @@ class DreadHandler(object):
     def __init__(self):
         dreadlist = self.dreadlist
         if len(dreadlist) == 0:
+            dreadlist.append(tuple('Beastmaster','1','CoD-146'))
             dreadlist.append(tuple("Agonize","1-5","HtV-276"))
             dreadlist.append(tuple("Balefire","1-5","HtV-277"))
             dreadlist.append(tuple("Confuse","1-5","HtV-277"))

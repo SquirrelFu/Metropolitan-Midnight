@@ -10,8 +10,25 @@
   </head>
 
   <body class='header' background='{% static "website/images/NYC Skyline night.jpg" %}'>
-  <div style='width:100%; height:100px; background-color:white; border-bottom:3px solid black;' class='headerdiv'>
-  <h1 style='text-align:center; line-height:5vh; font-size:40px;'><a href='/' class='mainlogo'><image src="{% static 'website/images/evennia_logo.png' %}" /></a><a href='/' class='Mainheader'>Metropolitan Midnight</a></h1>
+  <div class='headerdiv'>
+    {% if request.user.is_staff %}
+  <form action="{% url 'admin:index' %}">
+    <input type="submit" value="Admin Interface" class='adminbutton'/>
+  </form>
+  {% endif %}
+  {% if user.is_authenticated %}
+  <form action="{% url 'logout' %}">
+    <input type="submit" value="Log Out" class='logbutton'/>
+  </form>
+  {% else %}
+  <form action="{% url 'login' %}">
+    <input type="submit" value="Log In" class='logbutton'/>
+  </form>
+  {% endif %}
+  <form action="/webclient">
+<input type="submit" value="Webclient" class=clientbutton>
+</form>
+  <h1 style='text-align:center; line-height:5vh; font-size:40px;'><a href='/' class='mainlogo'><image src="{% static 'website/images/evennia_logo.png' %}" /></a><a href='/' class='mainheader'>Metropolitan Midnight</a></h1>
   <table class='linktable'>
   <tr>
   <td><a href='/territory' class='headerlinks'>Territory System</a></td>
@@ -21,24 +38,8 @@
   </table>
   
   </div>
-  {% if request.user.is_staff %}
-  <form action="{% url 'admin:index' %}">
-    <input type="submit" value="Admin Interface" class='adminbutton'/>
-</form>
-  {% endif %}
-  {% if user.is_authenticated %}
-  <form action="{% url 'logout' %}">
-    <input type="submit" value="Log Out" class='logbutton'/>
-</form>
-  {% else %}
-  <form action="{% url 'login' %}">
-    <input type="submit" value="Log In" class='logbutton'/>
-</form>
-  {% endif %}
 <div class='bodytext' style='font-family:arial;'>
   {% block content %}
   {% endblock %}
-<form action="/webclient">
-<input type="submit" value="Webclient" class=clientbutton>
 </div>
 </html>

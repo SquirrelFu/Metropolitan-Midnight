@@ -16,46 +16,108 @@ at_server_cold_stop()
 
 """
 import settings
+import os.path as path
 import os
 from evennia.utils import search
 from evennia import create_script
 from evennia import DefaultCharacter
-import commands
+def Load_Status(inString):
+    loadstring = "./spherestatus/" + inString + "status.txt"
+    if path.exists(loadstring):
+        if inString.lower() == "vampire":
+            settings.VAMPIRE_STATUS = open(loadstring).read()
+        elif inString.lower() == "hunter":
+            settings.HUNTER_sTATUS = open(loadstring).read()
+        elif inString.lower() == "werewolf":
+            settings.WOLF_STATUS = open(loadstring).read()
+        elif inString.lower() == "mage":
+            settings.MAGE_STATUS = open(loadstring).read()
+        elif inString.lower() == "beast":
+            settings.BEAST_STATUS = open(loadstring).read()
+        elif inString.lower() == "changeling":
+            settings.CHANGELING_STATUS = open(loadstring).read()
+        elif inString.lower() == "geist":
+            settings.GEIST_STATUS = open(loadstring).read()
+        elif inString.lower() == "mummy":
+            settings.MUMMY_STATUS = open(loadstring).read()
+        elif inString.lower() == "atariya":
+            settings.ATARIYA_STATUS = open(loadstring).read()
+        elif inString.lower() == "dreamer":
+            settings.DREAMER_STATUS = open(loadstring).read()
+        elif inString.lower() == "infected":
+            settings.INFECTED_STATUS = open(loadstring).read()
+        elif inString.lower() == "lostboy":
+            settings.LOSTBOYS_STATUS = open(loadstring).read()
+        elif inString.lower() == "plain":
+            settings.PLAIN_STATUS = open(loadstring).read()
+        elif inString.lower() == "psyvamp":
+            settings.PSYVAMP_STATUS = open(loadstring).read()
+        elif inString.lower() == "demon":
+            settings.DEMON_STATUS = open(loadstring).read()
+        elif inString.lower() == "promethean":
+            settings.PROMETHEAN_STATUS = open(loadstring).read()
+def Save_Status(sphereIn):
+    savestring = "./spherestatus/" + sphereIn + "status.txt"
+    spherelist = ["vampire","werewolf","hunter","mage","beast",
+                  "promethean","demon","changeling","geist","mummy","atariya","dreamer","infected","lostboy","plain","psyvamp"]
+    if not path.exists(savestring) and sphereIn in spherelist:
+        if not path.isdir("./spherestatus/"):
+            os.makedirs("./spherestatus/")
+        open(savestring,'w').close()
+    with open(savestring,"r+") as stat:
+        if sphereIn.lower() == "vampire":
+            stat.write(settings.VAMPIRE_STATUS)
+        elif sphereIn.lower() == "hunter":
+            stat.write(settings.HUNTER_STATUS)
+        elif sphereIn.lower() == "werewolf":
+            stat.write(settings.WEREWOLF_STATUS)
+        elif sphereIn.lower() == "mage":
+            stat.write(settings.MAGE_STATUS)
+        elif sphereIn.lower() == "beast":
+            stat.write(settings.BEAST_STATUS)
+        elif sphereIn.lower() == "changeling":
+            stat.write(settings.CHANGELING_STATUS)
+        elif sphereIn.lower() == "geist":
+            stat.write(settings.GEIST_STATUS)
+        elif sphereIn.lower() == "mummy":
+            stat.write(settings.MUMMY_STATUS)
+        elif sphereIn.lower() == "atariya":
+            stat.write(settings.ATARIYA_STATUS)
+        elif sphereIn.lower() == "dreamer":
+            stat.write(settings.DREAMER_STATUS)
+        elif sphereIn.lower() == "infected":
+            stat.write(settings.INFECTED_STATUS)
+        elif sphereIn.lower() == "lostboy":
+            stat.write(settings.LOSTBOYS_STATUS)
+        elif sphereIn.lower() == "plain":
+            stat.write(settings.PLAIN_STATUS)
+        elif sphereIn.lower() == "psyvamp":
+            stat.write(settings.PSYVAMP_STATUS)
+        elif sphereIn.lower() == "demon":
+            stat.write(settings.DEMON_STATUS)
+        elif sphereIn.lower() == "promethean":
+            stat.write(settings.PROMETHEAN_STATUS)
 def at_server_start():
     """
     This is called every time the server starts up, regardless of
     how it was shut down.
     """
-    if os.path.isfile(r'.\spherestatus\v_status.txt'):
-        settings.VAMP_STATUS = open(r'.\spherestatus\v_status.txt').read()
-    if os.path.isfile('.\spherestatus\ww_status.txt'):
-        settings.WOLF_STATUS = open('.\spherestatus\ww_status.txt').read()
-    if os.path.isfile('.\spherestatus\ma_status.txt'):
-        settings.MAGE_STATUS = open('.\spherestatus\ma_status.txt').read()
-    if os.path.isfile('.\spherestatus\ch_status.txt'):
-        settings.LING_STATUS = open('.\spherestatus\ch_status.txt').read()
-    if os.path.isfile('.\spherestatus\hn_status.txt'):
-        settings.HUNTER_STATUS = open('.\spherestatus\hn_status.txt').read()
-    if os.path.isfile(r'.\spherestatus\bt_status.txt'):
-        settings.BEAST_STATUS = open(r'.\spherestatus\bt_status.txt').read()
-    if os.path.isfile('.\spherestatus\mm_status.txt'):
-        settings.MUMMY_STATUS = open('.\spherestatus\mm_status.txt').read()
-    if os.path.isfile('.\spherestatus\pm_status.txt'):
-        settings.PROMETHEAN_STATUS = open('.\spherestatus\pm_status.txt').read()
-    if os.path.isfile('.\spherestatus\dm_status.txt'):
-        settings.DEMON_STATUS = open('.\spherestatus\dm_status.txt').read()
-    if os.path.isfile(".\spherestatus\pv_status.txt"):
-        settings.PSYVAMP_STATUS = open('.\spherestatus\pv_status.txt').read()
-    if os.path.isfile(r".\spherestatus\at_status.txt"):
-        settings.ATARIYA_STATUS = open(r'.\spherestatus\at_status.txt').read()
-    if os.path.isfile(".\spherestatus\dr_status.txt"):
-        settings.DREAMER_STATUS = open('.\spherestatus\dr_status.txt').read()
-    if os.path.isfile(".\spherestatus\if_status.txt"):
-        settings.INFECTED_STATUS = open('.\spherestatus\if_status.txt').read()
-    if os.path.isfile(".\spherestatus\pl_status.txt"):
-        settings.PLAIN_STATUS = open('.\spherestatus\pl_status.txt').read()
-    if os.path.isfile(".\spherestatus\lb_status.txt"):
-        settings.LOSTBOYS_STATUS = open('.\spherestatus\lb_status.txt').read()
+    Load_Status("vampire")
+    Load_Status("werewolf")
+    Load_Status("mage")
+    Load_Status("beast")
+    Load_Status("changeling")
+    Load_Status("geist")
+    Load_Status("mummy")
+    Load_Status("atariya")
+    Load_Status("dreamer")
+    Load_Status("infected")
+    Load_Status("lostboy")
+    Load_Status("plain")
+    Load_Status("psyvamp")
+    Load_Status("hunter")
+    Load_Status('demon')
+    Load_Status('promethean')
     try:
         beatsearch = search.scripts('BeatHandler')[0]
     except IndexError:
@@ -66,51 +128,22 @@ def at_server_stop():
     This is called just before the server is shut down, regardless
     of it is for a reload, reset or shutdown.
     """
-    if settings.VAMP_STATUS != "???":
-        v_status = open(r'.\spherestatus\v_status.txt','w')
-        v_status.write(str(settings.VAMP_STATUS))
-    if settings.WOLF_STATUS != "???":
-        ww_status = open('.\spherestatus\ww_status.txt','w')
-        ww_status.write(str(settings.WOLF_STATUS))
-    if settings.MAGE_STATUS != "???":
-        ma_status = open('.\spherestatus\ma_status.txt','w')
-        ma_status.write(str(settings.MAGE_STATUS))
-    if settings.LING_STATUS != "???":
-        ch_status = open('.\spherestatus\ch_status.txt','w')
-        ch_status.write(str(settings.LING_STATUS))
-    if settings.HUNTER_STATUS != "???":
-        hn_status = open('.\spherestatus\hn_status.txt','w')
-        hn_status.write(str(settings.HUNTER_STATUS))
-    if settings.BEAST_STATUS != "???":
-        bt_status = open(r'.\spherestatus\bt_status.txt','w')
-        bt_status.write(str(settings.BEAST_STATUS))
-    if settings.MUMMY_STATUS != "???":
-        mm_status = open('.\spherestatus\mm_status.txt','w')
-        mm_status.write(str(settings.MUMMY_STATUS))
-    if settings.PROMETHEAN_STATUS != "???":
-        pm_status = open('.\spherestatus\pm_status.txt','w')
-        pm_status.write(str(settings.PROMETHEAN_STATUS))
-    if settings.DEMON_STATUS != "???":
-        dm_status = open('.\spherestatus\dm_status.txt','w')
-        dm_status.write(str(settings.DEMON_STATUS))
-    if settings.ATARIYA_STATUS != "???":
-        at_status = open(r'.\spherestatus\at_status.txt','w')
-        at_status.write(str(settings.ATARIYA_STATUS))
-    if settings.DREAMER_STATUS != "???":
-        dr_status = open('.\spherestatus\dr_status.txt','w')
-        dr_status.write(str(settings.DREAMER_STATUS))
-    if settings.INFECTED_STATUS != "???":
-        if_status = open('.\spherestatus\if_status.txt','w')
-        if_status.write(str(settings.INFECTED_STATUS))
-    if settings.LOSTBOYS_STATUS != "???":
-        lb_status = open('.\spherestatus\lb_status.txt','w')
-        lb_status.write(str(settings.LOSTBOYS_STATUS))
-    if settings.PLAIN_STATUS != "???":
-        pl_status = open('.\spherestatus\pl_status.txt','w')
-        pl_status.write(str(settings.PLAIN_STATUS))
-    if settings.PSYVAMP_STATUS != "???":
-        pv_status = open('.\spherestatus\pv_status.txt','w')
-        pv_status.write(str(settings.PSYVAMP_STATUS))
+    Save_Status("vampire")
+    Save_Status("werewolf")
+    Save_Status("mage")
+    Save_Status("beast")
+    Save_Status("changeling")
+    Save_Status("geist")
+    Save_Status("mummy")
+    Save_Status("atariya")
+    Save_Status("dreamer")
+    Save_Status("lostboy")
+    Save_Status("plain")
+    Save_Status("psyvamp")
+    Save_Status("hunter")
+    Save_Status('demon')
+    Save_Status('promethean')
+
 
 
 def at_server_reload_start():

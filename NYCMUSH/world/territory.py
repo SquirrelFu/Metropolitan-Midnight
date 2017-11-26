@@ -44,7 +44,7 @@ class Extract(default_cmds.MuxCommand):
                             if int(arglist[0]) >= 1:
                                 self.caller.PoolGain('Essence',int(arglist[0]))
                                 for character in area:
-                                    if character.has_player:
+                                    if character.has_account:
                                         character.msg(str(self.caller)+" extracts "+arglist[0]+" essence from the locus.")
                             else:
                                 self.caller.msg("Please enter a positive number for extracting essence.")
@@ -88,7 +88,7 @@ class Extract(default_cmds.MuxCommand):
                                     self.caller.db.timelog.append(timeinstance.TimeLog(1, self.caller.location, "oblation"))
                                     self.caller.db.downtime -= 1
                                     for character in area:
-                                        if character.has_player:
+                                        if character.has_account:
                                             character.msg(str(self.caller)+" extracts "+arglist[0]+" essence from the locus through oblation.")
                                     return
                                 else:

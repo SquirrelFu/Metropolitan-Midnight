@@ -27,6 +27,7 @@ from evennia.utils import evtable
 from evennia.utils import inherits_from
 from evennia.utils import utils
 from evennia import create_script
+from evennia.comms.comms import DefaultChannel
 # from evennia import default_cmds
 
 class Command(BaseCommand):
@@ -50,6 +51,42 @@ class Command(BaseCommand):
 
     """
     pass
+class SetChannelColor(default_cmds.MuxCommand):
+    """
+    Used to set the colors of the tags on channels. The scheme is in an RGB form, 0 to 5. 0 is none of that color,
+    5 is full brightness on that color. So 222 is generic gray, 500 is bright red, and so on.
+    
+    Usage:
+        +chancolor <Channel>=<Color>
+    """
+    key = "+chancolor"
+    help_category = "Admin"
+    lock = "cmd:perm(Admin)"
+    
+    def func(self):
+        lhs = self.lhs
+        rhs = self.rhs
+        channelList = DefaultChannel.objects.filter_family()
+        for chan in channelList:
+            if chan.key.lower() == lhs:
+                if len(rhs) == 3:
+                    try:
+                        int(rhs)
+                        for num in rhs.split():
+                            if int(num) == 6 or int(num) == 7 or int(num) == 8 or int(num) == 9:
+                                self.caller.msg("Individual color values only go up to five, no more.")
+                                return
+                        chan.colorcode = rhs
+                        self.caller.msg("Color code set to " + rhs + " and appears as |" + rhs + "this.|n")
+                        return
+                    except ValueError:
+                        self.caller.msg("You have to put in three digits of 1-5 for a color code, no alphabetical characters or symbols.")
+                        return
+                else:
+                    self.caller.msg("Color codes are three digits in RGB form, no more and no less.")
+                    return
+        self.caller.msg("Invalid channel!")
+        return
 class ChargenItems(default_cmds.MuxCommand):
     """
     This command requires a switch, and will either add or remove an item from your inventory.
@@ -157,6 +194,11 @@ class ChargenItems(default_cmds.MuxCommand):
                 return
         else:
             self.caller.msg("Please select whether you are going to add or remove an item.")
+class SphereRoster(default_cmds.MuxCommand):
+    """
+    Used to find out who's who for the sphere that your currently controlled character is in.
+    Also shows if certain people are NPCs or not.
+    """
 class MarkNPC(Command):
     """
     Only useable by wizards, this command allows the admin to mark a specific character as an NPC,
@@ -164,12 +206,12 @@ class MarkNPC(Command):
     """
     key = "+NPC"
     aliases = "+npc"
-    lock = "cmd:(Wizards)"
+    lock = "cmd:(Admin)"
     help_category="Admin"
     def func(self):
         if self.caller.db.is_npc == False:
             self.caller.db.is_npc = True
-            self.locks.add('puppet:pperm(Wizards)')
+            self.locks.add('puppet:pperm(Admin)')
             #This bit might seem odd. What it does is allows the NPC to be puppeted by any wizard.
             #As multiple locks can coexist, this is more or less just an extra parameter that
             #allows wizards to puppet it in addition to allowing the basic player to puppet the
@@ -177,7 +219,7 @@ class MarkNPC(Command):
             self.caller.msg("Character marked as an NPC.")
         elif self.caller.db.is_npc == True:
             self.caller.db.is_npc = False
-            self.locks.remove('puppet:pperm(Wizards)')
+            self.locks.remove('puppet:pperm(Admin)')
             #As implied, removes the ability for any and every wizard to puppet the character.
             self.caller.msg("Character marked as a PC")
 class CensusCommand(Command):
@@ -266,14 +308,15 @@ class CensusCommand(Command):
             else:
                 tentativelist.append(character)
         for entry in approvelist:
-            if entry.is_superuser or entry.player == self.superplayer:
-                self.superplayer = entry.player
+            if entry.is_superuser or entry.account == self.superplayer:
+                self.superplayer = entry.account
                 continue
                 #Makes sure that the superuser isn't added for security reasons.
             record = ""
-            if entry.db.is_npc:
+            if entry.db.is_npc or entry.IsAdmin():
                 continue
                 #Makes sure that NPCs aren't added to the census, what with them being plot characters.
+                #Also filters out admin bits, because they're not properly characters.
             if entry.db.gender == "male":
                 malecount += 1
             elif entry.db.gender == "female":
@@ -341,11 +384,11 @@ class CensusCommand(Command):
             marker += 1
         marker = 0
         for entry in tentativelist:
-            if entry.is_superuser or entry.player == self.superplayer:
-                self.superplayer = entry.player
+            if entry.is_superuser or entry.account == self.superplayer:
+                self.superplayer = entry.account
                 continue
             record = ""
-            if entry.db.is_npc:
+            if entry.db.is_npc or entry.IsAdmin():
                 continue
             if entry.db.gender == "male":
                 unappmale += 1
@@ -1040,6 +1083,8 @@ class SpendPool(default_cmds.MuxCommand):
                                             else:
                                                 self.caller.msg("Your dedicated locus doesn't have that much essence left!")
                                         else:
+                                            self.caller.msg("You don't have a dedicated locus!")
+                                            return
                     else:
                         self.caller.msg("That's not a valid switch. Only spending is supported.")
                         return
@@ -1271,7 +1316,7 @@ class SpendPool(default_cmds.MuxCommand):
             stringout += " for " + self.rhs
         for character in self.caller.location.contents:
         #Iterate through the location's contents.
-            if character.player:
+            if character.account:
             #Check to see if the character has a player. That is to say, see if they are in fact a character whose player is not AFK.
                 character.msg(stringout)
     def isint(self, value):
@@ -1312,7 +1357,7 @@ class HealthManage(default_cmds.MuxCommand):
             elif lhs.lower() == "aggravated":
                 self.caller.Damage(3,int(rhs))
             for person in self.caller.location.contents:
-                if person.player:
+                if person.account:
                     person.msg(self.caller.name + " took " + str(rhs) + " " + lhs.lower() + " damage!")
         elif cmdstring == "+heal":
             if lhs.lower() == "bashing":
@@ -1322,7 +1367,7 @@ class HealthManage(default_cmds.MuxCommand):
             elif lhs.lower() == "aggravated":
                 self.caller.Heal(3,int(rhs))
             for person in self.caller.location.contents:
-                if person.player:
+                if person.account:
                     person.msg(self.caller.name + " healed for " +str(rhs+" " + lhs.lower() + " damage!"))
 class BreakCommand(default_cmds.MuxCommand):
     """
@@ -1366,7 +1411,7 @@ class BreakCommand(default_cmds.MuxCommand):
                 try:
                     notices = search.channels('Breaking Points')[0]
                 except IndexError:
-                    notices = create_channel('Breaking Points',alias='break',desc='Breaking point notices',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+                    notices = create_channel('Breaking Points',alias='break',desc='Breaking point notices',locks='control:perm(Developer);listen:perm(Admin);send:false()')
                 if self.caller.db.sanityname == "Integrity":
                     if self.caller.db.currentbreak == "":
                         for merit in self.caller.db.meritlist:
@@ -2130,8 +2175,8 @@ class ChargenHelp(Command):
         self.args = self.args.strip()
     def func(self):
         try:
-            if self.caller.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
-                screenwidth = self.caller.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+            if self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
+                screenwidth = self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
             else:
                 screenwidth = 156
         except IndexError:
@@ -2156,8 +2201,8 @@ class MUSHHelp(Command):
         lostboy = False
         plain = False
         try:
-            if self.caller.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
-                screenwidth = self.caller.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+            if self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
+                screenwidth = self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
             else:
                 screenwidth = 156
         except IndexError:
@@ -2559,7 +2604,7 @@ class ApproveChar(Command):
     """
     key = "+approve"
     aliases = '+unapprove'
-    lock = "cmd:pperm(Wizards)"
+    lock = "cmd:pperm(Admin)"
     help_category="Admin"
     def func(self):
         self.args = self.args.lstrip()
@@ -2572,7 +2617,7 @@ class ApproveChar(Command):
                 appchar.db.approved = True
                 appchar.db.next_lethal = datetime.datetime.now() + datetime.timedelta(days=2)
                 appchar.db.next_agg = datetime.datetime.now() + datetime.timedelta(weeks=1)
-                if appchar.has_player:
+                if appchar.has_account:
                     appchar.msg("You have been |050approved|n by " + self.caller.name)
                 if appchar.db.template == 'Werewolf':
                     appchar.db.next_lethal = datetime.datetime.now() + datetime.timedelta(days=1)
@@ -2595,7 +2640,7 @@ class ApproveChar(Command):
                 appchar.db.approved = False
                 if appchar.location == genroom:
                     appchar.location = nexusroom
-                if appchar.has_player:
+                if appchar.has_account:
                     appchar.msg("You have been |500unapproved|n by " + self.caller.name)
                     appchar.msg(nexusroom.return_appearance(appchar))
                 return
@@ -2693,7 +2738,7 @@ class Shift(default_cmds.MuxCommand):
                         template.speed_bonus -= 3
                     template.currentform = "Hishu"
                     for character in caller.location.contents:
-                        if character.player:
+                        if character.account:
                             character.msg(caller.name + " shifts into "+caller.pronoun+" human form!")
             elif self.args.lower() == "dalu":
                 if template.currentform == "Dalu":
@@ -2723,7 +2768,7 @@ class Shift(default_cmds.MuxCommand):
                         template.speed_bonus -= 3
                     template.currentform = "Dalu"
                     for character in caller.location.contents:
-                        if character.player:
+                        if character.account:
                             character.msg(caller.name + " shifts into dalu form!")
             elif self.args.lower() == "gauru":
                 if template.currentform == "Gauru":
@@ -2756,7 +2801,7 @@ class Shift(default_cmds.MuxCommand):
                         template.speed_bonus -= 3
                     template.currentform = "Gauru"
                     for character in caller.location.contents:
-                        if character.player:
+                        if character.account:
                             character.msg(caller.name + " shifts into gauru form!")
             elif self.args.lower() == "urshul":
                 if template.currentform == "Urshul":
@@ -2788,7 +2833,7 @@ class Shift(default_cmds.MuxCommand):
                     caller.db.desc = template.urshuldesc
                     template.currentform = "Urshul"
                     for character in caller.location.contents:
-                        if character.player:
+                        if character.account:
                             character.msg(caller.name + " shifts into urshul form!")
             elif self.args.lower() == "urhan":
                 if template.currentform == "urhan":
@@ -2820,7 +2865,7 @@ class Shift(default_cmds.MuxCommand):
                     caller.db.desc = template.urhandesc
                     self.currentform = "Urhan"
                     for character in caller.location.contents:
-                        if character.player:
+                        if character.account:
                             character.msg(caller.name + " shifts into "+caller.pronoun+" wolf form!")
             template.Update()
     def StoreOld(self, oldform):
@@ -2841,10 +2886,10 @@ class SetPosition(default_cmds.MuxCommand):
     Used to set your position, describing what exactly you do as a staffer.
     """
     key = "+position"
-    lock = "cmd:pperm(Wizards)"
+    lock = "cmd:pperm(Admin)"
     help_category = "Admin"
     def func(self):
-        self.caller.player.db.position = self.args
+        self.caller.account.db.position = self.args
         self.caller.msg("Staff position set to " + self.args)
         return
 class Sheet(default_cmds.MuxCommand):
@@ -2857,7 +2902,7 @@ class Sheet(default_cmds.MuxCommand):
         arglist = self.arglist
         if(arglist):
         #Checks to see if you're trying to view someone else's sheet, by way of passing an argument.
-            if self.caller.locks.check_lockstring(self.caller, "cmd:perm(Wizards)"):
+            if self.caller.locks.check_lockstring(self.caller, "cmd:perm(Admin)"):
             #Checks to see if you're a wizard or higher. Unlike on some other games, immortals outrank wizards rather than the other way around. There is no equivalent to a MUSH's
             #royalty rank.
                 self.Sheet_Display(search.objects(arglist[0])[0])
@@ -3220,11 +3265,11 @@ class ShowStaff(Command):
         timelist = []
         charlist = DefaultCharacter.objects.filter_family()
         for char in charlist:
-            if char.IsPlayerAdmin() and not char.player.db.dark:
-                adminlist.append(char.player.name)
-                poslist.append(char.player.db.position)
-                if not char.has_player:
-                    timelist.append(utils.time_format(time.time() - char.player.sessions.get()[0].cmd_last_visible,1))
+            if char.IsAccountAdmin() and not char.account.db.dark:
+                adminlist.append(char.account.name)
+                poslist.append(char.account.db.position)
+                if not char.has_account:
+                    timelist.append(utils.time_format(time.time() - char.account.sessions.get()[0].cmd_last_visible,1))
                 else:
                     timelist.append('Currently Connected')
         stafftable = evtable.EvTable("Staff Name","Position","Online",table=[adminlist,poslist,timelist],width=78)
@@ -3235,19 +3280,19 @@ class Hide(Command):
     leave messages when moving from place to place.
     """
     key = "+hide"
-    lock = "cmd:pperm(Wizards)"
+    lock = "cmd:pperm(Admin)"
     help_category = "Admin"
     def func(self):
-        if not self.caller.player.db.dark:
-            self.caller.player.db.dark = True
+        if not self.caller.account.db.dark:
+            self.caller.account.db.dark = True
             self.caller.msg("You are now hidden.")
             return
-        if self.caller.player.db.dark == True:
-            self.caller.player.db.dark = False
+        if self.caller.account.db.dark == True:
+            self.caller.account.db.dark = False
             self.caller.msg("You are now unhidden.")
             return
-        if self.caller.player.db.dark == False:
-            self.caller.player.db.dark = True
+        if self.caller.account.db.dark == False:
+            self.caller.account.db.dark = True
             self.caller.msg("You are now hidden.")
             return 
 class TOS(Command):
@@ -3302,13 +3347,13 @@ class OpenAll(Command):
     Used to open every sphere and mortal+ merit set coded into the game.
     """
     key = "+openall"
-    lock = "cmd:pperm(Wizards)"
+    lock = "cmd:pperm(Admin)"
     help_category="Admin"
     def func(self):
-        settings.VAMP_STATUS = "Open"
-        settings.WOLF_STATUS = "Open"
+        settings.VAMPIRE_STATUS = "Open"
+        settings.WEREWOLF_STATUS = "Open"
         settings.MAGE_STATUS = "Open"
-        settings.LING_STATUS = "Open"
+        settings.CHANGELING_STATUS = "Open"
         settings.HUNTER_STATUS = "Open"
         settings.BEAST_STATUS = "Open"
         settings.PROMETHEAN_STATUS = "Open"
@@ -3320,281 +3365,55 @@ class OpenAll(Command):
         settings.INFECTED_STATUS = "Open"
         settings.PLAIN_STATUS = "Open"
         settings.LOSTBOYS_STATUS = "Open"
-        self.caller.msg("Open Sesame! All spheres are now open. Please note, this may include spheres that are not currently mechanically appropriate for play.")
-class OpenSphere(Command):
+        self.caller.msg("Open Sesame! All spheres are now open. Please note, this may include spheres that are not currently mechanically appropriate for play.")  
+class ManageSpheres(default_cmds.MuxCommand):
     """
-    Used to open a given sphere to applications, if it was previously restricted or closed.
+    This command is used to manage spheres. Each of the three switches
+    sets a given sphere to a certain status. "Open" means that no restrictions
+    are placed on applications to that sphere. "Closed" means that applications
+    to that sphere are not currently being accepted. "Restricted" means that
+    applications are open, but that certain additional rules beyond the norm
+    are being placed on such applications.
     
     Usage:
-        +opensphere <Sphere>
+        +sphere/<Open/Close/Restrict> <sphere>
     """
-    key = "+opensphere"
-    lock = "cmd:pperm(Wizards)"
-    help_category="Admin"
-    def parse(self):
-        self.args = self.args.strip()
+    key = "+sphere"
+    lock = "cmd:perm(Admin)"
+    help_category = "Admin"
     def func(self):
-        if self.args.lower() == "vampire":
-            if settings.VAMP_STATUS.lower() != "open":
-                self.caller.msg("Vampire sphere opened!")
-                settings.VAMP_STATUS = "Open"
-                return
-            else:
-                self.caller.msg("Vampire sphere is already open to applications.")
-                return
-        if self.args.lower() == "werewolf":
-            if settings.WOLF_STATUS.lower() != "open":
-                settings.WOLF_STATUS = "Open"
-                self.caller.msg("Werewolf sphere opened!")
-                return
-            else:
-                self.caller.msg("Werewolf sphere is already open to applications.")
-                return
-        if self.args.lower() == "mage":
-            if settings.MAGE_STATUS.lower() != "open":
-                self.caller.msg("Mage sphere opened!")
-                settings.MAGE_STATUS = "Open"
-                return
-            else:
-                self.caller.msg("Mage sphere is already open to applications.")
-                return
-        if self.args.lower() == "changeling":
-            if settings.LING_STATUS.lower() != "open":
-                settings.LING_STATUS = "Open"
-                self.caller.msg("Changeling sphere opened!")
-                return
-            else:
-                self.caller.msg("Changeling sphere is already open to applications.")
-                return
-        if "hunter" in self.args.lower():
-            if not "/" in self.args:
-                if settings.HUNTER_STATUS.lower() != "open":
-                    settings.HUNTER_sTATUS = "Open"
-                    self.caller.msg("Hunter sphere opened!")
+        args = self.args.strip()
+        switches = self.switches
+        sphereList = ['werewolf','mage','beast','changeling','hunter','demon','promethean','atariya','infected','dreamer','lostboy','plain',
+                      'psyvamp','vampire']
+        if args.lower() in sphereList:
+            calledSetting = eval('settings.'+args.upper()+'_STATUS')
+            if switches[0].lower() == "open":
+                if calledSetting != "Open":
+                    setattr(settings,self.args.upper() + '_STATUS','Open')
+                    self.caller.msg('The '+args.lower()+' sphere has been opened.')
                     return
                 else:
-                    self.caller.msg("Hunter sphere is already open to applications.")
+                    self.caller.msg('The '+args.lower()+' sphere is already open!')
                     return
-            else:
-                huntsearch = search.scripts('HunterStats')[0]
-                for comp in huntsearch.db.compacts:
-                    if comp.lower() == self.args.lower() and comp in huntsearch.db.appfactions:
-                        self.caller.msg("That compact is already open for player use.")
-                        return
-                    elif comp.lower() == self.args.lower():
-                        huntsearch.db.appfactions.append(comp)
-                        self.caller.msg("The compact, \"" + comp + " has been opened for player use.")
-                        return
-                for cons in huntsearch.db.conspiracies:
-                    if cons.lower() == self.args.lower() and cons in huntsearch.db.appfactions:
-                        self.caller.msg("That conspiracy is already open for player use.")
-                        return
-                    elif cons.lower() == self.args.lower():
-                        huntsearch.db.appfactions.append(cons)
-                        self.caller.msg("The conspiracy, \"" + cons + " has been opened for player use.")
-                        return
-                self.caller.msg("Invalid compact or conspiracy to open for play.")
-                return
-        if self.args.lower() == "beast":
-            if settings.BEAST_STATUS.lower() != "open":
-                settings.BEAST_STATUS = "Open"
-                self.caller.msg("Beast sphere opened!")
-                return
-            else:
-                self.caller.msg("Beast sphere is already open to applications.")
-                return
-        if self.args.lower() == "promethean":
-            if settings.PROMETHEAN_STATUS.lower() != "open":
-                settings.PROMETHEAN_STATUS = "Open"
-                self.caller.msg("Promethean sphere opened!")
-                return
-            else:
-                self.caller.msg("Promethean spehre is already open to applications.")
-                return
-        if self.args.lower() == 'atariya':
-            if settings.ATARIYA_STATUS.lower() != 'open':
-                settings.ATARIYA_STATUS = 'Open'
-                self.caller.msg('Atariya merits opened for use.')
-                return
-            else:
-                self.caller.msg('Atariya merits are already open for use.')
-                return
-        if self.args.lower() == 'dreamer' or self.args.lower() == 'dreamers':
-            if settings.DREAMER_STATUS != 'Open':
-                settings.DREAMER_STATUS = 'Open'
-                self.caller.msg('Dreamer merits opened for use.')
-                return
-            else:
-                self.caller.msg('Dreamer merits are already open for use.')
-                return
-        if self.args.lower() == 'infected':
-            if settings.INFECTED_STATUS != 'Open':
-                settings.INFECTED_STATUS = 'Open'
-                self.caller.msg('Infected merits opened for use.')
-                return
-            else:
-                self.caller.msg('Infected merits are already open for use.')
-        if 'lostboy' in self.args.lower():
-            if settings.LOSTBOYS_STATUS != 'Open':
-                settings.LOSTBOYS_STATUS = 'Open'
-                self.caller.msg('Lost boys merits opened for use.')
-                return
-            else:
-                self.caller.msg('Lost boys merits are already open for use.')
-                return
-        if 'psychic vampire' in self.args.lower():
-            if settings.PSYVAMP_STATUS != "Open":
-                settings.PSYVAMP_STATUS = "Open"
-                self.caller.msg("Psychic vampire merits opened for use.")
-                return
-            else:
-                self.caller.msg("Psychic vampire merits are already open for use.")
-                return
-        if 'plain' in self.args.lower():
-            if settings.PLAIN_STATUS != 'Open':
-                settings.PLAIN_STATUS = 'Open'
-                self.caller.msg("The Plain merits opened for use.")
-                return
-            else:
-                self.caller.msg("The merits of The Plain are already open for use.")
-                return
+            elif switches[0].lower() == 'close':
+                if calledSetting != 'Closed':
+                    setattr(settings,self.args.upper() + '_STATUS','Closed')
+                    self.caller.msg('The '+args.lower()+' sphere has been closed.')
+                    return
+                else:
+                    self.caller.msg('The '+args.lower()+' sphere is already closed!')
+                    return
+            elif switches[0].lower() == 'restrict':
+                if calledSetting != 'Restricted':
+                    setattr(settings,self.args.upper() + '_STATUS','Restricted')
+                    self.caller.msg('The '+args.lower()+' sphere has been set to restricted.')
+                    return
+                else:
+                    self.caller.msg('The '+args.lower()+' sphere is already set to restricted!')
+                    return
         else:
             self.caller.msg("Invalid sphere to open.")
-class CloseSphere(Command):
-    """
-    Used to close a given sphere to new applications. When closed, the +Template command will cease to function for all
-    but administrators when making a character. The allowance of administrators to make characters in closed spheres
-    is so that NPC characters may be made, not for special treatment.
-    
-    Syntax:
-        +closesphere <Sphere>
-    """
-    key = "+closesphere"
-    lock = "cmd:pperm(Wizards)"
-    help_category = "Admin"
-    def parse(self):
-        self.args = self.args.strip()
-    def func(self):
-        if self.args.lower() == "vampire":
-            if settings.VAMP_STATUS.lower() != "closed":
-                settings.VAMP_STATUS = "Closed"
-                self.caller.msg("Vampire sphere closed.")
-                return
-            else:
-                self.caller.msg("Vampire sphere is already closed to applications.")
-                return
-        if self.args.lower() == "werewolf":
-            if settings.WOLF_STATUS.lower() != "closed":
-                settings.WOLF_STATUS = "Closed"
-                self.caller.msg("Werewolf sphere closed.")
-                return
-            else:
-                self.caller.msg("Werewolf sphere already closed to applications.")
-                return
-        if self.args.lower() == "mage":
-            if settings.MAGE_STATUS.lower() != "closed":
-                settings.MAGE_STATUS = "Closed"
-                self.caller.msg("Mage sphere closed.")
-                return
-            else:
-                self.caller.msg("Mage sphere is already closed to applications.")
-                return
-        if self.args.lower() == "changeling":
-            if settings.LING_STATUS.lower() != "closed":
-                settings.LING_STATUS = "Closed"
-                self.caller.msg("Changeling sphere closed.")
-                return
-            else:
-                self.caller.msg("Changeling sphere is already closed to applications.")
-                return
-        if "hunter" in self.args.lower():
-            if not "/" in self.args:
-                if settings.HUNTER_STATUS.lower() != "closed":
-                    settings.HUNTER_STATUS = "Closed"
-                    self.caller.msg("Hunter sphere closed.")
-                    return
-                else:
-                    self.caller.msg("Hunter sphere is already closed to applications.")
-                    return
-            else:
-                huntsearch = search.scripts('HunterStats')[0]
-                for comp in huntsearch.db.compacts:
-                    if comp.lower() == self.args.lower() and comp in huntsearch.db.appfactions:
-                        huntsearch.db.appfactions.remove(comp)
-                        self.caller.msg("The compact, \"" + comp + " has been closed from player use.")
-                        return
-                    elif comp.lower() == self.args.lower():
-                        self.caller.msg("That compact is not open for player use, no need to close it.")
-                        return
-                for cons in huntsearch.db.conspiracies:
-                    if cons.lower() == self.args.lower() and cons in huntsearch.db.appfactions:
-                        huntsearch.db.appfactions.remove(cons)
-                        self.caller.msg("The conspiracy, \"" + cons + " has been close from player use.")
-                        return
-                    elif cons.lower() == self.args.lower():
-                        self.caller.msg("That conspiracy is not open for player use, no need to close it.")
-                        return
-                self.caller.msg("Invalid compact or conspiracy to open for play.")
-                return
-        if self.args.lower() == "beast":
-            if settings.BEAST_STATUS.lower() != "closed":
-                settings.BEAST_STATUS = "Closed"
-                self.caller.msg("Beast sphere closed")
-                return
-            else:
-                self.caller.msg("Beast sphere is already closed to applications.")
-                return
-        if self.args.lower() == "promethean":
-            if settings.PROMETHEAN_STATUS.lower() != "closed":
-                settings.PROMETHEAN_STATUS = "Closed"
-                self.caller.msg("Promethean sphere closed.")
-                return
-            else:
-                self.caller.msg("Promethean sphere is already closed to applications.")
-                return
-        if self.args.lower() == 'atariya':
-            if settings.ATARIYA_STATUS.lower() != 'closed':
-                settings.ATARIYA_STATUS = 'Closed'
-                self.caller.msg('Atariya merits closed.')
-                return
-            else:
-                self.caller.msg('Atariya merits are already closed from being taken.')
-                return
-        if 'dreamer' in self.args.lower():
-            if settings.DREAMER_STATUS != 'Closed':
-                settings.DREAMER_STATUS = 'Closed'
-                self.caller.msg('Dreamer merits closed.')
-                return
-            else:
-                self.caller.msg('Dreamer merits are already closed from being taken.')
-                return
-        if self.args.lower() == 'infected':
-            if settings.INFECTED_STATUS != 'Closed':
-                settings.INFECTED_sTATUS = 'Closed'
-                self.caller.msg('Infected merits closed.')
-                return
-            else:
-                self.caller.msg('Infected merits are already closed from being taken.')
-                return
-        if 'lostboy' in self.args.lower():
-            if settings.LOSTBOYS_STATUS != 'Closed':
-                settings.LOSTBOYS_STATUS = 'Closed'
-                self.caller.msg('Lost boys merits closed.')
-                return
-            else:
-                self.caller.msg('Lost boys merits are already closed from being taken.')
-                return
-        if 'psychic vampire' in self.args.lower():
-            if settings.PSYVAMP_STATUS != 'Closed':
-                settings.PSYVAMP_STATUS = 'Closed'
-                self.caller.msg('Psychic Vampire merits closed.')
-                return
-            else:
-                self.caller.msg('Psychic Vampire merits are already closed from being taken.')
-                return
-        self.caller.msg('Invalid sphere to close.')
-        return
-            
 class SphereStatus(Command):
     """
     Shows the status of individual templates. 'Open' means that characters may be applied for
@@ -3603,24 +3422,24 @@ class SphereStatus(Command):
     are special limitations on the sphere at the moment that must be addressed in the character
     creation process individually.
     """
-    key = "+spheres"
+    key = "+spherestatus"
     lock = "cmd:all()"
     help_category="OOC"
     def func(self):
         statuses = []
-        if settings.VAMP_STATUS == "Closed":
+        if settings.VAMPIRE_STATUS == "Closed":
             statuses.append("Vampire: |400Closed|n")
-        elif settings.VAMP_STATUS == "Open":
+        elif settings.VAMPIRE_STATUS == "Open":
             statuses.append("Vampire: |040Open|n")
-        elif settings.VAMP_STATUS == "Restricted":
+        elif settings.VAMPIRE_STATUS == "Restricted":
             statuses.append("Vampire: |440Restricted|n")
         else:
             statuses.append("Vampire: |440???|n")
-        if settings.WOLF_STATUS == "Closed":
+        if settings.WEREWOLF_STATUS == "Closed":
             statuses.append("Werewolf: |400Closed|n")
-        elif settings.WOLF_STATUS == "Open":
+        elif settings.WEREWOLF_STATUS == "Open":
             statuses.append("Werewolf: |040Open|n")
-        elif settings.WOLF_STATUS == "Restricted":
+        elif settings.WEREWOLF_STATUS == "Restricted":
             statuses.append("Werewolf: |440Restricted|n")
         else:
             statuses.append("Werewolf: |440???|n")
@@ -3632,11 +3451,11 @@ class SphereStatus(Command):
             statuses.append('Mage: |440Restricted|n')
         else:
             statuses.append('Mage: |440???|n')
-        if settings.LING_STATUS == "Closed":
+        if settings.CHANGELING_STATUS == "Closed":
             statuses.append('Changeling: |400Closed|n')
-        elif settings.LING_STATUS == "Open":
+        elif settings.CHANGELING_STATUS == "Open":
             statuses.append('Changeling: |040Open|n')
-        elif settings.LING_STATUS == "Restricted":
+        elif settings.CHANGELING_STATUS == "Restricted":
             statuses.append('Changeling: |440Restricted|n')
         else:
             statuses.append('Changeling: |440???|n')
@@ -3730,30 +3549,18 @@ class SphereStatus(Command):
             statuses.append('PsyVampires: |440???|n')
         SphereBox = StatBlock('Sphere Statuses',False,statuses)
         self.caller.msg(SphereBox.Show() + SphereBox.Footer())
-class RestrictSphere(Command):
-    key = "+restrict"
-    lock = "cmd:pperm(Wizards)"
-    def func(self):
-        if self.args.lower() == "vampire":
-            if settings.VAMP_STATUS == "Restricted":
-                self.caller.msg("Vampire sphere is already restricted. No need to change it.")
-                return
-            else:
-                settings.VAMP_STATUS = "Restricted"
-                self.caller.msg("Vampire sphere has been set to restricted status.")
-                return
 class CloseAll(Command):
     """
     Closes all the spheres on the game, save for mortals and psychic merits.
     """
     key = "+closeall"
-    lock = "cmd:pperm(Wizards)"
+    lock = "cmd:pperm(Admin)"
     help_category="Admin"
     def func(self):
-        settings.VAMP_STATUS = "Closed"
-        settings.WOLF_STATUS = "Closed"
+        settings.VAMPIRE_STATUS = "Closed"
+        settings.WEREWOLF_STATUS = "Closed"
         settings.MAGE_STATUS = "Closed"
-        settings.LING_STATUS = "Closed"
+        settings.CHANGELING_STATUS = "Closed"
         settings.HUNTER_STATUS = "Closed"
         settings.BEAST_STATUS = "Closed"
         settings.PROMETHEAN_STATUS = "Closed"
@@ -3782,7 +3589,7 @@ class Panic(Command):
     individuals to simply be a jerk across the board.
     """
     key = "+panic"
-    lock = "cmd:pperm(Wizards)"
+    lock = "cmd:pperm(Admin)"
     help_category="Admin"
     def func(self):
         if settings.BEAST_STATUS != "Closed":
@@ -3848,7 +3655,7 @@ class Prove(default_cmds.MuxCommand):
                     self.caller.msg("Only attributes have effective values!")
                     return
             for character in self.caller.location:
-                if character.player:
+                if character.account:
                     character.msg(provestring)
         if len(switches) == 0:
             for attribute in self.caller.db.attrstats.keys():
@@ -4113,19 +3920,19 @@ class SpaceArchMastery(default_cmds.MuxCommand):
     """
     key = "+tel"
     aliases = ["+summon","+teleport","+pull"]
-    locks = "cmd:perm(Wizards)"
+    locks = "cmd:perm(Admin)"
     help_category="Admin"
     def func(self):
         if self.cmdstring == "+summon" or self.cmdstring == "+pull":
             for char in self.arglist:
                 try:
                     charsearch = search.objects(char)[0]
-                    if charsearch.has_player:
+                    if charsearch.has_account:
                         self.caller.location.msg(charsearch.name + " is summoned away by " + self.caller.name + "!")
                         charsearch.location = self.caller.location  
                         charsearch.msg(self.caller.location.return_appearance(self.caller))
                         for char in self.caller.location.contents:
-                            if char.has_player:
+                            if char.has_account:
                                 char.msg(charsearch.name + " has arrived.")
                 except IndexError:
                     continue
@@ -4133,11 +3940,11 @@ class SpaceArchMastery(default_cmds.MuxCommand):
             self.caller.location.msg(self.caller.name + " teleports away!")
             try:
                 charsearch = search.objects(self.arglist[0])[0]
-                if charsearch.has_player:
+                if charsearch.has_account:
                     self.caller.location = charsearch.location
                     self.caller.msg(self.caller.location.return_appearance(self.caller))
                     for char in self.caller.location.contents:
-                            if char.has_player:
+                            if char.has_account:
                                 char.msg(self.caller.name + " has arrived.")
             except IndexError:
                 self.caller.msg("No such character!")
@@ -4821,7 +4628,7 @@ class Roll(default_cmds.MuxCommand):
                 private = True
         if private == False:
             for x in user.location.contents:
-                if x.player:
+                if x.account:
                     x.msg(stringout)
         else:
             self.caller.msg(stringout)
@@ -5646,7 +5453,7 @@ class SubmitApp(Command):
         try:
             jobchan = search.channels('Jobs')[0]
         except IndexError:
-            jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+            jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
         try:
             date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")
             deadline = datetime.date.today() + datetime.timedelta(days=int(handlervar.db.deadlines[handlervar.db.buckets['APP'] - 1]))
@@ -5679,7 +5486,7 @@ class SetStatus(Command):
     def parse(self):
         self.args = self.args.lstrip()
     def func(self):
-        self.caller.player.db.doing = self.args
+        self.caller.account.db.doing = self.args
         self.caller.msg("Status set.")
 class ShortDesc(Command):
     """
@@ -6268,7 +6075,7 @@ class SetTemplate(Command):
     def parse(self):
         self.args = self.args.strip()
     def func(self):
-        self.admins = ['Builders','Wizards','Immortals','Superuser']
+        self.admins = ['Builders','Admin','Developer','Superuser']
         args = self.args
         if not args:
             templatestring = "/" + "-" * 34 + "Template" + "-" * 34 + "\\\n"
@@ -6298,7 +6105,7 @@ class SetTemplate(Command):
             self.caller.msg(templatestring)
         else:
             if args.lower() == "vampire":
-                if settings.VAMP_STATUS.lower() == "open" or settings.VAMP_STATUS.lower() == "restricted" or self.caller.IsAdmin():
+                if settings.VAMPIRE_STATUS.lower() == "open" or settings.VAMPIRE_STATUS.lower() == "restricted" or self.caller.IsAdmin():
                     self.caller.db.template = "Vampire"
                     self.caller.db.pools = {'Willpower':str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])+
                                             ","+str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])}
@@ -6330,7 +6137,7 @@ class SetTemplate(Command):
                     self.caller.msg("Vampire sphere is not open at this time.")
                     return
             if args.lower() == "ghoul":
-                if settings.VAMP_STATUS.lower() == "open" or settings.VAMP_STATUS.lower() == "restricted" or self.caller.IsAdmin():
+                if settings.VAMPIRE_STATUS.lower() == "open" or settings.VAMPIRE_STATUS.lower() == "restricted" or self.caller.IsAdmin():
                     self.caller.db.template = "Ghoul"
                     self.caller.db.pools = {'Willpower':str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])+
                                             ","+str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])}
@@ -6361,7 +6168,7 @@ class SetTemplate(Command):
                     self.caller.msg("Vampire sphere is currently closed.")
                     return
             if args.lower() == "werewolf":
-                if settings.WOLF_STATUS.lower() == "open" or settings.WOLF_STATUS.lower() == "restricted" or self.caller.IsAdmin():
+                if settings.WEREWOLF_STATUS.lower() == "open" or settings.WEREWOLF_STATUS.lower() == "restricted" or self.caller.IsAdmin():
                     self.caller.db.template = "Werewolf"
                     self.caller.db.pools = {'Willpower':str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])+
                                             ","+str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])}
@@ -6395,7 +6202,7 @@ class SetTemplate(Command):
                     self.caller.msg("Werewolf sphere is not open at this time.")
                     return
             if args.lower() == "wolfblood":
-                if settings.WOLF_STATUS.lower() == "open" or settings.WOLF_STATUS.lower() == "restricted" or self.caller.IsAdmin():
+                if settings.WEREWOLF_STATUS.lower() == "open" or settings.WEREWOLF_STATUS.lower() == "restricted" or self.caller.IsAdmin():
                     self.caller.db.template = "Wolfblood"
                     self.caller.db.powername = "Tells"
                     self.caller.db.pools = {'Willpower':str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])+
@@ -6493,7 +6300,7 @@ class SetTemplate(Command):
                 else:
                     self.caller.msg("Mage sphere is not open at this time.")
             if args.lower() == "changeling":
-                if settings.LING_STATUS.lower() == "open" or settings.LING_STATUS.lower() == "restricted" or self.caller.IsAdmin():
+                if settings.CHANGELING_STATUS.lower() == "open" or settings.CHANGELING_STATUS.lower() == "restricted" or self.caller.IsAdmin():
                     self.caller.db.template = "Changeling"
                     self.caller.db.powerstat = 1
                     self.caller.db.pools = {'Willpower':str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])+
@@ -6528,7 +6335,7 @@ class SetTemplate(Command):
                     self.caller.msg("Changeling sphere is not open at this time.")
                     return
             if args.lower() == "fae-touched":
-                if settings.LING_STATUS.lower() == "open" or settings.LING_STATUS.lower() == "restricted" or self.caller.IsAdmin():
+                if settings.CHANGELING_STATUS.lower() == "open" or settings.CHANGELING_STATUS.lower() == "restricted" or self.caller.IsAdmin():
                     self.caller.db.template = "Fae-Touched"
                     self.caller.db.powerstat = 0
                     self.caller.db.pools = {'Willpower':str(self.caller.db.attributes['Resolve']+self.caller.db.attributes['Composure'])+
@@ -6761,7 +6568,7 @@ class SetTemplate(Command):
 class VampireInfo(Command):
     key = "vampinfo"
     lock = "cmd:all()"
-    infostring = ("Vampires are good of course, for politically-minded players. The vampire venue is currently "+settings.VAMP_STATUS.lower()+". However, our main restrictions on this sphere are "
+    infostring = ("Vampires are good of course, for politically-minded players. The vampire venue is currently "+settings.VAMPIRE_STATUS.lower()+". However, our main restrictions on this sphere are "
                 "not allowing members of VII, or strix player characters. These entities are too hostile to other players to be allowed for play. Likewise, Jiang Shi are not " 
                 "valid, as there is too little known of them and neither historical members of broken covenants or lost clans are available.")
     def func(self):
@@ -6776,7 +6583,7 @@ class WerewolfInfo(Command):
     key = "wolfinfo"
     lock = "cmd:inside(Chargen)"
     infostring = ("Somewhat contrasting to vampires, werewolves are good for those who wish to have a strong sense of unity. The pack is a werewolf's first and foremost obligation,"
-    " and concerns of the tribe often come second. The werewolf sphere is currently "+settings.WOLF_STATUS.lower()+" though regardless certain restrictions exist. The Pure are amongst"
+    " and concerns of the tribe often come second. The werewolf sphere is currently "+settings.WEREWOLF_STATUS.lower()+" though regardless certain restrictions exist. The Pure are amongst"
     " the most notable restriction for werewolf players, as while they are useful antagonists the nature of a pure player-character is too potentially destructive versus the"
     " potential gains of having such an individual around.")
     def func(self):
@@ -6807,7 +6614,7 @@ class ChangelingInfo(Command):
     lock = "cmd:all()"
     infostring = ("Generally, changelings can run the gamut between cooperative and conflicting but tend towards the cooperative side of things. The Gentry that took them are "
                   "creatures of singular arrogance and self-importance after all, and emulating them is a quick way to earn your fellows' enmity. The changeling sphere is"
-                  " currently " + settings.LING_STATUS.lower() + " and the restrictions in place on the sphere are as follows. First, no privateer or loyalist changelings will be "
+                  " currently " + settings.CHANGELING_STATUS.lower() + " and the restrictions in place on the sphere are as follows. First, no privateer or loyalist changelings will be "
                   "permitted for use as player characters. Charlatan, also known as outcast, Gentry will not be permitted either nor will actual Gentry. Fetches are not an"
                   " available 'Mortal+' character type and Huntsmen are completely out of the question as are Cambions or other oneiroi-related entities. Finally, a character"
                   " must be part of the local freehold to avoid suspicion as tends to run amok towards those who are independent.")

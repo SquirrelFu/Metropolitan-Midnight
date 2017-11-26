@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+<link rel='stylesheet' href='{% static "website/css/demonpage.css"%}'/>
+</head>
+<div class='demonheader'>
+<table class='demonlinks'>
+<tr>
+<td rowspan="4"><img src='{% static "website/images/demonbanner.png" %}' class='demonbanner'>
+</td>
+</tr>
+<tr>
+<td>Recent Events</td>
+</tr>
+<tr><td>House Rules</td></tr>
+<tr><td>Custom Content</td></tr>
+</table>
+</div>
+{% endblock %}

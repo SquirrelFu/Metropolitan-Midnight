@@ -256,7 +256,7 @@ class StatOther(default_cmds.MuxCommand):
                         return
                     target.AddMerit(lhs,rhs)
                     self.caller.msg(lhs+" merit added to " + target.name + " at "+str(rhs)+" dots.")
-                    if target.has_player:
+                    if target.has_account:
                         target.msg(self.caller.name + " has added the " + lhs + " merit to you at " + str(rhs) + " dots.")
                     target.Update()
                 else:
@@ -266,7 +266,7 @@ class StatOther(default_cmds.MuxCommand):
                     if lhs.lower() == merit[0].lower():
                         self.caller.msg(merit[0]+" removed from " + target.name)
                         target.RemMerit(merit[0])
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has removed the " + lhs + " merit from you.")
                         target.Update()
                         return
@@ -284,7 +284,7 @@ class StatOther(default_cmds.MuxCommand):
                                 try:
                                     target.db.physskills[skill] = int(rhs)
                                     self.caller.msg(skill + " set to "+rhs + " on " + target.name)
-                                    if target.has_player:
+                                    if target.has_account:
                                         target.msg(self.caller.name + " has set your " + lhs + "skill to " + rhs)
                                     target.Update()
                                     return
@@ -301,7 +301,7 @@ class StatOther(default_cmds.MuxCommand):
                                 try:
                                     target.db.mentskills[skill] = int(self.rhs)
                                     self.caller.msg(skill + " set to "+self.rhs + " on " + target.name)
-                                    if target.has_player:
+                                    if target.has_account:
                                         target.msg(self.caller.name + " has set your " + lhs + "skill to " + rhs)
                                     target.Update()
                                     return
@@ -318,7 +318,7 @@ class StatOther(default_cmds.MuxCommand):
                                 try:
                                     target.db.socskills[skill] = int(rhs)
                                     self.caller.msg(skill + " set to "+ rhs + " on " + target.name)
-                                    if target.has_player:
+                                    if target.has_account:
                                         target.msg(self.caller.name + " has set your " + lhs + "skill to " + rhs)
                                     target.Update()
                                     return
@@ -346,7 +346,7 @@ class StatOther(default_cmds.MuxCommand):
                                     target.db.attributes[attrib] = int(rhs)
                                     target.db.attribbase[attrib] = int(rhs)
                                     self.caller.msg(attrib + " set to "+rhs + " on " + target.name)
-                                    if target.has_player:
+                                    if target.has_account:
                                         target.msg(self.caller.name + " has set your " + lhs + "attribute to " + rhs)
                                     target.Update()
                                     return
@@ -376,7 +376,7 @@ class StatOther(default_cmds.MuxCommand):
                     if clan.lower() == arglist[0].lower():
                         target.db.xsplat = clan
                         self.caller.msg(target.name + " has had their clan set to " + clan)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your clan to " + clan)
                         return
                 self.caller.msg("Invalid clan.")
@@ -385,7 +385,7 @@ class StatOther(default_cmds.MuxCommand):
                     if family.lower() == arglist[0].lower():
                         target.db.xsplat = family
                         self.caller.msg(target.name + " has had their family set to "+ family)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your family to " + family)
                 self.caller.msg("Invalid family.")
                 return
@@ -394,7 +394,7 @@ class StatOther(default_cmds.MuxCommand):
                     if seem.lower() == arglist[0].lower():
                         target.db.xsplat = seem
                         self.caller.msg(target.name + " has had their seeming set to " + seem)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your seeming to " + seem)
                         return
                 self.caller.msg("Invalid seeming.")
@@ -404,7 +404,7 @@ class StatOther(default_cmds.MuxCommand):
                     if form.lower() == arglist[0].lower():
                         target.db.xsplat = form
                         self.caller.msg(target.name + " has had their incarnation set to " + form)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your incarnation to " + form)
                         return
                 self.caller.msg("Invalid incarnation.")
@@ -414,14 +414,14 @@ class StatOther(default_cmds.MuxCommand):
                     if com.lower() == args.lower():
                         target.db.xsplat = com
                         self.caller.msg(target.name + " has had their faction set to the compact " + com)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your faction to the compact " + com)
                         return
                 for cons in huntscript.db.conspiracies:
                     if cons.lower() == args.lower():
                         target.db.xsplat = cons
                         self.caller.msg(target.name + " has had their faction set to the conspiracy " + cons)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your faction to the conspiracy " + cons)
                         return
                 self.caller.msg("Invalid compact or conspiracy")
@@ -430,7 +430,7 @@ class StatOther(default_cmds.MuxCommand):
                 for path in magescript.db.paths:
                     if path.lower() == arglist[0].lower():
                         target.db.xsplat = path
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your path to " + path)
                         self.caller.msg(target.name + " has had their path set to " + path)
                         return
@@ -439,7 +439,7 @@ class StatOther(default_cmds.MuxCommand):
                 for dec in mumscript.db.decrees:
                     if dec.lower() == arglist[0].lower():
                         target.db.xsplat = dec
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your decree to " + dec)
                         self.caller.msg(target.name + " has had their decree set to " + dec)
                         return
@@ -449,7 +449,7 @@ class StatOther(default_cmds.MuxCommand):
                 for lin in promscript.db.lineages:
                     if lin.lower() == arglist[0].lower():
                         target.db.xsplat = lin
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your lineage to " + lin)
                         self.caller.msg(target.name + " has had their lineage set to "  + lin)
                         return
@@ -459,7 +459,7 @@ class StatOther(default_cmds.MuxCommand):
                 for aus in wolfscript.db.auspices:
                     if aus.lower() == arglist[0].lower():
                         target.db.xsplat = aus
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your auspice to " + aus)
                         self.caller.msg(target.name + " has had their auspice set to " + aus)
                         return
@@ -479,7 +479,7 @@ class StatOther(default_cmds.MuxCommand):
                     if cov.lower() == args.lower():
                         target.db.ysplat = cov
                         self.caller.msg(target.name + " has had their covenant set to " + cov)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your covenant to " + cov)
                         return
                 self.caller.msg("Invalid covenant.")
@@ -488,7 +488,7 @@ class StatOther(default_cmds.MuxCommand):
                     if hun.lower() == arglist[0].lower():
                         target.db.ysplat = hun
                         self.caller.msg(target.name + " has had their hunger set to " + hun)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your hunger to " + hun)
                         return
                 self.caller.msg("Invalid hunger.")
@@ -497,7 +497,7 @@ class StatOther(default_cmds.MuxCommand):
                 if arglist[0].lower() == "seelie" or arglist[0].lower() == "unseelie":
                     target.db.ysplat = arglist[0].title()
                     self.caller.msg(target.name + " has had their court set to " + arglist[0].title())
-                    if target.has_player:
+                    if target.has_account:
                         target.msg(self.caller.name + " has set your court to " + arglist[0].title())
                     return
                 self.caller.msg("Invalid court.")
@@ -507,7 +507,7 @@ class StatOther(default_cmds.MuxCommand):
                     if agen.lower() == arglist[0].lower():
                         target.db.ysplat = agen
                         self.caller.msg(target.name + " has had their agenda set to " + agen)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your agenda to " + agen)
                         return
                 self.caller.msg("Invalid agenda.")
@@ -517,7 +517,7 @@ class StatOther(default_cmds.MuxCommand):
                 if ref != False:
                     target.db.ysplat = ref
                     self.caller.msg(target.name + " has had their refinement set to " + ref)
-                    if target.has_player:
+                    if target.has_account:
                         target.msg(self.caller.name + " has set your refinement to " + ref)
                     return
                 self.caller.msg("Invalid refinement.")
@@ -527,7 +527,7 @@ class StatOther(default_cmds.MuxCommand):
                     if order.lower() == args.lower():
                         target.db.ysplat = order
                         self.caller.msg(target.name + " has had their order set to " + order)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your order to " + order)
                         return
                 self.caller.msg("Invalid order.")
@@ -537,7 +537,7 @@ class StatOther(default_cmds.MuxCommand):
                     if guild.lower() == arglist[0].lower():
                         target.db.ysplat = guild
                         self.caller.msg(target.name + " has had their guild set to " + guild)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your guild to " + guild)
                         return
                 self.caller.msg("Invalid guild.")
@@ -547,7 +547,7 @@ class StatOther(default_cmds.MuxCommand):
                     if tribe.lower() == args.lower():
                         target.db.ysplat = tribe
                         self.caller.msg(target.name + " has had their tribe set to " + tribe)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your tribe to " + tribe)
                         return
                 self.caller.msg("Invalid tribe.")
@@ -563,7 +563,7 @@ class StatOther(default_cmds.MuxCommand):
                     if title.lower() == args.lower():
                         target.db.zsplat = title
                         self.caller.msg(target.name + " has had their entitlement set to " + title)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your entitlement to " + title)
                         return
                 self.caller.msg("Invalid entitlement.")
@@ -573,7 +573,7 @@ class StatOther(default_cmds.MuxCommand):
                     if leg.lower() == args.lower():
                         target.db.zsplat = leg
                         self.caller.msg(target.name + " has had their legacy set to " + leg)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your legacy to " + leg)
                         return
                 self.caller.msg("Invalid legacy.")
@@ -583,7 +583,7 @@ class StatOther(default_cmds.MuxCommand):
                     for subrole in role:
                         if subrole == arglist[0].lower():
                             target.db.zsplat = subrole
-                            if target.has_player:
+                            if target.has_account:
                                 target.msg(self.caller.name + " has set your role to " + subrole)
                             self.caller.msg(target.name + " has had their role set to " + subrole + " in the " + target.db.ysplat + " refinement.")
                             return
@@ -594,7 +594,7 @@ class StatOther(default_cmds.MuxCommand):
                     if line.lower() == args.lower():
                         target.db.zsplat = line
                         self.caller.msg(target.name + " has had their bloodline set to " + line)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your bloodline to " + line)
                         return
                 self.caller.msg("Invalid bloodline")
@@ -604,7 +604,7 @@ class StatOther(default_cmds.MuxCommand):
                     if lodge.lower() == args.lower():
                         target.db.zsplat = lodge
                         self.caller.msg(target.name + " has had their lodge set to " + lodge)
-                        if target.has_player:
+                        if target.has_account:
                             target.msg(self.caller.name + " has set your lodge to " + lodge)
                         return
                 self.caller.msg("Invalid lodge.")

@@ -222,15 +222,15 @@ class JobCommand(default_cmds.MuxCommand):
                                 continue
                         try:
                             charsearch = search.objects("#" + str(char))[0].name
-                            if self.caller.player.search(charsearch) is not None:
-                                sendlist.append(self.caller.player.search(charsearch))
+                            if self.caller.account.search(charsearch) is not None:
+                                sendlist.append(self.caller.account.search(charsearch))
                             continue
                         except IndexError:
                             continue
                         except TypeError:
                             charsearch = search.objects("#" + str(char))[0].name
-                            if self.caller.player.search(charsearch) is not None:
-                                sendlist.append(self.caller.player.search(charsearch))
+                            if self.caller.account.search(charsearch) is not None:
+                                sendlist.append(self.caller.account.search(charsearch))
                             continue
                     for receive in sendlist:
                         receive.msg("You have received a new @mail from the job system.")
@@ -338,15 +338,15 @@ class JobCommand(default_cmds.MuxCommand):
                                             continue
                                     try:
                                         charsearch = search.objects("#" + str(char))[0].name
-                                        if self.caller.player.search(charsearch) is not None:
-                                            sendlist.append(self.caller.player.search(charsearch))
+                                        if self.caller.account.search(charsearch) is not None:
+                                            sendlist.append(self.caller.account.search(charsearch))
                                         continue
                                     except IndexError:
                                         continue
                                     except TypeError:
                                         charsearch = search.objects("#" + str(char))[0].name
-                                        if self.caller.player.search(charsearch) is not None:
-                                            sendlist.append(self.caller.player.search(charsearch))
+                                        if self.caller.account.search(charsearch) is not None:
+                                            sendlist.append(self.caller.account.search(charsearch))
                                         continue
                                 for receive in sendlist:
                                     receive.msg("You have received a new @mail from the job system.")
@@ -433,15 +433,15 @@ class JobCommand(default_cmds.MuxCommand):
                                             continue
                                     try:
                                         charsearch = search.objects("#" + str(char))[0].name
-                                        if self.caller.player.search(charsearch) is not None:
-                                            sendlist.append(self.caller.player.search(charsearch))
+                                        if self.caller.account.search(charsearch) is not None:
+                                            sendlist.append(self.caller.account.search(charsearch))
                                         continue
                                     except IndexError:
                                         continue
                                     except TypeError:
                                         charsearch = search.objects("#" + str(char))[0].name
-                                        if self.caller.player.search(charsearch) is not None:
-                                            sendlist.append(self.caller.player.search(charsearch))
+                                        if self.caller.account.search(charsearch) is not None:
+                                            sendlist.append(self.caller.account.search(charsearch))
                                         continue
                                 for receive in sendlist:
                                     receive.msg("You have received a new @mail from the job system.")
@@ -528,15 +528,15 @@ class JobCommand(default_cmds.MuxCommand):
                                             continue
                                     try:
                                         charsearch = search.objects("#" + str(char))[0].name
-                                        if self.caller.player.search(charsearch) is not None:
-                                            sendlist.append(self.caller.player.search(charsearch))
+                                        if self.caller.account.search(charsearch) is not None:
+                                            sendlist.append(self.caller.account.search(charsearch))
                                         continue
                                     except IndexError:
                                         continue
                                     except TypeError:
                                         charsearch = search.objects("#" + str(char))[0].name
-                                        if self.caller.player.search(charsearch) is not None:
-                                            sendlist.append(self.caller.player.search(charsearch))
+                                        if self.caller.account.search(charsearch) is not None:
+                                            sendlist.append(self.caller.account.search(charsearch))
                                         continue
                                 for receive in sendlist:
                                     receive.msg("You have received a new @mail from the job system.")

@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.conf import settings
 
 def mplusrules(request):
-    return render(request, 'mplusrules/plushrmain.html')
+    return render(request, 'mpluspage/mplusrules.html')
 def beastpage(request):
     return render(request, 'beastpage/beastmain.html')
 def mpluspage(request):
@@ -19,4 +19,8 @@ def bookpage(request):
 def magepage(request):
     return render(request, 'magepage/magemain.html')
 def magerules(request):
-    return render(request, 'magerules/magerules.html')
+    return render(request, 'magepage/magerules.html')
+def demonpage(request):
+    return render(request, 'demonpage/demonmain.html')
+def beastcustom(request):
+    return render(request, 'beastpage/beastcustom.html')
