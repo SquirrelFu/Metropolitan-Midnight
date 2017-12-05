@@ -605,7 +605,6 @@ class Character(gendersub.GenderCharacter):
         physskills = self.db.physskills
         self.db.init_bonus = 0
         self.db.speed_bonus = 0
-        self.db.size = 5
         self.db.visibility = 0
         for x in self.db.meritlist:
             if x[0] == "Fleet of Foot":

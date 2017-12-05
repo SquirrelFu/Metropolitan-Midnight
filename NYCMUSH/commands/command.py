@@ -2634,6 +2634,7 @@ class OOCCommand(default_cmds.MuxCommand):
             self.caller.location.msg_contents("|244<OOC>|n " + self.caller.name + " says, \""+self.args+"\"")
 class Shift(default_cmds.MuxCommand):
 #A multi-descer and multi-statter all in one. Used by characters that can assume more than one form easily.
+#Currently, this only works for werewolves as animal forms used by vampires and prometheans are FAR too variable.
     """
     A command used to shift between the multiple forms werewolves have. Any description set on yourself in a given form
     will be saved for the next time you shift to that form, and likewise shifting to hishu form will revert you to your
@@ -2652,183 +2653,186 @@ class Shift(default_cmds.MuxCommand):
     help_category="Gameplay"
     def func(self):
         caller = self.caller
-        template = caller.db.template.db.template
-        if template.name == "Werewolf":
+        
+        if caller.db.template == "Werewolf":
+            if not caller.db.currentform:
+                caller.db.currentform = 'Hishu'
             if self.args.lower() == "hishu":
-                if template.currentform == "Hishu":
+                if caller.db.currentform == "Hishu":
                     self.caller.msg("You are already in your human form!")
                 else:
-                    self.StoreOld(template.currentform)
-                    caller.db.desc = template.humandesc
-                    if template.currentform == "Dalu":
-                        template.attributes['Strength'] -= 1
-                        template.attributes['Stamina'] -= 1
-                        template.attributes['Manipulation'] += 1
-                        template.size -= 1
-                    elif template.currentform == "Gauru":
-                        template.attributes['Strength'] -= 3
-                        template.attributes['Dexterity'] -= 1
-                        template.attributes['Stamina'] -= 2
-                        template.attributes['Manipulation'] += 1
-                        template.size -= 2
-                    elif template.currentform == "Urshul":
-                        template.attributes['Strength'] -= 2
-                        template.attributes['Dexterity'] -= 2
-                        template.attributes['Stamina'] -= 2
-                        template.attributes['Manipulation'] += 1
-                        template.size -= 1
-                        template.speed_bonus -= 3
-                    elif template.currentform == "Urhan":
-                        template.attributes['Dexterity'] -= 2
-                        template.attributes['Stamina'] -= 1
-                        template.attributes['Manipulation'] += 1
-                        template.size += 1
-                        template.speed_bonus -= 3
-                    template.currentform = "Hishu"
+                    self.StoreOld(caller.db.currentform)
+                    caller.db.desc = caller.db.humandesc
+                    if caller.db.currentform == "Dalu":
+                        caller.db.attributes['Strength'] -= 1
+                        caller.db.attributes['Stamina'] -= 1
+                        caller.db.attributes['Manipulation'] += 1
+                        caller.db.size -= 1
+                    elif caller.db.currentform == "Gauru":
+                        caller.db.attributes['Strength'] -= 3
+                        caller.db.attributes['Dexterity'] -= 1
+                        caller.db.attributes['Stamina'] -= 2
+                        caller.db.size -= 2
+                    elif caller.db.currentform == "Urshul":
+                        caller.db.attributes['Strength'] -= 2
+                        caller.db.attributes['Dexterity'] -= 2
+                        caller.db.attributes['Stamina'] -= 2
+                        caller.db.attributes['Manipulation'] += 1
+                        caller.db.size -= 1
+                        caller.db.speed_bonus -= 3
+                    elif caller.db.currentform == "Urhan":
+                        caller.db.attributes['Dexterity'] -= 2
+                        caller.db.attributes['Stamina'] -= 1
+                        caller.db.attributes['Manipulation'] += 1
+                        caller.db.size += 1
+                        caller.db.speed_bonus -= 3
+                    caller.db.currentform = "Hishu"
                     for character in caller.location.contents:
                         if character.account:
-                            character.msg(caller.name + " shifts into "+caller.pronoun+" human form!")
+                            character.msg(caller.name + " shifts into |p human form!")
             elif self.args.lower() == "dalu":
-                if template.currentform == "Dalu":
+                if caller.db.currentform == "Dalu":
                     self.caller.msg("You are already in dalu form!")
                 else:
-                    self.StoreOld(template.currentform)
-                    caller.db.desc = template.daludesc
-                    if template.currentform == "Hishu":
-                        template.attributes['Strength'] += 1
-                        template.attributes['Stamina'] += 1
-                        template.attributes['Manipulation'] -= 1
-                        template.size += 1
-                    elif template.currentform == "Gauru":
-                        template.attributes['Strength'] -= 2
-                        template.attributes['Dexterity'] -= 1
-                        template.attributes['Stamina'] -= 1
-                        template.size -= 2
-                    elif template.currentform == "Urshul":
-                        template.attributes['Strength'] -= 1
-                        template.attributes['Dexterity'] -= 1
-                        template.attributes['Stamina'] -= 1
-                        template.speed_bonus -= 3
-                    elif template.currentform == "Urhan":
-                        template.attributes['Strength'] += 1
-                        template.attributes['Dexterity'] -= 1
-                        template.size += 2
-                        template.speed_bonus -= 3
-                    template.currentform = "Dalu"
+                    self.StoreOld(caller.db.currentform)
+                    caller.db.desc = caller.db.daludesc
+                    if caller.db.currentform == "Hishu":
+                        caller.db.attributes['Strength'] += 1
+                        caller.db.attributes['Stamina'] += 1
+                        caller.db.attributes['Manipulation'] -= 1
+                        caller.db.size += 1
+                    elif caller.db.currentform == "Gauru":
+                        caller.db.attributes['Strength'] -= 2
+                        caller.db.attributes['Dexterity'] -= 1
+                        caller.db.attributes['Stamina'] -= 1
+                        caller.db.size -= 2
+                    elif caller.db.currentform == "Urshul":
+                        caller.db.attributes['Strength'] -= 1
+                        caller.db.attributes['Dexterity'] -= 1
+                        caller.db.attributes['Stamina'] -= 1
+                        caller.db.speed_bonus -= 3
+                    elif caller.db.currentform == "Urhan":
+                        caller.db.attributes['Strength'] += 1
+                        caller.db.attributes['Dexterity'] -= 1
+                        caller.db.size += 2
+                        caller.db.speed_bonus -= 3
+                    caller.db.currentform = "Dalu"
                     for character in caller.location.contents:
                         if character.account:
                             character.msg(caller.name + " shifts into dalu form!")
             elif self.args.lower() == "gauru":
-                if template.currentform == "Gauru":
+                if caller.db.currentform == "Gauru":
                     self.caller.msg("You are already in gauru form!")
                 else:
-                    self.StoreOld(template.currentform)
-                    caller.db.desc = template.gaurudesc
-                    if template.currentform == "Hishu":
-                        template.attributes['Strength'] += 3
-                        template.attributes['Dexterity'] += 1
-                        template.attributes['Stamina'] += 2
-                        template.size += 2
-                    elif template.currentform == "Dalu":
-                        template.attributes['Strength'] += 2
-                        template.attributes['Dexterity'] += 1
-                        template.attributes['Stamina'] += 1
-                        template.attributes['Manipulation'] += 1
-                        template.size += 1
-                    elif template.currentform == "Urshul":
-                        template.attributes['Strength'] += 1
-                        template.attributes['Dexterity'] -= 1
-                        template.attributes['Manipulation'] += 1
-                        template.size += 1
-                        template.speed_bonus -= 3
-                    elif template.currentform == "Urhan":
-                        template.attributes['Strength'] -= 3
-                        template.attributes['Dexterity'] += 1
-                        template.attributes['Stamina'] -= 1
-                        template.attributes['Manipulation'] -= 1
-                        template.speed_bonus -= 3
-                    template.currentform = "Gauru"
+                    self.StoreOld(caller.db.currentform)
+                    caller.db.desc = caller.db.gaurudesc
+                    if caller.db.currentform == "Hishu":
+                        caller.db.attributes['Strength'] += 3
+                        caller.db.attributes['Dexterity'] += 1
+                        caller.db.attributes['Stamina'] += 2
+                        caller.db.size += 2
+                    elif caller.db.currentform == "Dalu":
+                        caller.db.attributes['Strength'] += 2
+                        caller.db.attributes['Dexterity'] += 1
+                        caller.db.attributes['Stamina'] += 1
+                        caller.db.attributes['Manipulation'] += 1
+                        caller.db.size += 1
+                    elif caller.db.currentform == "Urshul":
+                        caller.db.attributes['Strength'] += 1
+                        caller.db.attributes['Dexterity'] -= 1
+                        caller.db.attributes['Manipulation'] += 1
+                        caller.db.size += 1
+                        caller.db.speed_bonus -= 3
+                    elif caller.db.currentform == "Urhan":
+                        caller.db.attributes['Strength'] -= 3
+                        caller.db.attributes['Dexterity'] += 1
+                        caller.db.attributes['Stamina'] -= 1
+                        caller.db.attributes['Manipulation'] -= 1
+                        caller.db.speed_bonus -= 3
+                    caller.db.currentform = "Gauru"
                     for character in caller.location.contents:
                         if character.account:
                             character.msg(caller.name + " shifts into gauru form!")
             elif self.args.lower() == "urshul":
-                if template.currentform == "Urshul":
+                if caller.db.currentform == "Urshul":
                     self.caller.msg("You are already in urshul form!")
                 else:
-                    if template.currentform == "Hishu":
-                        template.attributes['Strength'] += 2
-                        template.attributes['Dexterity'] += 2
-                        template.attributes['Stamina'] += 2
-                        template.attributes['Manipulation'] -= 1
-                        template.size += 1
-                        template.speed_bonus -= 3
-                    elif template.currentform == "Dalu":
-                        template.attributes['Strength'] += 1
-                        template.attriubtes[4] += 2
-                        template.attributes['Stamina'] += 1
-                        template.speed_bonus += 3
-                    elif template.currentform == "Gauru":
-                        template.attributes['Strength'] -= 1
-                        template.attributes['Dexterity'] += 1
-                        template.attributes['Manipulation'] -= 1
-                        template.speed_bonus += 3
-                        template.size -= 1
-                    elif template.currentform == "Urhan":
-                        template.attributes['Strength'] += 2
-                        template.attributes['Stamina'] += 1
-                        template.size += 2
-                    self.StoreOld(template.currentform)
-                    caller.db.desc = template.urshuldesc
-                    template.currentform = "Urshul"
+                    if caller.db.currentform == "Hishu":
+                        caller.db.attributes['Strength'] += 2
+                        caller.db.attributes['Dexterity'] += 2
+                        caller.db.attributes['Stamina'] += 2
+                        caller.db.attributes['Manipulation'] -= 1
+                        caller.db.size += 1
+                        caller.db.speed_bonus -= 3
+                    elif caller.db.currentform == "Dalu":
+                        caller.db.attributes['Strength'] += 1
+                        caller.db.attributes['Dexterity'] += 2
+                        caller.db.attributes['Stamina'] += 1
+                        caller.db.speed_bonus += 3
+                    elif caller.db.currentform == "Gauru":
+                        caller.db.attributes['Strength'] -= 1
+                        caller.db.attributes['Dexterity'] += 1
+                        caller.db.attributes['Manipulation'] -= 1
+                        caller.db.speed_bonus += 3
+                        caller.db.size -= 1
+                    elif caller.db.currentform == "Urhan":
+                        caller.db.attributes['Strength'] += 2
+                        caller.db.attributes['Stamina'] += 1
+                        caller.db.size += 2
+                    self.StoreOld(caller.db.currentform)
+                    caller.db.desc = caller.db.urshuldesc
+                    caller.db.currentform = "Urshul"
                     for character in caller.location.contents:
                         if character.account:
                             character.msg(caller.name + " shifts into urshul form!")
             elif self.args.lower() == "urhan":
-                if template.currentform == "urhan":
+                if caller.db.currentform == "urhan":
                     self.caller.msg("You are already in your wolf form!")
                 else:
-                    self.StoreOld(template.currentform)
-                    if template.currentform == "Hishu":
-                        template.attributes['Dexterity'] += 2
-                        template.attributes['Stamina'] += 1
-                        template.attributes['Manipulation'] -= 1
-                        template.size -= 1
-                        template.speed_bonus += 3
-                    elif template.currentform == "Dalu":
-                        template.attributes['Strength'] -= 1
-                        template.attributes['Dexterity'] += 2
-                        template.size -= 2
-                        template.speed_bonus += 3
-                    elif template.currentform == "Gauru":
-                        template.attributes['Strength'] -= 3
-                        template.attributes['Dexterity'] += 1
-                        template.attributes['Stamina'] -= 1
-                        template.attributes['Manipulation'] -= 1
-                        template.size -= 3
-                        template.speed_bonus += 3
-                    elif template.currentform == "Urshul":
-                        template.attributes['Strength'] -= 2
-                        template.attributes['Stamina'] -= 1
-                        template.size -= 2
-                    caller.db.desc = template.urhandesc
-                    self.currentform = "Urhan"
+                    self.StoreOld(caller.db.currentform)
+                    if caller.db.currentform == "Hishu":
+                        caller.db.attributes['Dexterity'] += 2
+                        caller.db.attributes['Stamina'] += 1
+                        caller.db.attributes['Manipulation'] -= 1
+                        caller.db.size -= 1
+                        caller.db.speed_bonus += 3
+                    elif caller.db.currentform == "Dalu":
+                        caller.db.attributes['Strength'] -= 1
+                        caller.db.attributes['Dexterity'] += 2
+                        caller.db.size -= 2
+                        caller.db.speed_bonus += 3
+                    elif caller.db.currentform == "Gauru":
+                        caller.db.attributes['Strength'] -= 3
+                        caller.db.attributes['Dexterity'] += 1
+                        caller.db.attributes['Stamina'] -= 1
+                        caller.db.attributes['Manipulation'] -= 1
+                        caller.db.size -= 3
+                        caller.db.speed_bonus += 3
+                    elif caller.db.currentform == "Urshul":
+                        caller.db.attributes['Strength'] -= 2
+                        caller.db.attributes['Stamina'] -= 1
+                        caller.db.size -= 2
+                    caller.db.desc = caller.db.urhandesc
+                    caller.db.currentform = "Urhan"
                     for character in caller.location.contents:
                         if character.account:
-                            character.msg(caller.name + " shifts into "+caller.pronoun+" wolf form!")
-            template.Update()
+                            character.msg(caller.name + " shifts into |p wolf form!")
+            caller.Update()
+        else:
+            self.caller.msg("Only werewolves can shift forms!")
+            return
     def StoreOld(self, oldform):
         caller = self.caller
-        template = caller.db.template.db.template
         if oldform == "Hishu":
-            template.humandesc = caller.db.desc
+            caller.db.humandesc = caller.db.desc
         elif oldform == "Dalu":
-            template.daludesc = caller.db.desc
+            caller.db.daludesc = caller.db.desc
         elif oldform == "Gauru":
-            template.daludesc = caller.db.desc
+            caller.db.daludesc = caller.db.desc
         elif oldform == "Urshul":
-            template.urshuldesc = caller.db.desc
+            caller.db.urshuldesc = caller.db.desc
         elif oldform == "Urhan":
-            template.urhandesc = caller.db.desc
+            caller.db.urhandesc = caller.db.desc
 class SetPosition(default_cmds.MuxCommand):
     """
     Used to set your position, describing what exactly you do as a staffer.
