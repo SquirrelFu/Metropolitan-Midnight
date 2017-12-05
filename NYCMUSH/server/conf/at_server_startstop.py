@@ -27,9 +27,9 @@ def Load_Status(inString):
         if inString.lower() == "vampire":
             settings.VAMPIRE_STATUS = open(loadstring).read()
         elif inString.lower() == "hunter":
-            settings.HUNTER_sTATUS = open(loadstring).read()
+            settings.HUNTER_STATUS = open(loadstring).read()
         elif inString.lower() == "werewolf":
-            settings.WOLF_STATUS = open(loadstring).read()
+            settings.WEREWOLF_STATUS = open(loadstring).read()
         elif inString.lower() == "mage":
             settings.MAGE_STATUS = open(loadstring).read()
         elif inString.lower() == "beast":
@@ -64,7 +64,7 @@ def Save_Status(sphereIn):
         if not path.isdir("./spherestatus/"):
             os.makedirs("./spherestatus/")
         open(savestring,'w').close()
-    with open(savestring,"r+") as stat:
+    with open(savestring,"w") as stat:
         if sphereIn.lower() == "vampire":
             stat.write(settings.VAMPIRE_STATUS)
         elif sphereIn.lower() == "hunter":
@@ -143,6 +143,7 @@ def at_server_stop():
     Save_Status("hunter")
     Save_Status('demon')
     Save_Status('promethean')
+    Save_Status("infected")
 
 
 

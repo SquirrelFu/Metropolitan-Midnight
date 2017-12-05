@@ -18,6 +18,7 @@ from web.character.views import magepage
 from web.character.views import magerules
 from web.character.views import demonpage
 from web.character.views import beastcustom
+from web.character.views import beastrules
 # eventual custom patterns
 custom_patterns = [
     url(r'^mplus/rules/$', mplusrules),
@@ -30,7 +31,8 @@ custom_patterns = [
     url(r'^mage/$', magepage),
     url(r'^mage/rules/$', magerules),
     url(r'^demon/$',demonpage),
-    url(r'^beast/customs/$',beastcustom)
+    url(r'^beast/customs/$',beastcustom),
+    url(r'^beast/rules/%',beastrules)
     ]
 
 # this is required by Django.

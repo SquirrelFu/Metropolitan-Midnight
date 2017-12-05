@@ -1,5 +1,9 @@
-Beasts are the sort to feed indirectly, yet spectacularly. Their displays of sating their horrors are never subtle, as they often require the person or creature they are sating themselves upon to be fully aware. Conversely, this is a purely non-physical event, even if the Beast's method of eliciting such a response is violent. Beasts have an advantage over other templates in feeding in some respects, as any beast with a different hunger is treated as being an entirely different template from the other for purposes of determining repeat feeding penalties given that the methodologies of different hungers are extremely different. However, the spectacular nature of their feedings also means that the basic amount of health they remove from an area is greater than that of others templates. As a house rule on Metropolitan Midnight, the base satiety potential is always five dice, and considered a moderate example of feeding. However, one may choose to kill their victim in the process using +sate/kill. This creates a substantially greater impact, and it must be logged what sort of victim you are procuring. Regardless, this doubles the satiety potential's dicepool to ten, yet should never be done casually as it also reduces the health of the territory even more than a beast's usual baseline. Likewise, the presence of a murder will be obvious to anyone checking the area through the territory system.
+Beasts are the sorts to feed indirectly, as they do not strictly require more than the recognition of their horror that they have fulfilled whatever hunger is relevant to them. However, they also often have to take greater pains to sate themselves as their hunger's needs are more demanding than other supernaturals.
+
+The first command without a downtime parameter added, allows the beast to hunt with a single die. On a success, they gain 1 satiety. On a failure, none. This is not a chance die, but more dice can be added with downtime increasing by 1 for every downtime hour spent.
+
+The second command conversely, notes that the Beast has sated their hunger by watching another supernatural feed. This results in adding one satiety, but requires a reason to be logged in the downtime log as an action taking zero hours.
 
 Commands:
-	+sate
-	+sate/kill
+	+sate [<downtime>]
+	+sate/family <reason>

@@ -16,8 +16,6 @@ if RSS_ENABLED:
         import feedparser
     except ImportError:
         raise ImportError("RSS requires python-feedparser to be installed. Install or set RSS_ENABLED=False.")
-
-
 class CheckWeather(Command):
     wintermonths = ['Jan','Feb','Mar']
     springmonths = ['Apr','May','Jun']
@@ -42,7 +40,7 @@ class CheckWeather(Command):
             return
         feed = feedparser.parse(weatherinfo)
         moonfeed = feedparser.parse(settings.MOON_PHASE)
-        screenwidth = self.caller.player.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+        screenwidth = self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
         boxwidth = screenwidth/4
         feedout = ""
         season = ""
@@ -120,7 +118,7 @@ class CheckWeather(Command):
         weatherbox += "/" + "-" * ((boxwidth)/2 - 3) + "Weather" + "-" * (boxwidth/2 - 4) + "\\\n"
         weatherbox += "|| General Atmosphere: "  + atmosphere + " " * (boxwidth - len("| General Atmosphere: " +atmosphere)) + "||\n"
         weatherbox += "|| Temperature: " + temperature + " " * (boxwidth - len("| Temperature: " + temperature)) + "||\n"
-        if windspeed != "":
+        if minspeed != "":
             weatherbox += "|| Wind Speed: " + minspeed + maxspeed + " " * (boxwidth - len("| Wind Speed: " + minspeed + maxspeed)) + "||\n"
             weatherbox += "|| Wind Chill: " + windchill + " F" + " " * (boxwidth - len("| Wind Chill: " + windchill + " F")) + "||\n"
         weatherbox += "|| Phase of the Moon: " + moonstring + " " * (boxwidth - len("| Phase of the Moon" + moonstring)  - 2) + "||\n"

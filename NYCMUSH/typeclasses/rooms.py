@@ -221,7 +221,7 @@ class Locus(object):
                 self.esesnce = self.maxessence
 class AddHallow(default_cmds.MuxCommand):
     key = "+addhallow"
-    lock = "cmd:pperm(Immortals)"
+    lock = "cmd:pperm(Admin)"
     def func(self):
         self.caller.location.db.features['Hallow'] = Hallow(1)
 class Hallow(object):

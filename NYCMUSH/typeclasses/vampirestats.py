@@ -5,13 +5,14 @@ Created on Jan 13, 2017
 '''
 from evennia import DefaultScript
 class VampireStatHandler(DefaultScript):
-    bookreference = ["VtR","SotC","BS","VtR1"]
+    bookreference = ["VtR","SotC","BS","VtR1",'ATYoN']
     clanlist = ["Daeva","Gangrel","Mekhet","Nosferatu","Ventrue"]
     covenantlist = ["Carthians","Circle of the Crone","Invictus","Lancea et Sanctum","Ordo Dracul"]
     bloodlines = ['Khaibit','Neglatu','Kerberos']
     sorceries = ['Theban Sorcery','Cruac']
     #Shorthand book codes for the books from whence content is drawn. They MUST be in the same order as the booktitles list below.
-    booktitles = ["Vampire the Requiem: Second Edition","Secrets of the Covenants","Blood Sorcery: Sacraments and Blasphemies","Vampire the Requiem: First Edition"]
+    booktitles = ["Vampire the Requiem: Second Edition","Secrets of the Covenants","Blood Sorcery: Sacraments and Blasphemies",
+                  "Vampire the Requiem: First Edition",'A Thousand Years of Night']
     def MeetsPrereqs(self, character, discipline):
         disciplines = self.db.disciplines
         for indexdiscipline in disciplines:
@@ -99,6 +100,7 @@ class VampireStatHandler(DefaultScript):
             disciplines.append(tuple(["Coil of Zirnitra","Ordo Dracul","SotC-200"]))
             disciplines.append(tuple(["Coil of Ziva","Ordo Dracul","SotC-201"]))
             disciplines.append(tuple(["Cruac","Circle of the Crone","VtR-151"]))
+            disciplines.append(tuple(['Coil of Quintessence','Ordo Dracul','ATYoN-81']))
             disciplines.append(tuple(["Creation","Blood Sorcery","BS-19"]))
             disciplines.append(tuple(["Destruction","Blood Sorcery","BS-20"]))
             disciplines.append(tuple(["Divination","Blood Sorcery","BS-21"]))
@@ -141,6 +143,17 @@ class VampireStatHandler(DefaultScript):
             devotions.append(tuple(["The Wish","VtR-148","Celerity,2","Majesty,4","Vigor,2"]))
             devotions.append(tuple(["Vermin Flood","VtR-149","Animalism,3","Vigor,2","Celerity,2"]))
             devotions.append(tuple(["Wraith's Presence","VtR-149","Obfuscate,3","Nightmare,1"]))
+            devotions.append(tuple(['Annals of Death','ATYoN-72','Auspex,3']))
+            devotions.append(tuple(['Bones of the Mountain','ATYoN-73','Protean,4','Resilence,3','Vigor,3']))
+            devotions.append(tuple(['Celebrity','ATYoN-73','Majesty,2']))
+            devotions.append(tuple(['Consumption','ATYoN-74','Dominate,5']))
+            devotions.append(tuple(['Crush of Years','ATYoN-74','Nightmare,4','Majesty,3']))
+            devotions.append(tuple(['Legion','ATYoN-74','Animalism,5','Auspex,3']))
+            devotions.append(tuple(['Malignant Smog','ATYoN-75','Protean,5']))
+            devotions.append(tuple(['Pass into Yesteryear','ATYoN-76','Obfuscate,3','Nightmare,1']))
+            devotions.append(tuple(['Preternatural Instinct','ATYoN-76','Auspex,4','Celerity,1']))
+            devotions.append(tuple(['Spontaneous Ignition','ATYoN-76','Celerity,5','Resilience,1']))
+            devotions.append(tuple(['Unbridled Force','ATYoN-76','Vigor,5','Dominate,2']))
         if len(cruac) == 0:
             cruac.append(tuple(["Pangs of Prosperina","1","VtR-152","Transmutation,1"]))
             cruac.append(tuple(["Rigor Mortis","1","VtR-152","Transmutation,1"]))
@@ -166,6 +179,9 @@ class VampireStatHandler(DefaultScript):
             cruac.append(tuple(["Mantle of the Predator Goddess","4","SotC-186","Transmutation,4"]))
             cruac.append(tuple(["Birthing the God","5","SotC-186","Creation,5"]))
             cruac.append(tuple(["Mantle of the Crone","5","SotC-186","Creation,5"]))
+            cruac.append(tuple(["Manananggal's Working",'3','ATYoN-78']))
+            cruac.append(tuple(["Gwydion's Curse",'5','ATYoN-78']))
+            cruac.append(tuple(['Scapegoat','5','ATYoN-78']))
         if len(theban) == 0:
             theban.append(tuple(["Blood Scourge","1","VtR-153","Transmutation,1","Destruction,1"]))
             theban.append(tuple(["Vitae Reliquary","1","VtR-153","Transmutation,1"]))
@@ -190,6 +206,9 @@ class VampireStatHandler(DefaultScript):
             theban.append(tuple(["The Guiding Star","3","SotC-196","Protection,3"]))
             theban.append(tuple(["Apocalypse","5","SotC-197","Trnasmutation,5"]))
             theban.append(tuple(["The Judgment Fast","5","SotC-197","Transmutation,5"]))
+            theban.append(tuple(['Curse of Isolation','4','ATYoN-79']))
+            theban.append(tuple(['Orison of Voices','4','ATYoN-79']))
+            theban.append(tuple(['Sins of the Ancestors','4','ATYoN-79']))
         if len(scales) == 0:
             scales.append(tuple(["Day-Wake Conditioning","1","Ascendant","VtR-156"]))
             scales.append(tuple(["Flesh-Graft Treatment","4","Ascendant","VtR-156"]))
@@ -205,6 +224,8 @@ class VampireStatHandler(DefaultScript):
             scales.append(tuple(["Grafting Unholy Flesh","4","Zirnitra","SotC-200"]))
             scales.append(tuple(["Bleed the Sin","2","Ziva","SotC-201"]))
             scales.append(tuple(["Siphon the Soul","3","Ziva","SotC-202"]))
+            scales.append(tuple(['Codependency','5','Quintessence','ATYoN-82']))
+            scales.append(tuple(['Cold of the Grave','3','ATYoN-82']))
     def Reset(self):
         self.at_script_creation()
     def DisciplineList(self):

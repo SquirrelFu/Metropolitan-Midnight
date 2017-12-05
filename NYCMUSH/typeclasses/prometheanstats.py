@@ -25,7 +25,7 @@ class PrometheanStatHandler(DefaultScript):
         
         self.db.refinementdict = ["Aes/Bronze","Argentum/Silver","Aurum/Gold","Cobalus/Cobalt","Cuprum/Copper","Ferrum/Iron","Mercurius/Quicksilver","Phosphorum/Phosphorus","Plumbum/Lead","Stannum/Tin"]
         transmutations = self.db.transmutations
-        transmutations.append(tuple(["Alchemicus","General","Stone","Aqua Regia","Spagyria","Elixir","PtC-119"]))
+        transmutations.append(tuple(["Alchemicus","Mercurius","Stone","Aqua Regia","Spagyria","Elixir","PtC-119"]))
         transmutations.append(tuple(["Benefice","Aes","Command","Consortium","Control","Community","PtC-123"]))
         transmutations.append(tuple(["Contamination","Cobalus","Indulgence","Madness","Leverage","Suffering","PtC-125"]))
         transmutations.append(tuple(["Corporeum","Aes/Ferrum","Charites","Zephyrus","Hygeius","Motus","PtC-129"]))

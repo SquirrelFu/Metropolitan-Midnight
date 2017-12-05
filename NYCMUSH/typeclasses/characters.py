@@ -70,8 +70,9 @@ class Character(gendersub.GenderCharacter):
             elif not self.db.approved:
                 pass
         else:
-            if self.db.last_login.day < datetime.now().day and self.db.approved:
-                self.Refresh()
+            if self.db.last_login.day < datetime.now().day:
+                if self.db.approved:
+                    self.Refresh()
                 self.db.last_login = datetime.now()
     def at_object_creation(self):
         default_cmdsets = commands.default_cmdsets
@@ -87,6 +88,7 @@ class Character(gendersub.GenderCharacter):
         self.db.meritlimit = 10
         self.db.doing = ""
         self.db.desclist = {}
+        self.db.is_npc = False
         self.db.beatlog = []
         self.db.next_sate = ""
         self.db.xplog = []
@@ -143,7 +145,6 @@ class Character(gendersub.GenderCharacter):
         self.db.dob_month = 1
         self.db.dob_year = 1
         self.db.dark = False
-        self.db.tos_agreed = False
         self.db.harvest_amount = 0
         self.db.template = "Mortal"
         self.db.sanityname = "Integrity"
@@ -572,7 +573,7 @@ class Character(gendersub.GenderCharacter):
         except KeyError:
             return
     def IsAdmin(self):
-        if self.locks.check_lockstring(self, "dumm:perm(Admin)") and self.id != 1:
+        if self.locks.check_lockstring(self, "dumm:perm(admin)") and self.id != 1:
             return True
         else:
             return False
@@ -639,6 +640,7 @@ class Character(gendersub.GenderCharacter):
         self.db.initiative = attributes['Dexterity'] + attributes['Composure'] + self.db.init_bonus
         self.db.speed = attributes['Strength'] + attributes['Dexterity'] + self.db.size + self.db.speed_bonus
         self.db.defense = min(attributes['Dexterity'], attributes['Wits']) + physskills['Athletics']
+        self.db.pools['Willpower'] = str(attributes['Resolve'] + attributes['Composure']) + "," + str(attributes['Resolve'] + attributes['Composure']) 
     def AddPlus(self, merit):
         if merit in self.db.plusmerits:
             if merit == "Subliminal Conditioning":

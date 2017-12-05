@@ -1,0 +1,1 @@
+This section concerns commands used to help staff run the game. If you're not staff, please do not try to use these commands. It's not so much that we don't want the players using the admin tools (Although that could be very bad) as much as the fact that they can't due to the way the MUSH is built.

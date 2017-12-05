@@ -27,10 +27,10 @@ def beaststatus():
     return str(settings.BEAST_STATUS)
 @register.simple_tag
 def vampstatus():
-    return str(settings.VAMP_STATUS)
+    return str(settings.VAMPIRE_STATUS)
 @register.simple_tag
 def wolfstatus():
-    return str(settings.WOLF_STATUS)
+    return str(settings.WEREWOLF_STATUS)
 @register.simple_tag
 def magestatus():
     return str(settings.MAGE_STATUS)

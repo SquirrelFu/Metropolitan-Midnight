@@ -5,31 +5,34 @@ Commands describe the input the player can do to the game.
 
 """
 from datetime import date
-from evennia import Command as BaseCommand
-from evennia import default_cmds
-import os
-import random
-from server.conf import settings
-from textwrap import wrap
-from evennia.utils.evmenu import get_input
-import re
-from typeclasses import merits
-from string import capwords
 import datetime
-from exceptions import NameError
-from world.textbox import StatBlock
-from evennia.utils import search
+from evennia import Command as BaseCommand
 from evennia import DefaultCharacter
-import time
 from evennia import create_channel
-from itertools import izip
+from evennia import create_script
+from evennia import default_cmds
+from evennia.accounts.accounts import DefaultAccount
+from evennia.comms.comms import DefaultChannel
 from evennia.utils import evtable
 from evennia.utils import inherits_from
+from evennia.utils import search
 from evennia.utils import utils
-from evennia import create_script
-from evennia.comms.comms import DefaultChannel
-# from evennia import default_cmds
+from evennia.utils.evmenu import get_input
+from exceptions import NameError
+from itertools import izip
+import os
+import random
+import re
+from string import capwords
+from textwrap import wrap
+import time
 
+from server.conf import settings
+from typeclasses import merits
+from world.textbox import StatBlock
+
+
+# from evennia import default_cmds
 class Command(BaseCommand):
     """
     Inherit from this if you want to create your own command styles
@@ -76,7 +79,7 @@ class SetChannelColor(default_cmds.MuxCommand):
                             if int(num) == 6 or int(num) == 7 or int(num) == 8 or int(num) == 9:
                                 self.caller.msg("Individual color values only go up to five, no more.")
                                 return
-                        chan.colorcode = rhs
+                        chan.db.colorcode = rhs
                         self.caller.msg("Color code set to " + rhs + " and appears as |" + rhs + "this.|n")
                         return
                     except ValueError:
@@ -206,12 +209,12 @@ class MarkNPC(Command):
     """
     key = "+NPC"
     aliases = "+npc"
-    lock = "cmd:(Admin)"
+    lock = "cmd:pperm(Admin)"
     help_category="Admin"
     def func(self):
         if self.caller.db.is_npc == False:
             self.caller.db.is_npc = True
-            self.locks.add('puppet:pperm(Admin)')
+            self.caller.locks.add('puppet:pperm(Admin)')
             #This bit might seem odd. What it does is allows the NPC to be puppeted by any wizard.
             #As multiple locks can coexist, this is more or less just an extra parameter that
             #allows wizards to puppet it in addition to allowing the basic player to puppet the
@@ -219,7 +222,7 @@ class MarkNPC(Command):
             self.caller.msg("Character marked as an NPC.")
         elif self.caller.db.is_npc == True:
             self.caller.db.is_npc = False
-            self.locks.remove('puppet:pperm(Admin)')
+            self.caller.locks.remove('puppet:pperm(Admin)')
             #As implied, removes the ability for any and every wizard to puppet the character.
             self.caller.msg("Character marked as a PC")
 class CensusCommand(Command):
@@ -298,7 +301,7 @@ class CensusCommand(Command):
         demographics = []
         self.superplayer = None
         for character in charlist:
-            if character.db.approved:
+            if character.db.approved == True:
                 cutoff = datetime.datetime.now() - datetime.timedelta(days=30)
                 if character.db.last_login <= cutoff:
                     continue
@@ -313,10 +316,13 @@ class CensusCommand(Command):
                 continue
                 #Makes sure that the superuser isn't added for security reasons.
             record = ""
-            if entry.db.is_npc or entry.IsAdmin():
+            if entry.db.is_npc:
                 continue
                 #Makes sure that NPCs aren't added to the census, what with them being plot characters.
-                #Also filters out admin bits, because they're not properly characters.
+            if entry.IsAdmin() and entry.name == entry.account.name:
+                continue
+            #Filters out admin bits and admin bits only. Admin bits are your appearance on-grid, generally a self-locked bit that's
+            #not one of your three characters.
             if entry.db.gender == "male":
                 malecount += 1
             elif entry.db.gender == "female":
@@ -388,7 +394,9 @@ class CensusCommand(Command):
                 self.superplayer = entry.account
                 continue
             record = ""
-            if entry.db.is_npc or entry.IsAdmin():
+            if entry.db.is_npc: 
+                continue
+            if entry.IsAdmin() and entry.name == entry.account.name:
                 continue
             if entry.db.gender == "male":
                 unappmale += 1
@@ -1403,6 +1411,7 @@ class BreakCommand(default_cmds.MuxCommand):
         sanity = caller.db.sanity
         dramafail = False
         dreamer = False
+        dreamRating = 1
         if caller.db.approved == False:
             caller.msg("You can't roll breaking points unless you're approved.")
             return
@@ -1417,6 +1426,7 @@ class BreakCommand(default_cmds.MuxCommand):
                         for merit in self.caller.db.meritlist:
                             if merit[0].lower() == "subliminal conditioning":
                                 dreamer = True
+                                dreamRating = merit[1]
                         breakpool = attributes['Resolve'] + attributes['Composure']
                         try:
                             breakpool += int(lhs)
@@ -1462,7 +1472,10 @@ class BreakCommand(default_cmds.MuxCommand):
                             self.caller.AddBeat("Breaking Point",rhs)
                             notices.msg(self.caller.name + " just rolled a breaking point for "+ rhs + " with a modifier of " + lhs + " and got a success.")
                             if dreamer:
-                                self.caller.PoolGain('Memory',successes)
+                                if dreamRating >= 4:
+                                    self.caller.PoolGain('Memory',successes)
+                                else:
+                                    self.caller.PoolGain('Memory',1)
                             return
                         elif successes >= 5:
                             self.caller.msg("Breaking point passed with an exceptional success. No need to select a condition, two beats added to your log and a point of willpower gained.")
@@ -1472,7 +1485,10 @@ class BreakCommand(default_cmds.MuxCommand):
                             self.caller.db.breaklog.append("Exceptional success. Reason: "+rhs+" Date: "+time.strftime("%d")+" "+time.strftime("%m")+ " " + time.strftime("%Y"))
                             notices.msg(self.caller.name + " just rolled a breaking point for "+ rhs + " width a modifier of "+ lhs + " and got an exceptional success.")
                             if dreamer:
-                                self.caller.PoolGain('Memory',successes)
+                                if dreamRating >= 4:
+                                    self.caller.PoolGain('Memory',successes)
+                                else:
+                                    self.caller.PoolGain('Memory',1)
                             return
                         elif successes == 0 and not dramafail:
                             self.caller.msg("Breaking point failed, please use +break/guilty, +break/shaken, or +break/spooked to accept a condition.")
@@ -2186,7 +2202,8 @@ class ChargenHelp(Command):
             helplist = os.listdir('./helpfiles/chargen')
             stringout = "/" + "-" * (screenwidth/2 - len('Chargen')/2) + "Chargen" + "-" * (screenwidth/2 - len('Chargen')/2 + 1) + "\\\n"
 class MUSHHelp(Command):
-    #Ye olde help system. Actually, this stuff is stored in text files so it's not actually so old as one might expect. Still functions similarly though.
+    #Ye olde help system. Actually, this stuff is stored in text files so it's not actually so old as one might expect. 
+    #Still functions similarly though.
     key = "+help"
     lock = "cmd:all()"
     helptitle = ""
@@ -2194,184 +2211,115 @@ class MUSHHelp(Command):
         self.args = self.args.strip()
         #Pretty simple parser. Removes whitespace.
     def func(self):
-        psyvamp = False
-        atariya = False
-        dreamer = False
-        infected = False
-        lostboy = False
-        plain = False
+        args = self.args
+        helpdirectory = ".\\helpfiles"
+        outputString = ""
+        fileLocation = ""
+        fileIndex = os.walk(helpdirectory)
         try:
-            if self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
-                screenwidth = self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
-            else:
-                screenwidth = 156
-        except IndexError:
-            screenwidth = 156
-        cellwidth = ((screenwidth/2) - 2)/3
-        for item in self.caller.db.meritlist:
-            if item[0].lower() == "psychic vampirism":
-                psyvamp = True
-            elif item[0].lower() == "damn lucky":
-                atariya = True
-            elif item[0].lower() == "subliminal conditioning":
-                dreamer = True
-            elif item[0].lower() == "carrier":
-                infected = True
-            elif item[0].lower() == "the protocol":
-                lostboy = True
-            elif item[0].lower() == "plain reader":
-                plain = True
-        outputstring = ""
-        args = self.args.lstrip()
-        helptitle = self.helptitle
-        dir_list = []
-        currentdir = "./helpfiles/"
-        commandstring = ""
-        if args == "":
-        #If there are no arguments, set the 'helptitle' or file being looked for in string form, to main. This is the main menu of the help system.
-            helptitle = "main"
+            screenWidth = self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+        except (IndexError, AttributeError) as err:
+            screenWidth = 156
+        if not args == "":
+            if args.lower() == "main":
+                self.caller.msg('Please use just, "+help" instead.')
+                return
+            for root, dirs, files in fileIndex:
+                for directory in dirs:
+                    
+                    if args.lower() == directory.lower():
+                        fileLocation = os.path.join(root + "\\" + directory)
+                        break
+                for item in files:
+                    if args.lower() == item.replace('.txt','').lower():
+                        fileLocation = os.path.join(root + "\\" + item)
+                        break
+            if fileLocation == "":
+                self.caller.msg("Invalid helpfile!")
+                return
         else:
-        #If there are arguments, we look to see if there are backslashes in it. The double-backslash thing is because the backslash is the escape character
-        #so it has to be escaped to register as an actual backslash.
-            if "/" in args:
-                for slash in args:
-                #Obviously at this point, we know there's at least one backslash. So we look for each and every one in there.
-                    if slash == "/":
-                        slashindex = args.index("/")
-                        #A bit of implicit stuff taking place here. If there's more than one backslash in the list, then obviously it's deeper in. More on that later.
-                        #For now however, this makes sure we only get the file name rather than any folders by selecting the final backslash present in the string.
-                helptitle = args[slashindex+1:len(args)]
-                #Sets the actual file name rather than any of the folders by selecting everything after the final backslash.
-                currentdir = "./helpfiles/"+ args[0:slashindex] + "/"
-                #Sets the current directory by selecting everything before the final backslash, backslash included.
-            elif "\\" in args:
-                for slash in args:
-                #Obviously at this point, we know there's at least one backslash. So we look for each and every one in there.
-                    if slash == "\\":
-                        slashindex = args.index("\\")
-                        #A bit of implicit stuff taking place here. If there's more than one backslash in the list, then obviously it's deeper in. More on that later.
-                        #For now however, this makes sure we only get the file name rather than any folders by selecting the final backslash present in the string.
-                helptitle = args[slashindex+1:len(args)]
-                #Sets the actual file name rather than any of the folders by selecting everything after the final backslash.
-                currentdir = "./helpfiles/"+ args[0:slashindex] + "/"
-                #Sets the current directory by selecting everything before the final backslash, backslash included.
+            fileLocation = helpdirectory
+        #The block from, 'if not args == ""' to here is finding if the input by the user is a
+        #directory, file, or completely absent. 'Main' is a restricted input because every
+        #folder will default to showing the text of the, 'Main.txt' file within it. It would
+        #start borking things up if only the header were shown.
+        if os.path.isdir(fileLocation):
+            if os.path.exists(fileLocation + "\\Main.txt"):
+                headerFile = open(fileLocation + "\\Main.txt",'r+').read()
+            if args == "":
+                headerTitle = "Main"
             else:
-                helptitle = args
-                #If there are no backslashes in the argument though, it just grabs the argument as the title.
-        filefound = False
-        for filesearch in os.listdir(currentdir):
-            if filesearch.replace(".txt","").lower() == helptitle.lower():
-                helptitle = filesearch.replace('.txt','')
-                filefound = True
-        if not filefound:
-            outputstring = "Please select a valid helpfile, or use '+help' by itself to see the main index."
-            return
-            #Simple error message, not MUCH to see here.
-        if (len(helptitle) % 2) != 0:
-        #Checks to see if the helptitle string's length is an odd number. Going to need this for the header.
-            helptitle_left = (screenwidth - 6)/4 - (len(helptitle)/2)
-            helptitle_right = helptitle_left + 1
-        else:
-        #Given that only two situations may occur here, an else case would mean that this helptitle has an even length.
-            helptitle_left = (screenwidth - 4)/4 - (len(helptitle)/2)
-            helptitle_right = helptitle_left
-        if os.path.isfile(currentdir+str(helptitle)+'.txt'):
-        #This makes sure that the file exists at all.
-            displaytitle = helptitle.replace("_"," ")
-            outputstring += "/" + "-" * helptitle_left + displaytitle + "-"  * helptitle_right + "\\\n"
-            #This actually makes the header, placed after it ensures that the file exists so as not to make a header for a nonexistent file.text that have been fitted to the width of 78 (The area inside the text box)
-            #from the singular, long string.
-            commandfile = open(currentdir+helptitle+".txt",'r')
-            commandstring = commandfile.read()
-            helpdirs = os.listdir(currentdir)
-            #This checks to see if there is anything within the current directory.
-            for x in helpdirs:
-            #This iterates through the current directory, and sees if those things are directories themselves.
-                if os.path.isdir(currentdir+str(x)):
-                #If they are in fact directories, it appends them to the dir_list list.
-                    dir_list.append(x)
-            if commandstring != "":
-            #So, this checks to see if commandstring is something other than empty. This would be the case if an associated command file exists.
-                commandlist = []
-                commandlist.extend(commandstring.splitlines(True))
-                for line in commandlist:
-                    line = line.replace("\n","^")
-                    line = wrap(line,((screenwidth - 4)/2))
-                    for section in line:
-                        oldsection = section
-                        section = section.replace("^","\n")
-                        if section.endswith("\n") and (not(section == "\n")):
-                            line.insert((line.index(oldsection)+1),"\n")
-                            section = section.replace("\n","")
-                            outputstring += "||" + section + " " * (((screenwidth - 4)/2)  - len(section)) + "||\n"
-                        elif section == "\n":
-                            if section != oldsection.replace("^","\n"):
-                                outputstring += "||" + " " * (((screenwidth - 4)/2) - len(section)) + "||\n"
-                        else:
-                            outputstring += "||" + section + " " * (((screenwidth - 4)/2) - len(section)) + "||\n"
-            if currentdir == "./helpfiles/":
-            #This checks to see if we're in the helpfiles directory. The only things in here are the main helpfile and the subfolders as far as direct contents go.
-                if len(dir_list) != 0:
-                #This checks to make sure that the directory list actually has stuff in it. Strictly speaking this shouldn't actually be a problem as the game will
-                #be launching with helpfiles and help folders, but you never know.
-                    for thing in dir_list:
-                    #This checks to see what's in the directory list, and iterates through it.
-                        if (thing.lower() == "dreamers" and dreamer == True) or (thing.lower() == "admin" and self.caller.IsAdmin()) or (thing.lower() == "lost_boys" and lostboy == True) or (thing.lower() == "infected" and infected == True) or (thing.lower() == "plain" and plain == True) or(thing.lower() == "psychic_vampire" and psyvamp == True) or (thing.lower() == "atariya" and atariya == True) or (self.caller.db.template == thing.title()) or (self.caller.db.powerstat != 0 and thing.title() == "Supernatural") or (thing.title() == "General") or (thing.title() == "Policies"):
-                            outputstring += "+--" + thing.title().replace("_"," ") + "-" * (((screenwidth - 2)/2) - len("+--" + thing.title())) + "+\n"
-                            #This adds a header for every item in the directory list.
-                            if os.path.isdir("./helpfiles/"+thing):
-                            #This also checks to see if the folder in question is a valid folder. Yes, it's a bit redundant but redundant safety never hurt anyone.
-                                thing_list = os.listdir("./helpfiles/"+thing)
-                                #This forms a list of contents within the subdirectory.
-                                for string in thing_list:
-                                #This checks for command files in the contents of the directory currently referenced by, 'thing'.
-                                    if "commands" in string:
-                                        thing_list.remove(string)
-                                        #This also removes the associated commands files, because they aren't independent helpfiles.
-                                while "__init__.py" in thing_list: thing_list.remove("__init__.py")
-                                #This bit actually removes the __init__.py files from thing_list, because those aren't helpfiles.
-                                cellcalc = 0
-                                filecount = 0
-                                for filesearch in thing_list:
-                                    cellcalc += len(filesearch)
-                                    filecount += 1
-                                if filecount != 0:
-                                    cell_padding = ((screenwidth/2) - 2)/filecount
-                                filestring = ""
-                                for file2 in thing_list:
-                                    if cell_padding >= len(file2):
-                                        break
-                                    else:
-                                        cellwidth = cell_padding
-                                olditems = ""
-                                #A variable used to store the unlinked versions of the strings. Useful for not having as complex code.
-                                for item2 in thing_list:
-                                    item2 = re.sub('.txt','',item2)
-                                    if thing_list.index((item2 + '.txt')) == 0:
-                                        filestring += "|||lc +help " + thing + "/" + item2 + "|lt" + item2.replace("_"," ") + "|le" + " " * (cellwidth - len("| " + item2)) + "  "
-                                        olditems += "| " + item2 + " " * (cellwidth - len("| " + item2)) + "  "
-                                    elif len(item2) + len(olditems) > ((screenwidth/2) - 2):
-                                        filestring = filestring.rstrip()
-                                        olditems = olditems.rstrip()
-                                        filestring += " " * ((screenwidth/2) - len(olditems)) + "||\n"
-                                        olditems = ""
-                                        filestring += "|||lc +help " + thing + "/" + item2 + "|lt" + item2.replace("_"," ") + "|le" + " " * (cellwidth - len("| " + item2)) + "  "
-                                        olditems += "| " + item2 + " " * (cellwidth - len("| " + item2)) + "  "
-                                    else:
-                                        filestring += "|lc +help " + thing + "/" + item2 + "|lt" + item2.replace("_"," ") + "|le" + " " * (cellwidth - len(item2)) + "  "
-                                        olditems += item2 + " " * (cellwidth - len(item2)) + "  "
-                                    if thing_list.index((item2 + '.txt')) == (len(thing_list) - 1):
-                                        filestring = filestring.rstrip()
-                                        olditems = olditems.rstrip()
-                                        filestring += " " * ((screenwidth/2) - len(olditems)) + "||\n"
-                                        olditems = ""
-                                outputstring += filestring
-                                filestring = ""
-                                olditems = ""
-                                #Filestring is the entire list of helpfiles under a given category.
-            outputstring += "\\" + "-" * ((screenwidth - 4)/2) + "/"
-            #Finally, the footer.
-        self.caller.msg(outputstring)
+                headerTitle = args
+            if len(headerTitle) % 2 == 1:
+                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(headerTitle)/2) + headerTitle.title() + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
+            else:
+                boxHeader = "/" + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + headerTitle.title() + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
+            outputString += boxHeader
+            try:
+                headerWrap = wrap(headerFile,screenWidth/2 - 4)
+                for line in headerWrap:
+                    if line.strip() == "":
+                        pass
+                    outputString += "\n|| " + line + " " * (screenWidth/2 - 4 - len(line))+" |"
+            except UnboundLocalError:
+                pass
+            subFiles = []
+            subFolders = []
+            for item in os.listdir(fileLocation):
+                if os.path.isfile(fileLocation + "\\" + item):
+                    subFiles.append(item)
+                elif os.path.isdir(fileLocation + "\\" + item):
+                    subFolders.append(item)
+            menuTally = 0
+            if '__init__.py' in subFiles: subFiles.remove('__init__.py')
+            if 'Main.txt' in subFiles: subFiles.remove('Main.txt')
+            if 'main.txt' in subFiles: subFiles.remove('main.txt')
+            if 'admin' in subFolders and not self.caller.IsAdmin(): subFolders.remove('admin')
+            if len(subFiles) > 0:
+                outputString += "\n+" + "-" * (screenWidth/4 - 4) + "Files" + "-" * (screenWidth/4 - 3) +  "+"
+                for helpfile in subFiles:
+                    if helpfile == subFiles[0] or menuTally == 0 or menuTally + len(helpfile.replace('.txt','')) >= (screenWidth/2 - 4):
+                        if helpfile != subFiles[0]:
+                            outputString += " " * ((screenWidth/4) - menuTally - 4) + "  |"
+                            menuTally = 0
+                        outputString += "\n|| "
+                    if helpfile != subFiles[-1] and menuTally + len(helpfile.replace('.txt','')) < (screenWidth/2 - 4):
+                        outputString += "|lc+help " + helpfile.replace('.txt','') + "|lt" + helpfile.replace('.txt','').title() + "|le, "
+                        menuTally += len(helpfile.replace('.txt','') + ", ")
+                    else:
+                        menuTally += len(helpfile.replace('.txt',''))
+                        outputString += "|lc+help " + helpfile.replace('.txt','')+ "|lt" + helpfile.replace('.txt','').title() + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
+            menuTally = 0
+            if len(subFolders) > 0:
+                outputString += "\n+" + "-" * (screenWidth/4 - 7) + "Subsections" + "-" * (screenWidth/4 - 6) + "+"
+                for subSection in subFolders:
+                    if subSection == subFolders[0] or menuTally == 0:
+                        outputString += "\n|| "
+                    if subSection != subFolders[-1] and menuTally < (screenWidth/2 - 4):
+                        menuTally += len(subSection + ", ")
+                        outputString += "|lc+help " + subSection + "|lt" + subSection.title() + "|le, "
+                    else:
+                        menuTally += len(subSection)
+                        outputString += "|lc+help " + subSection + "|lt" + subSection.title() + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
+        if os.path.isfile(fileLocation):
+            headerTitle = args
+            if len(args) % 2 == 1:
+                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(args)/2) + headerTitle.title() + "-" * (screenWidth/4 - len(args)/2 - 1) + "\\"
+            else:
+                boxHeader = "/" + "-" * ((screenWidth/4) - 1 - len(args)/2) + headerTitle.title() + "-" * ((screenWidth/4) - 1 - len(args)/2) + "\\"
+            outputString += boxHeader
+            fileWrap = open(fileLocation,'r+').read().replace("\t","    ").split("\n")
+            for line in fileWrap:
+                if len(line) > (screenWidth/2 - 4):
+                    lineWrap = wrap(line,screenWidth/2 - 4)
+                    for segment in lineWrap:
+                        outputString += "\n|| " + segment
+                        if len(segment) <= (screenWidth/2 - 4):
+                            outputString += " " * ((screenWidth/2 - 4) - len(segment)) + " |"
+                else:
+                    outputString += "\n|| " + line + " " * ((screenWidth/2 - 4) - len(line)) + " |"
+        outputString += "\n\\" + "-" * (screenWidth/2 - 2) + "/"
+        self.caller.msg(outputString)
 class BackgroundCommand(default_cmds.MuxCommand):
     """
     Used to add, remove, or view sections of your character's background.
@@ -2618,7 +2566,7 @@ class ApproveChar(Command):
                 appchar.db.next_lethal = datetime.datetime.now() + datetime.timedelta(days=2)
                 appchar.db.next_agg = datetime.datetime.now() + datetime.timedelta(weeks=1)
                 if appchar.has_account:
-                    appchar.msg("You have been |050approved|n by " + self.caller.name)
+                    appchar.msg("You have been |050approved|n by " + self.caller.account.name)
                 if appchar.db.template == 'Werewolf':
                     appchar.db.next_lethal = datetime.datetime.now() + datetime.timedelta(days=1)
                     appchar.db.next_agg = datetime.datetime.now() + datetime.timedelta(days=3, hours=12)
@@ -2641,7 +2589,7 @@ class ApproveChar(Command):
                 if appchar.location == genroom:
                     appchar.location = nexusroom
                 if appchar.has_account:
-                    appchar.msg("You have been |500unapproved|n by " + self.caller.name)
+                    appchar.msg("You have been |500unapproved|n by " + self.caller.account.name)
                     appchar.msg(nexusroom.return_appearance(appchar))
                 return
             elif appchar.db.approved == False and self.cmdstring == "+unapprove":
@@ -2886,10 +2834,13 @@ class SetPosition(default_cmds.MuxCommand):
     Used to set your position, describing what exactly you do as a staffer.
     """
     key = "+position"
-    lock = "cmd:pperm(Admin)"
+    lock = "cmd:perm(Admin)"
     help_category = "Admin"
     def func(self):
-        self.caller.account.db.position = self.args
+        if inherits_from(self.caller,DefaultAccount):
+            self.caller.db.position = self.args
+        else: 
+            self.caller.account.db.position = self.args
         self.caller.msg("Staff position set to " + self.args)
         return
 class Sheet(default_cmds.MuxCommand):
@@ -3263,13 +3214,16 @@ class ShowStaff(Command):
         adminlist = []
         poslist = []
         timelist = []
-        charlist = DefaultCharacter.objects.filter_family()
-        for char in charlist:
-            if char.IsAccountAdmin() and not char.account.db.dark:
-                adminlist.append(char.account.name)
-                poslist.append(char.account.db.position)
-                if not char.has_account:
-                    timelist.append(utils.time_format(time.time() - char.account.sessions.get()[0].cmd_last_visible,1))
+        acclist = DefaultAccount.objects.filter_family()
+        for acc in acclist:
+            if acc.locks.check_lockstring(acc, "dummy:perm(Admin)") and not acc.db.dark:
+                if acc.is_superuser:
+                    continue
+                adminlist.append(acc.name)
+                poslist.append(acc.db.position)
+                if not acc.is_connected:
+                    self.caller.msg(str(acc.sessions))
+                    timelist.append(utils.time_format(time.time() - acc.sessions.get()[0].cmd_last_visible,1))
                 else:
                     timelist.append('Currently Connected')
         stafftable = evtable.EvTable("Staff Name","Position","Online",table=[adminlist,poslist,timelist],width=78)
@@ -3300,9 +3254,12 @@ class TOS(Command):
     Used to agree to the game's terms of service when first logging on to the game.
     """
     key = "+tos"
-    lock = "cmd:attr(tos_agreed,False)"
+    lock = "cmd:accattr(tos_agreed,False)"
     help_category="OOC"
     def func(self):
+        if self.caller.account.db.tos_agreed == True:
+            self.caller.msg("You've already agreed to the terms of service, no need to do it twice!")
+            return
         tos1_string = ("First, and perhaps foremost. You the player, the person sitting in front of the computer, must be at least eighteen years of age to be able to play here."
                         " We do not make a point of showing explicit material but simply due to the nature of Chronicles of Darkness' setting, it can and will happen. By using "
                         "the next command, you signify on a legal basis that you are in fact at least eighteen years of age. |/ |/Input: VERIFIEDGEEZER")
@@ -3337,7 +3294,7 @@ class TOS(Command):
     def stage3(self, caller, prompt, callback):
         if callback == "COMMUNITY":
             caller.msg("Thank you. Cooperation is an extremely important virtue in community-oriented games.")
-            caller.db.tos_agreed = True
+            caller.account.db.tos_agreed = True
         else:
             caller.msg("If you feel the spirit of our restrictions is too great, we apologize. Our intent is not to deter, but to aid cooperation. If you did not mean to disagree,"
                        " please try using +tos again and input, 'COMMUNITY' in all caps without apostraphes next time.")
@@ -3365,6 +3322,7 @@ class OpenAll(Command):
         settings.INFECTED_STATUS = "Open"
         settings.PLAIN_STATUS = "Open"
         settings.LOSTBOYS_STATUS = "Open"
+        settings.GEIST_STATUS = "Open"
         self.caller.msg("Open Sesame! All spheres are now open. Please note, this may include spheres that are not currently mechanically appropriate for play.")  
 class ManageSpheres(default_cmds.MuxCommand):
     """
@@ -3384,8 +3342,7 @@ class ManageSpheres(default_cmds.MuxCommand):
     def func(self):
         args = self.args.strip()
         switches = self.switches
-        sphereList = ['werewolf','mage','beast','changeling','hunter','demon','promethean','atariya','infected','dreamer','lostboy','plain',
-                      'psyvamp','vampire']
+        sphereList = ['werewolf','mage','beast','changeling','hunter','demon','promethean','atariya','infected','dreamer','lostboys','plain','psyvamp','vampire','geist']
         if args.lower() in sphereList:
             calledSetting = eval('settings.'+args.upper()+'_STATUS')
             if switches[0].lower() == "open":
@@ -3547,6 +3504,14 @@ class SphereStatus(Command):
             statuses.append('PsyVampires: |440Restricted|n')
         else:
             statuses.append('PsyVampires: |440???|n')
+        if settings.GEIST_STATUS == "Open":
+            statuses.append('Sin-Eaters: |040Open|n')
+        elif settings.GEIST_STATUS == "Closed":
+            statuses.append('Sin-Eaters: |400Closed|n')
+        elif settings.GEIST_STATUS == "Restricted":
+            statuses.append('Sin-Eaters: |440Restricted|n')
+        else:
+            statuses.append('Sin-Eaters: |440???|n')
         SphereBox = StatBlock('Sphere Statuses',False,statuses)
         self.caller.msg(SphereBox.Show() + SphereBox.Footer())
 class CloseAll(Command):
@@ -3572,6 +3537,7 @@ class CloseAll(Command):
         settings.INFECTED_STATUS = "Closed"
         settings.PLAIN_STATUS = "Closed"
         settings.LOSTBOYS_STATUS = "Closed"
+        settings.GEIST_STATUS = "Closed"
         self.caller.msg("All spheres closed, only basic mortals and psychics are allowed now.")
         try:
             spherechan = search.channels('Spheres')[0]
@@ -3630,7 +3596,7 @@ class Prove(default_cmds.MuxCommand):
             self.caller.msg("You need to enter a stat to prove!")
             return
         if switches == "effective":
-            for attribute in self.caller.db.attrstats:
+            for attribute in self.caller.db.attributes:
                 if attribute.name.lower() == arglist[0].lower():
                     if rhs != "":
                         try:
@@ -3658,7 +3624,7 @@ class Prove(default_cmds.MuxCommand):
                 if character.account:
                     character.msg(provestring)
         if len(switches) == 0:
-            for attribute in self.caller.db.attrstats.keys():
+            for attribute in self.caller.db.attributes.keys():
                 if attribute.lower() == arglist[0].lower():
                     if attribute[0] in vowels:
                         conjunction = "an"
@@ -3678,7 +3644,7 @@ class Prove(default_cmds.MuxCommand):
                             self.caller.msg("Invalid value to prove.")
                             return
                     else:
-                        provestring = "PROVE: " + str(self.caller) + " has " + conjunction + " " + attribute + " of " + str(self.caller.db.attrstats[attribute])
+                        provestring = "PROVE: " + str(self.caller) + " has " + conjunction + " " + attribute + " of " + str(self.caller.db.attributes[attribute])
                         self.caller.location.msg_contents(provestring)
                         return
             for physskill in self.caller.db.physskills.keys():
@@ -4492,9 +4458,9 @@ class Roll(default_cmds.MuxCommand):
                 result = random.randint(1,10)
                 if result == 10 and any(mod == "weak" for mod in othermods) == False and any(mod2 == "x" for mod2 in othermods) == False:
                     counter -= 1
-                if result >= 9 and (highmod == "9" or highmod == "8"):
+                elif result >= 9 and (highmod == "9" or highmod == "8"):
                     counter -= 1
-                if result >= 8 and highmod == "8":
+                elif result >= 8 and highmod == "8":
                     counter -= 1
                 results.append(result)
                 counter += 1
@@ -4507,14 +4473,15 @@ class Roll(default_cmds.MuxCommand):
                     if successes >= 1:
                         successes -= 1
             counter = 0
-            while counter < rotecount:
-                result = random.randint(1,10)
-                if result >= 8:
-                    successes += 1
-                    if result == 10:
-                        counter -= 1
-                results.append(str(result))
-                counter += 1
+            if highmod == "Rote":
+                while counter < rotecount:
+                    result = random.randint(1,10)
+                    if result >= 8:
+                        successes += 1
+                        if result == 10:
+                            counter -= 1
+                    results.append(str(result))
+                    counter += 1
         else:
             counter = 0
             if dicepool <= 0:
@@ -4534,9 +4501,9 @@ class Roll(default_cmds.MuxCommand):
                 result2 = random.randint(1,10)
                 if result2 == 10 and any(mod == "weak" for mod in othermods) == False and any(mod2 == "x" for mod2 in othermods) == False:
                     counter -= 1
-                if result2 >= 9 and (highmod == "9" or highmod == "8"):
+                elif result2 >= 9 and (highmod == "9" or highmod == "8"):
                     counter -= 1
-                if result2 >= 8 and highmod == "8":
+                elif result2 >= 8 and highmod == "8":
                     counter -= 1
                 results2.append(str(result2))
                 counter += 1
@@ -4569,11 +4536,21 @@ class Roll(default_cmds.MuxCommand):
             tempstring += str(x) + " "
         namestring += " With: "
         if highmod != 0 and len(othermods) > 0:
-            namestring += str(highmod) + ", "
+            if highmod == "8":
+                namestring += "8-again, "
+            elif highmod == "9":
+                namestring += "9-again, "
+            elif highmod == "Rote":
+                namestring += "Rote, "
         if len(othermods) == 0 and highmod == 0:
             namestring += "No Modifiers "
         if highmod != 0 and len(othermods) == 0:
-            namestring += str(highmod) + " "
+            if highmod == "8":
+                namestring += "8-again "
+            elif highmod == "9":
+                namestring += "9-again "
+            elif highmod == "Rote":
+                namestring += "Rote "
         for modifier in othermods:
             if modifier == "weak" and othermods.index(modifier) == len(othermods) - 1:
                 namestring += "Weak "
@@ -4587,7 +4564,6 @@ class Roll(default_cmds.MuxCommand):
                 namestring += "Advanced, "
             if modifier == "advanced" and othermods.index(modifier) == len(othermods) - 1:
                 namestring += "Advanced "
-        resultstring += "Result: "
         padvar = 75
         if successes2 > successes and any(mod4.lower() == "advanced" for mod4 in othermods) == True:
             finalsuccesses = successes2
@@ -5673,12 +5649,12 @@ class SetStat(default_cmds.MuxCommand):
                     return
             elif switches[0] == "attribute":
                 if self.args:
-                    for attrib in self.caller.db.attrstats.keys():
+                    for attrib in self.caller.db.attributes.keys():
                         if self.lhs:
                             if attrib.lower() == self.lhs.lower():
                                 if self.rhs:
                                     try:
-                                        self.caller.db.attrstats[attrib] = int(self.rhs)
+                                        self.caller.db.attributes[attrib] = int(self.rhs)
                                         self.caller.db.attribbase[attrib] = int(self.rhs)
                                         self.caller.msg(attrib + " set to "+self.rhs)
                                         self.caller.Update()
@@ -5778,7 +5754,7 @@ class SetStat(default_cmds.MuxCommand):
                 if self.caller.db.template == "Beast" and switches[0].lower() == "family":
                     for family in self.caller.location.db.atavisms.db.families:
                         if self.args.lower() == family.lower():
-                            self.caller.db.xplst = family
+                            self.caller.db.xsplat = family
                             self.caller.msg("Family set to "+family)
                             return
                     self.caller.msg("That's not a valid family for a Beast to select.")
@@ -5979,27 +5955,27 @@ class SetStat(default_cmds.MuxCommand):
                             return
                     self.caller.msg("Invalid lodge.")
                     return
-                elif switches[0].lower() in demeanorlist:
-                    if switches[0].lower() == "legend" and self.caller.db.template == "Beast":
-                        for legend in self.caller.location.db.atavisms.db.legends:
-                            if legend.lower() == self.args.lower():
-                                self.caller.db.demeanor = legend
-                                self.caller.msg("Legend set to " + legend)
-                                return
-                        self.caller.msg("Invalid legend archetype.")
-                        return
-                    elif self.caller.db.template == "Changeling" and switches[0].lower() == "mask":
+            elif switches[0].lower() in demeanorlist:
+                if switches[0].lower() == "legend" and self.caller.db.template == "Beast":
+                    for legend in self.caller.location.db.atavisms.db.legends:
+                        if legend.lower() == self.args.lower():
+                            self.caller.db.demeanor = legend
+                            self.caller.msg("Legend set to " + legend)
+                            return
+                    self.caller.msg("Invalid legend archetype.")
+                    return
+                elif self.caller.db.template == "Changeling" and switches[0].lower() == "mask":
                         for masque in self.caller.location.db.contracts.db.archetypes:
                             if masque.lower() == self.args.lower():
                                 self.caller.db.demeanor = masque
                                 self.caller.msg("Mask set to " + masque)
                                 return
                         self.caller.msg("Invalid mask archetype.")
-                    elif self.caller.db.template == "Demon" or self.caller.db.template == "Hunter" or self.caller.db.template == "Mage" or self.caller.db.template == "Mummy" or self.caller.db.template == "Mortal" and switches[0].lower() == "virtue":
+                elif self.caller.db.template == "Demon" or self.caller.db.template == "Hunter" or self.caller.db.template == "Mage" or self.caller.db.template == "Mummy" or self.caller.db.template == "Mortal" and switches[0].lower() == "virtue":
                         self.caller.db.demeanor = self.args.title()
                         self.caller.msg("Virtue set to " + self.args.title())
                         return
-                    elif self.caller.db.template == "Promethean":
+                elif self.caller.db.template == "Promethean":
                         for elpis in self.caller.location.db.transmutations.db.elpides:
                             if elpis.lower() == self.args.lower():
                                 self.caller.db.demeanor = elpis
@@ -6007,7 +5983,7 @@ class SetStat(default_cmds.MuxCommand):
                                 return
                         self.caller.msg('Invalid elpis.')
                         return
-                    elif self.caller.db.template == "Vampire" and switches[0].lower() == "mask":
+                elif self.caller.db.template == "Vampire" and switches[0].lower() == "mask":
                         for mask in self.caller.location.db.disciplines.db.archetypes:
                             if mask.lower() == self.args.lower():
                                 self.caller.db.demeanor = mask
@@ -6015,7 +5991,7 @@ class SetStat(default_cmds.MuxCommand):
                                 return
                         self.caller.msg("Invalid mask archetype..")
                         return
-                    elif self.caller.db.template == "Werewolf" and switches[0].lower() == "blood":
+                elif self.caller.db.template == "Werewolf" and switches[0].lower() == "blood":
                         for blood in self.caller.location.db.gifts.db.blood:
                             if blood.lower() == self.args.lower():
                                 self.caller.db.demeanor = blood
@@ -6023,11 +5999,11 @@ class SetStat(default_cmds.MuxCommand):
                                 return
                         self.caller.msg("Invalid blood archetype.")
                         return
-                elif switches[0].lower() in naturelist:
-                    if self.caller.db.template == "Changeling" and switches[0].lower() == "mask":
+            elif switches[0].lower() in naturelist:
+                    if self.caller.db.template == "Beast" and switches[0].lower() == "life":
                         for life in self.caller.location.db.atavisms.db.lives:
                             if life.lower() == self.args.lower():
-                                self.caller.db.demeanor = life
+                                self.caller.db.nature = life
                                 self.caller.msg("Life set to " + life)
                                 return
                         self.caller.msg("Invalid life archetype.")

@@ -24,3 +24,5 @@ def demonpage(request):
     return render(request, 'demonpage/demonmain.html')
 def beastcustom(request):
     return render(request, 'beastpage/beastcustom.html')
+def beastrules(request):
+    return render(request, 'beastpage/beastrules.html')

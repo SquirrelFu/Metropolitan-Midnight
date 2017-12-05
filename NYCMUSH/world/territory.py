@@ -3,7 +3,7 @@ Created on Jan 22, 2017
 
 @author: CodeKitty
 '''
-from typeclasses import rooms
+import typeclasses.rooms
 from evennia import default_cmds
 from downtime import DownTime
 from evennia.utils import search
@@ -39,7 +39,7 @@ class Extract(default_cmds.MuxCommand):
         if cmdstring == "+locus":
             if len(area.db.features) != 0:
                 for feature in area.db.features:
-                    if isinstance(feature, rooms.Locus):
+                    if isinstance(feature, typeclasses.rooms.Locus):
                         try:
                             if int(arglist[0]) >= 1:
                                 self.caller.PoolGain('Essence',int(arglist[0]))
@@ -59,7 +59,7 @@ class Extract(default_cmds.MuxCommand):
             if self.caller.db.template == "Mage" or self.caller.db.template == "Proximus":
                 if len(area.db.features) != 0:
                     for feature in area.db.features.keys():
-                        if isinstance(area.db.features[feature], rooms.Hallow):
+                        if isinstance(area.db.features[feature], typeclasses.rooms.Hallow):
                             feature = area.db.features[feature]
                             if self.caller.db.downtime <= 0:
                                 self.caller.msg("You don't have enough downtime to oblate at a hallow!")
@@ -173,6 +173,26 @@ class Extract(default_cmds.MuxCommand):
             else:
                 self.caller.msg("There's no hallow here from which to extract mana!")
 class Hunt(default_cmds.MuxCommand):
+    """
+    Used to spend downtime and automatically roll, in order to acquire your template's
+    expendable pool.
+    
+    Usage:
+        +feed[/ambush|seduce|animals] [<target>]: For vampires, rolls Strength + Streetwise for Ambush,
+        Manipulation + Persuasion for Seduce, Wits + Survival for Animals. Returns (Successes)
+        vitae and costs 1 hour of downtime. If a target is given, it will attempt to feed on that
+        individual instead. Please note that the other individual must give their consent for you
+        to feed on them, OOCly. THis does not represent IC consent, so feeding in combat is still
+        possible.
+        
+        +sate[/family] [<downtime|amount>]=[<reason>]: For Beasts, rolls a baseline of 1 die, with extra downtime providing
+        extra dice at a 1:1 ratio. If the /family switch is used, this will instead gain one satiety due to
+        another supernatural entity gaining their expendable in your IC presence. Please note that
+        using this feature requires that you provide a short, one-sentence reason as otherwise it
+        could lead to unlimited satiety.
+        
+        
+    """
     key = "+feed"
     aliases = ["+harvest","+sate","+drain","+reap","+hunt"]
     help_category = "Gameplay"
@@ -186,6 +206,9 @@ class Hunt(default_cmds.MuxCommand):
         timeinstance = DownTime()
         if cmdstring == "+feed":
             if template == "Vampire":
+                if self.caller.db.powerstat >= 6 and not args:
+                    self.caller.msg("You can't feed on common prey anymore, look to your fellow kindred for sustenance.")
+                    return
                 if switches[0].lower() == "ambush":
                     dicepool = self.caller.db.attributes['Strength'] + self.caller.db.sockills['Streetwise']
                     dicecount = 0
@@ -232,7 +255,7 @@ class Hunt(default_cmds.MuxCommand):
                                 try:
                                     jobchan = search.channels('Jobs')[0]
                                 except IndexError:
-                                    jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+                                    jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
                                 date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")
                                 gen_deadline = datetime.datetime.now() + datetime.timedelta(days=7)
                                 gen_deadline = gen_deadline.time.strftime("%a %b %d")
@@ -295,7 +318,7 @@ class Hunt(default_cmds.MuxCommand):
                                 try:
                                     jobchan = search.channels('Jobs')[0]
                                 except IndexError:
-                                    jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+                                    jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
                                 date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")
                                 gen_deadline = datetime.datetime.now() + datetime.timedelta(days=7)
                                 gen_deadline = gen_deadline.time.strftime("%a %b %d")
@@ -361,7 +384,7 @@ class Hunt(default_cmds.MuxCommand):
                                     try:
                                         jobchan = search.channels('Jobs')[0]
                                     except IndexError:
-                                        jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+                                        jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
                                     date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")
                                     gen_deadline = datetime.datetime.now() + datetime.timedelta(days=7)
                                     gen_deadline = gen_deadline.time.strftime("%a %b %d")
@@ -565,6 +588,10 @@ class Hunt(default_cmds.MuxCommand):
                 self.caller.msg("Only changelings may harvest glamour.")
         if cmdstring == "+sate":
             if template == "Beast":
+                if switches[0].lower() == "family" and args:
+                    self.caller.db.timelog.append(timeinstance.TimeLog(0,territory,"Family dinner due to: " + args))
+                    self.caller.db.sanity += 1
+                    return
                 dicepool = 1
                 dicecount = 0
                 try:
@@ -669,7 +696,7 @@ class Hunt(default_cmds.MuxCommand):
                                 try:
                                     jobchan = search.channels('Jobs')[0]
                                 except IndexError:
-                                    jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+                                    jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
                                 date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")
                                 gen_deadline = datetime.datetime.now() + datetime.timedelta(days=7)
                                 gen_deadline = gen_deadline.time.strftime("%a %b %d")
@@ -735,7 +762,7 @@ class Hunt(default_cmds.MuxCommand):
                                     try:
                                         jobchan = search.channels('Jobs')[0]
                                     except IndexError:
-                                        jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+                                        jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
                                     date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")
                                     gen_deadline = datetime.datetime.now() + datetime.timedelta(days=7)
                                     gen_deadline = gen_deadline.time.strftime("%a %b %d")
@@ -796,7 +823,7 @@ class Hunt(default_cmds.MuxCommand):
                                     try:
                                         jobchan = search.channels('Jobs')[0]
                                     except IndexError:
-                                        jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+                                        jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
                                     date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")
                                     gen_deadline = datetime.datetime.now() + datetime.timedelta(days=7)
                                     gen_deadline = gen_deadline.time.strftime("%a %b %d")

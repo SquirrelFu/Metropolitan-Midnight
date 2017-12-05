@@ -36,7 +36,6 @@ from world.aspirations import AspireCmd
 from command import OOCMasq
 from world.territory import Hunt
 from world.territory import Extract
-from typeclasses.rooms import AddHallow
 from command import ManageSpheres
 from command import SetChannelColor
 class CharacterCmdSet(default_cmds.CharacterCmdSet):
@@ -78,17 +77,12 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(JobCommand())
         self.add(RequestCommand())
         self.add(PlayerEmit())
-        self.add(command.BookRef)
-        self.add(command.ShowStaff())
         self.add(command.Prove())
         self.add(BeatCommand)
-        self.add(command.SphereStatus)
         self.add(command.ShortDesc)
-        self.add(command.SetStatus)
         self.add(command.NoteCommand)
         self.add(command.TimeDesc)
         self.add(AspireCmd)
-        self.add(OOCMasq)
 class LocationCmdSet(CmdSet):
 #Used for individual locations. One per building, even if multiple rooms are attached to it.
     def at_cmdset_creation(self):
@@ -98,7 +92,6 @@ class GridCmdSet(CmdSet):
     def at_cmdset_creation(self):
         self.add(Hunt)
         self.add(Extract)
-        self.add(AddHallow)
         super(GridCmdSet, self).at_cmdset_creation()
 class ChargenCmdSet(CmdSet):
     """
@@ -150,6 +143,19 @@ class AccountCmdSet(default_cmds.AccountCmdSet):
         Populates the cmdset
         """
         super(AccountCmdSet, self).at_cmdset_creation()
+        self.add(command.SetPosition())
+        self.add(command.BookRef)
+        self.add(command.ShowStaff())
+        self.add(command.SphereStatus)
+        self.add(ManageSpheres())
+        self.add(SetChannelColor())
+        self.add(ManageXP())
+        self.add(StatOther())
+        self.add(command.Hide())
+        self.add(command.Panic())
+        self.add(command.CloseAll())
+        self.add(command.OpenAll())
+        self.add(command.SetStatus)
         #
         # any commands you add below will overload the default ones.
         #
@@ -158,18 +164,11 @@ class AdminSet(CmdSet):
     key = "AdminSet"
     def at_cmdset_creation(self):
         super(AdminSet, self).at_cmdset_creation()
-        self.add(command.Panic())
-        self.add(command.CloseAll())
-        self.add(command.OpenAll())
         self.add(command.MarkNPC())
-        self.add(ManageSpheres())
         self.add(command.SpaceArchMastery())
-        self.add(StatOther())
-        self.add(command.Hide())
-        self.add(command.SetPosition())
-        self.add(ManageXP())
+
         self.add(command.ApproveChar)
-        self.add(SetChannelColor())
+
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """
     Command set available to the Session before being logged in.  This

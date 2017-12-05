@@ -1,6 +1,6 @@
 The classic predator of mortals, vampires obviously need blood to survive and in some respects are the most straightforward of the templates. Their nocturnal tendencies are not enforced on an out-of-character basis, yet they still remain as a notable in-character consideration. Regardless, they do not receive a penalty to how often they can hunt or take other actions on account of having a very similar amount of time to act even if it's at a different time within a 24-hour timeframe. That said, vampires have multiple options for feeding as they can maneuver their prey into varying positions. The first is force. Force involves attempting to simply ambush people in one of NYC's many back alleys and shadowed corners, and is a roll of Strength + Streetwise. The second is seduction. Despite the name, this need not always involve leveraging sexuality yet given the basic nature of such an idea many vampires find it advantageous to do so, and is a roll of Manipulation + Persuasion. Finally, you can feed on animals if you are below blood potency three and in doing so use a dicepool of Wits + Survival + 1. A public feeding ground AKA rack adds +2 to this roll.
 
-Comands:
+Commands:
 	+feed/ambush (Strength + Streetwise)
 	+feed/seduce (Manipulation + Persuasion)
 	+feed/animal (Wits + Survival + 1)

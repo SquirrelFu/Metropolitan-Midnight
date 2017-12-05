@@ -36,7 +36,7 @@ class Exit(DefaultExit):
     pass
 class FirstExit(Exit):
     def at_object_creation(self):
-        self.locks.add("traverse:attr(tos_agreed,True)")
+        self.locks.add("traverse:accattr(tos_agreed,True)")
     def at_failed_traverse(self, traversing_object):
         traversing_object.msg("You must agree to the terms of service through +tos first!")
 class ICExit(Exit):

@@ -7,6 +7,7 @@ from evennia import default_cmds
 from evennia.utils import search
 from string import capwords
 import re
+from evennia.scripts.scripts import DefaultScript
 class ManageXP(default_cmds.MuxCommand):
     """
     Used to manage experience points. Players can check their own XP, while admins can spend XP for players.
@@ -17,7 +18,7 @@ class ManageXP(default_cmds.MuxCommand):
         +xp/award <Amount>=<Reason> Similar to the previous, except it adds beats instead of taking away whole experiences.
     """
     key = "+xp"
-    locks = "cmd:pperm(Wizards)"
+    locks = "cmd:pperm(Admin)"
     help_category="Admin"
     def func(self):
         lhs = self.lhs
@@ -99,9 +100,11 @@ class StatOther(default_cmds.MuxCommand):
         to the World of Darkness, "Nature" system.
         +pstat/spec <Character>/<Skill>=<Specialty> Used to set a specialty on a character. Like players setting specialty on their
         characters, including an asterisk in the setting code will remove that specialty if it is present.
+        +pstat/powers <Character>/<Power Name>=[<rank>] Adds a power to the character at <Rank> if the power has a rank. If not, it
+        just adds it unto itself.
     """
     key = "+pstat"
-    locks = "cmd:pperm(Wizards)"
+    locks = "cmd:pperm(Admin)"
     help_category="Admin"
     def func(self):
         args = self.args
@@ -140,7 +143,14 @@ class StatOther(default_cmds.MuxCommand):
             if lhs == target.name:
                 self.caller.msg("You have to select a merit to add to the character.")
                 return
-            meritscript = search.scripts('MeritHandler')[0]
+            scriptList = DefaultScript.objects.filter_family()
+            for scriptsearch in scriptList:
+                if scriptsearch.key == 'MeritHandler':
+                    meritscript = scriptsearch
+                    break
+            if not meritscript:
+                self.caller.msg("Chargen not created, please set it up first.")
+                return
             overlist = []
             for x in meritscript.db.mental:
                 overlist.append(x)
@@ -609,6 +619,7 @@ class StatOther(default_cmds.MuxCommand):
                         return
                 self.caller.msg("Invalid lodge.")
                 return
+        
         elif switches[0].lower() == "powers":
             discscript = search.scripts('VampireStats')[0]
             beastscript = search.scripts('BeastStats')[0]
@@ -623,7 +634,7 @@ class StatOther(default_cmds.MuxCommand):
             if template == "Wolfblood":
                 tells = wolfscript.db.tells
                 for fur in tells:
-                    if fur[0].lower() == args.lower():
+                    if fur[0].lower() == lhs.lower():
                         if len(target.db.powers) == 0:
                             target.db.powers[fur[0]] = ''
                             self.caller.msg(fur[0] +" tell added.")
@@ -639,7 +650,6 @@ class StatOther(default_cmds.MuxCommand):
                             return
                 self.caller.msg("Invalid tell.")
                 return
-            return
             if template == "Beast":
                 rawr = beastscript.db.atavisms
                 #Library of atavisms in the chargen room.
@@ -647,7 +657,7 @@ class StatOther(default_cmds.MuxCommand):
                 #Library of nightmares in the chargen room.
                 for smash in rawr:
                 #Iterate through the library of atavisms
-                    if smash[0].lower() == self.args.lower():
+                    if smash[0].lower() == lhs.lower():
                     #If the atavism is found in the library, set the relevant dictionary entry to string zero, as it has no value attached.
                         try:
                             testvar = powers[smash[0]]
