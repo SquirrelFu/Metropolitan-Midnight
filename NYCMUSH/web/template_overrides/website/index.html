@@ -2,6 +2,7 @@
 {% load static %}
 {% load charactertags %}
 {% block content %}
+
 <head>
 <link rel='stylesheet' href='{% static "website/css/homepage.css"%}'/>
 </head>
@@ -10,7 +11,6 @@
 <tr><td>Welcome to the website for Metropolitan Midnight! We're a Chronicles of Darkness MUSH set in New York City, in the modern era. Developed to facilitate as many character types as possible
 for play, staff works to ensure a fun and engaging atmosphere for all its players. Below and to the left are the statuses of the varying character venues we currently have. If open, character
 creation is unrestricted. If closed, no more characters of this type may be made. If restricted, there are partial limitations on the characters being created.
-Test Text
 </td>
 </tr>
 </table>
@@ -47,6 +47,14 @@ Test Text
 <tr><td><a class='spherelink' href='/mage'>Mage: <span style='color:red'>Closed</span></a></td></tr>
 {% elif mage == "Restricted" %}
 <tr><td><a class='spherelink' href='/mage'>Mage: <span style='color:yellow'>Restricted</span></a></td></tr>
+{% endif %}
+{% promstatus as prommie %}
+{% if prommie == "Open" %}
+<tr><td><a class='spherelink' href='/promethean'>Promethean: <span style='color:green'>Open</span></a></td></tr>
+{% elif prommie == "Closed" %}
+<tr><td><a class='spherelink' href='/promethean'>Promethean: <span style='color:red'>Closed</span></a></td></tr>
+{% elif prommie == "Restricted" %}
+<tr><td><a class='spherelink' href='/promethean'>Promethean: <span style='color:yellow'>Restricted</span></a></td></tr>
 {% endif %}
 {% vampstatus as vampire %}
 {% if vampire == "Open" %}

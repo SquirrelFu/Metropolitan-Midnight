@@ -63,17 +63,25 @@ class Character(gendersub.GenderCharacter):
                 return self.name + "\nThis character seems particularly unremarkable."
     def at_post_puppet(self):
         super(Character, self).at_post_puppet()
-        if self.db.last_login == "":
-            self.db.last_login = datetime.now()
-            if self.db.last_login.hour == 0 and self.db.approved:
-                self.Refresh()
-            elif not self.db.approved:
-                pass
-        else:
-            if self.db.last_login.day < datetime.now().day:
-                if self.db.approved:
-                    self.Refresh()
+        try:
+            if self.db.last_login == "":
                 self.db.last_login = datetime.now()
+                if self.db.last_login.hour == 0 and self.db.approved:
+                    self.Refresh()
+                elif not self.db.approved:
+                    pass
+            else:
+                if self.db.last_login.day < datetime.now().day:
+                    if self.db.approved:
+                        self.Refresh()
+                    self.db.last_login = datetime.now()
+        except AttributeError:
+            if self.db.last_login.day < datetime.now().day:
+                    if self.db.approved:
+                        self.Refresh()
+                    self.db.last_login = datetime.now()
+            
+        
     def at_object_creation(self):
         default_cmdsets = commands.default_cmdsets
         self.db.mundanestatus = ["Status (City Hall)","Status (Entertainment)","Status (Industry)","Status (Police)","Status (Street)","Status (Community)","Status (Internet)"

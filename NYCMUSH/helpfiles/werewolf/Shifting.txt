@@ -1,0 +1,4 @@
+There exists a system for werewolf forms, and accordingly anyone with the werewolf template may use the command, "+shift" to assume a different form than the one they have now. Shortdesc (+help shortdesc) and normal description are swapped out for whatever you last set your description in that form to. Likewise, stat modifiers are applied and derived stats changed based on the form assumed.
+
+Commands:
+    +shift <Hishu/Dalu/Gauru/Urshul/Urhan>

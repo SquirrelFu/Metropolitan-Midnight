@@ -7,18 +7,18 @@ help.
 from django.conf.urls import url, include
 # default evennia patterns
 from evennia.web.urls import urlpatterns
-from web.character.views import mplusrules
-from web.character.views import beastpage
-from web.character.views import mpluspage
-from web.character.views import territorypage
-from web.character.views import bookpage
+from web.site.views import mplusrules
+from web.site.views import beastpage
+from web.site.views import mpluspage
+from web.site.views import territorypage
+from web.site.views import bookpage
 from web.charwiki.views import charlist
 from web.charwiki.views import charpage
-from web.character.views import magepage
-from web.character.views import magerules
-from web.character.views import demonpage
-from web.character.views import beastcustom
-from web.character.views import beastrules
+from web.site.views import magepage
+from web.site.views import magerules
+from web.site.views import demonpage
+from web.site.views import beastcustom
+from web.site.views import beastrules
 # eventual custom patterns
 custom_patterns = [
     url(r'^mplus/rules/$', mplusrules),
@@ -32,7 +32,7 @@ custom_patterns = [
     url(r'^mage/rules/$', magerules),
     url(r'^demon/$',demonpage),
     url(r'^beast/customs/$',beastcustom),
-    url(r'^beast/rules/%',beastrules)
+    url(r'^beast/rules/$',beastrules)
     ]
 
 # this is required by Django.

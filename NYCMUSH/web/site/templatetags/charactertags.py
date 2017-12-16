@@ -35,6 +35,9 @@ def wolfstatus():
 def magestatus():
     return str(settings.MAGE_STATUS)
 @register.simple_tag
+def promstatus():
+    return str(settings.PROMETHEAN_STATUS)
+@register.simple_tag
 def huntstatus():
     return str(settings.HUNTER_STATUS)
 @register.simple_tag

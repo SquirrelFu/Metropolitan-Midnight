@@ -2274,7 +2274,8 @@ class MUSHHelp(Command):
             if '__init__.py' in subFiles: subFiles.remove('__init__.py')
             if 'Main.txt' in subFiles: subFiles.remove('Main.txt')
             if 'main.txt' in subFiles: subFiles.remove('main.txt')
-            if 'admin' in subFolders and not self.caller.IsAdmin(): subFolders.remove('admin')
+            adminCheck = self.caller.locks.check_lockstring(self.caller,'dummy:perm(Admin)')
+            if 'admin' in subFolders and not adminCheck: subFolders.remove('admin')
             if len(subFiles) > 0:
                 outputString += "\n+" + "-" * (screenWidth/4 - 4) + "Files" + "-" * (screenWidth/4 - 3) +  "+"
                 for helpfile in subFiles:
@@ -3270,18 +3271,28 @@ class TOS(Command):
         self.tos2_string = ("Secondly. You must hereby promise not to attempt to subvert, disrupt, hack, or otherwise harm the operation of this server's software. Modification is to only"
                        " be performed with the express consent of headstaff, as a member of staff. Duplication and redistribution is allowed. By entering the next command, you"
                        " agree to not attack the server in any form.|/|/Input: PEACETREATY")
-        self.tos3_string = ("Finally, you must give your word to not harass, abuse, or otherwise treat with malice staff or your fellow players. This game can only succeed through"
+        self.tos3_string = ("Thirdly, you must give your word to not harass, abuse, or otherwise treat with malice staff or your fellow players. This game can only succeed through"
                        "cooperation. If you wish to resolve matters with another player one on one you may, but must be willing to provide a log of the discussion as recorded during the discussion should the"
                        " situation escalate. Staff is not here to jump on your honest mistakes, nor are we here to play favorites. But if you do in fact try to abuse staff's"
                        " good will, you will be treated as any other breaker of our rules. As an addendum though not a formal rule, we will note that conflict of characters should"
                        " stay between characters, and conflict of players between players in a civil manner. Player characters conflicting is not forbidden, malicious exchanges"
-                       " are. To agree to the rule against abuse, please enter the following command.|/|/Input: COMMUNITY")
+                       " are. Finally, an admittedly somewhat vague yet necessary statement. We understand that not all conflict is born of malice. Sometimes common misunderstandings"
+                       " or else, abrasive mannerisms are to blame. Yet to promote a healthy MUSH, we ask that you try to learn from your mistakes as to what annoys other people. If you are continually"
+                       " coming into conflict with other players and making the MUSH a place that just isn't fun to be in, there will be grounds for staff action against you. That's not to say that all"
+                       " players must be smiles and sunshine all the time, but creating an atmosphere of hostility or negativity is harmful to everyone. To agree to the rules regarding cooperation, please enter the following command.|/|/Input: COMMUNITY")
+        self.tos4_string = ("Finally, staff on Metropolitan Midnight asks that you not bring drama from other games to this game. We understand that conflicts do not go away because they are "
+                            "not spoken of, but neither does drama once brought to the MUSH. Everyone dragged into it gets hurt, and incidents are remembered even if we choose to move past them. "
+                            "If you truly believe an individual's behavior will lead to problems on the MUSH then please, let staff take care of it and trust that they will incriminate themselves "
+                            "in time rather than attempting to 'Warn' other people about this individual. If you have concerns about something someone has done /on this MUSH/ then please let us know. "
+                            "Otherwise, we ask that you keep it to yourself. If you agree to this final clause please enter the word below.|/|/Input: DRAMALLAMA")
         if self.caller.db.tos_stage == 0:
             get_input(self.caller,tos1_string,self.stage1)
         if self.caller.db.tos_stage == 1:
             get_input(self.caller,self.tos2_string,self.stage2)
         if self.caller.db.tos_stage == 2:
             get_input(self.caller, self.tos3_string,self.stage3)
+        if self.caller.db.tos_stage == 3:
+            get_input(self.caller, self.tos4_string,self.stage4)
     def stage1(self, caller, prompt, callback):
         if callback == "VERIFIEDGEEZER":
             caller.msg("Understood. Please use +tos again to proceed to the next step.")
@@ -3298,10 +3309,18 @@ class TOS(Command):
     def stage3(self, caller, prompt, callback):
         if callback == "COMMUNITY":
             caller.msg("Thank you. Cooperation is an extremely important virtue in community-oriented games.")
-            caller.account.db.tos_agreed = True
+            caller.db.tos_stage = 3
+            
         else:
             caller.msg("If you feel the spirit of our restrictions is too great, we apologize. Our intent is not to deter, but to aid cooperation. If you did not mean to disagree,"
                        " please try using +tos again and input, 'COMMUNITY' in all caps without apostraphes next time.")
+    def stage4(self, caller, prompt, callback):
+        if callback == "DRAMALLAMA":
+            caller.msag("And that's it! Thank you for not bringing problems where they are not needed. Head through the exit to enter the game!")
+            caller.account.db.tos_agreed = True
+        else:
+            caller.msg("If you do not wish to agree to the ban on inter-MUSH drama, that is your choice. However, staff on Metropolitan Midnight asks that gossip be left alone and old wounds left to heal. "
+            "If you meant to agree please input, 'DRAMALLAMA' in all caps without apostraphes next time.")
         
 class OpenAll(Command):
     """
@@ -3348,7 +3367,7 @@ class ManageSpheres(default_cmds.MuxCommand):
         switches = self.switches
         sphereList = ['werewolf','mage','beast','changeling','hunter','demon','promethean','atariya','infected','dreamer','lostboys','plain','psyvamp','vampire','geist']
         if args.lower() in sphereList:
-            calledSetting = eval('settings.'+args.upper()+'_STATUS')
+            calledSetting = getattr('settings',args.upper()+'_STATUS')
             if switches[0].lower() == "open":
                 if calledSetting != "Open":
                     setattr(settings,self.args.upper() + '_STATUS','Open')
@@ -3387,135 +3406,40 @@ class SphereStatus(Command):
     lock = "cmd:all()"
     help_category="OOC"
     def func(self):
+        sphereList = ['vampire','werewolf','mage','changeling','beast','hunter','promethean','mummy','demon','atariya',
+                      'dreamer','plain','infected','psyvampires','sin-eaters']
         statuses = []
-        if settings.VAMPIRE_STATUS == "Closed":
-            statuses.append("Vampire: |400Closed|n")
-        elif settings.VAMPIRE_STATUS == "Open":
-            statuses.append("Vampire: |040Open|n")
-        elif settings.VAMPIRE_STATUS == "Restricted":
-            statuses.append("Vampire: |440Restricted|n")
-        else:
-            statuses.append("Vampire: |440???|n")
-        if settings.WEREWOLF_STATUS == "Closed":
-            statuses.append("Werewolf: |400Closed|n")
-        elif settings.WEREWOLF_STATUS == "Open":
-            statuses.append("Werewolf: |040Open|n")
-        elif settings.WEREWOLF_STATUS == "Restricted":
-            statuses.append("Werewolf: |440Restricted|n")
-        else:
-            statuses.append("Werewolf: |440???|n")
-        if settings.MAGE_STATUS == "Closed":
-            statuses.append('Mage: |400Closed|n')
-        elif settings.MAGE_STATUS == "Open":
-            statuses.append('Mage: |040Open|n')
-        elif settings.MAGE_STATUS == "Restricted":
-            statuses.append('Mage: |440Restricted|n')
-        else:
-            statuses.append('Mage: |440???|n')
-        if settings.CHANGELING_STATUS == "Closed":
-            statuses.append('Changeling: |400Closed|n')
-        elif settings.CHANGELING_STATUS == "Open":
-            statuses.append('Changeling: |040Open|n')
-        elif settings.CHANGELING_STATUS == "Restricted":
-            statuses.append('Changeling: |440Restricted|n')
-        else:
-            statuses.append('Changeling: |440???|n')
-        if settings.BEAST_STATUS == "Closed":
-            statuses.append('Beast: |400Closed|n')
-        elif settings.BEAST_STATUS == "Open":
-            statuses.append('Beast: |040Open|n')
-        elif settings.BEAST_STATUS == "Restricted":
-            statuses.append('Beast: |440Restricted|n')
-        else:
-            statuses.append('Beast: |440???|n')
-        if settings.HUNTER_STATUS == 'Open':
-            statuses.append('Hunter: |040Open|n')
-        elif settings.HUNTER_STATUS == 'Closed':
-            statuses.append('Hunter: |400Closed|n')
-        elif settings.HUNTER_STATUS == 'Restricted':
-            statuses.append('Hunter: |440Restricted|n')
-        else:
-            statuses.append('Hunter: |440???|n')
-        if settings.PROMETHEAN_STATUS == 'Open':
-            statuses.append('Promethean: |040Open|n')
-        elif settings.PROMETHEAN_STATUS == 'Closed':
-            statuses.append('Promethean: |400Closed|n')
-        elif settings.PROMETHEAN_STATUS == 'Restricted':
-            statuses.append('Promethean: |440Restricted|n')
-        else:
-            statuses.append('Promethean: |440???|n')
-        if settings.MUMMY_STATUS == 'Open':
-            statuses.append('Mummy: |040Open|n')
-        elif settings.MUMMY_STATUS == 'Closed':
-            statuses.append('Mummy: |400Closed|n')
-        elif settings.MUMMY_STATUS == 'Restricted':
-            statuses.append('Mummy: |440Restricted|n')
-        else:
-            statuses.append('Mummy: |440???|n')
-        if settings.DEMON_STATUS == 'Closed':
-            statuses.append('Demon: |400Closed|n')
-        elif settings.DEMON_STATUS == 'Open':
-            statuses.append('Demon: |040Open|n')
-        elif settings.DEMON_STATUS == 'Restricted':
-            statuses.append('Demon: |440Restricted|n')
-        else:
-            statuses.append('Demon: |440???|n')
-        if settings.ATARIYA_STATUS == 'Open':
-            statuses.append('Atariya: |040Open|n')
-        elif settings.ATARIYA_STATUS == 'Closed':
-            statuses.append('Atariya: |400Closed|n')
-        elif settings.ATARIYA_STATUS == 'Restricted':
-            statuses.append('Atariya: |440Restricted|n')
-        else:
-            statuses.append('Atariya: |440???|n')
-        if settings.DREAMER_STATUS == 'Open':
-            statuses.append('Dreamers: |040Open|n')
-        elif settings.DREAMER_STATUS == 'Closed':
-            statuses.append('Dreamers: |400Closed|n')
-        elif settings.DREAMER_STATUS == 'Restricted':
-            statuses.append('Dreamers: |440Restricted|n')
-        else:
-            statuses.append('Dreamers: |440???|n')
-        if settings.INFECTED_STATUS == 'Open':
-            statuses.append('Infected: |040Open|n')
-        elif settings.INFECTED_STATUS == 'Closed':
-            statuses.append('Infected: |400Closed|n')
-        elif settings.INFECTED_STATUS == 'Restricted':
-            statuses.append('Infected: |440Restricted|n')
-        else:
-            statuses.append('Infected: |440???|n')
-        if settings.LOSTBOYS_STATUS == 'Open':
-            statuses.append('Lost Boys: |040Open|n')
-        elif settings.LOSTBOYS_STATUS == 'Closed':
-            statuses.append('Lost Boys: |400Closed|n')
-        elif settings.LOSTBOYS_STATUS == 'Restricted':
-            statuses.append('Lost Boys: |440Restricted|n')
-        else:
-            statuses.append('Lost Boys: |440???|n')
-        if settings.PLAIN_STATUS == 'Open':
-            statuses.append('The Plain: |040Open|n')
-        elif settings.PLAIN_STATUS == 'Closed':
-            statuses.append('The Plain: |400Closed|n')
-        elif settings.PLAIN_STATUS == 'Restricted':
-            statuses.append('The Plain: |440Restricted|n')
-        else:
-            statuses.append('The Plain: |440???|n')
-        if settings.PSYVAMP_STATUS == 'Open':
-            statuses.append('PsyVampires: |040Open|n')
-        elif settings.PSYVAMP_STATUS == 'Closed':
-            statuses.append('PsyVampires: |400Closed|n')
-        elif settings.PSYVAMP_STATUS == 'Restricted':
-            statuses.append('PsyVampires: |440Restricted|n')
-        else:
-            statuses.append('PsyVampires: |440???|n')
-        if settings.GEIST_STATUS == "Open":
-            statuses.append('Sin-Eaters: |040Open|n')
-        elif settings.GEIST_STATUS == "Closed":
-            statuses.append('Sin-Eaters: |400Closed|n')
-        elif settings.GEIST_STATUS == "Restricted":
-            statuses.append('Sin-Eaters: |440Restricted|n')
-        else:
-            statuses.append('Sin-Eaters: |440???|n')
+        for sphere in sphereList:
+            if sphere != 'sin-eaters' and sphere != 'psyvampires':
+                sphereState = getattr(settings,sphere.upper() + "_STATUS")
+                if sphereState == 'Open':
+                    statuses.append(sphere.title() + ": |040Open|n")
+                elif sphereState == 'Closed':
+                    statuses.append(sphere.title() + ": |400Closed|n")
+                elif sphereState == 'Restricted':
+                    statuses.append(sphere.title() + ": |440Restricted|n")
+                else:
+                    statuses.append(sphere.title() + ": |440???|n")
+            elif sphere == 'sin-eaters':
+                sphereState = getattr(settings,'GEIST_STATUS')
+                if sphereState == 'Open':
+                    statuses.append(sphere.title() + ": |040Open|n")
+                elif sphereState == 'Closed':
+                    statuses.append(sphere.title() + ": |400Closed|n")
+                elif sphereState == 'Restricted':
+                    statuses.append(sphere.title() + ": |440Restricted|n")
+                else:
+                    statuses.append(sphere.title() + "|440???|n")
+            elif sphere == 'psyvampires':
+                sphereState = getattr(settings,'PSYVAMP_STATUS')
+                if sphereState == 'Open':
+                    statuses.append(sphere.title() + ": |040Open|n")
+                elif sphereState == 'Closed':
+                    statuses.append(sphere.title() + ": |400Closed|n")
+                elif sphereState == 'Restricted':
+                    statuses.append(sphere.title() + ": |440Restricted|n")
+                else:
+                    statuses.append(sphere.title() + "|440???|n")
         SphereBox = StatBlock('Sphere Statuses',False,statuses)
         self.caller.msg(SphereBox.Show() + SphereBox.Footer())
 class CloseAll(Command):

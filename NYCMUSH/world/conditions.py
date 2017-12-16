@@ -62,6 +62,9 @@ class TiltCommand(default_cmds.MuxCommand):
                 elif switches[0] == "lair":
                     boxout = StatBlock("Lair Traits",False,lair)
                     self.caller.msg(boxout.Show() + boxout.Footer())
+                elif switches[0] == "pers":
+                    boxout = StatBlock("Personal Tilts",False,personal)
+                    self.caller.msg(boxout.Show() + boxout.Footer())
                 elif switches[0] == "clear":
                     for character in self.caller.location.contents:
                         self.caller.db.tilts = []

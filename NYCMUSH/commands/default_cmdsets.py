@@ -56,7 +56,6 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         #
         self.add(command.Roll())
         self.add(command.Sheet())
-        self.add(command.MUSHHelp())
         self.add(command.SpendPool())
         self.add(command.HealthManage())
         self.add(command.Shift())
@@ -83,6 +82,7 @@ class CharacterCmdSet(default_cmds.CharacterCmdSet):
         self.add(command.NoteCommand)
         self.add(command.TimeDesc)
         self.add(AspireCmd)
+        self.add(command.OOCMasq)
 class LocationCmdSet(CmdSet):
 #Used for individual locations. One per building, even if multiple rooms are attached to it.
     def at_cmdset_creation(self):
@@ -156,6 +156,7 @@ class AccountCmdSet(default_cmds.AccountCmdSet):
         self.add(command.CloseAll())
         self.add(command.OpenAll())
         self.add(command.SetStatus)
+        self.add(command.MUSHHelp())
         #
         # any commands you add below will overload the default ones.
         #

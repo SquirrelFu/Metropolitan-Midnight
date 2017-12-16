@@ -1,0 +1,4 @@
+Metropolitan Midnight features an opt-out OOC masquerade system to help prevent metagaming. This means that while people will be able to see that you are supernatural or mortal+, they will not be able to tell which precise kind of mortal+ you are or which kind of supernatural template you are. Turning this off will let people see, "Vampire", "Beast", or, "Mage" instead of just, "Supernatural" and such.
+
+Command:
+	+masq

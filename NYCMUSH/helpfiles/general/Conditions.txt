@@ -12,3 +12,4 @@ Commands:
 	+tilt/rem <Name> (Removes a tilt)
 	+tilt/lair (Shows all lair tilts available to Beasts. Minor traits listed first alphabetically, then major.)
 	+tilt/env (Shows all environmental tilts)
+	+tilt/pers (Shows all personal tilts)

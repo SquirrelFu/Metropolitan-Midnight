@@ -2,6 +2,23 @@
 {% load staticfiles %}
 <!DOCTYPE HTML>
 <html>
+<script>
+function refresh() {
+	  $.ajax({
+	  url: {{request.path}},
+	  data:{},
+	  success: function(data) {
+	    $.html(data);
+	  }
+	 });
+	};
+
+
+$(document).ready(function ($) {
+	refresh();
+	var int = setInterval("refresh()", 3000);
+}
+</script>
   <head>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="/static/website/images/evennia_logo.png" />

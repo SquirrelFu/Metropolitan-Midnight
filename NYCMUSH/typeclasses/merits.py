@@ -9,11 +9,11 @@ from evennia import DefaultScript
 class MeritHandler(DefaultScript):
     key = "MeritHandler"
     persistent = True
-    bookshort = ["CoD","HL","VtR","SotC","WtF","MtA","CtL:PT","BtP","HtV","MR","MtC","DtD","CtL:PTM","PtC","TP","NH:CH","BS"]
+    bookshort = ["CoD","HL","VtR","SotC","WtF","MtA","CtL:PT","BtP","HtV","MR","MtC","DtD","CtL:PTM","PtC","TP","NH:CH","BS","HD"]
     booklong = ["Chronicles of Darkness core","Hurt Locker","Vampire the Requiem: Second Edition","Secrets of the Covenants","Werewolf the Forsaken: Second Edition",
                 "Mage: The Awakening Second Edition","Changeling the Lost Playtest Documents","Beast: The Primordial","Hunter: The Vigil","Mortal Remains","Mummy: The Curse",
                 "Demon: The Descent","Chageling the Lost Playtest Documents - Merit and Contract Update","Promethean: The Created Second Edition","The Pack","Night Horrors:Conquering Heroes",
-                "Blood Sorcery: Sacraments and Blasphemies"]
+                "Blood Sorcery: Sacraments and Blasphemies","Half-Damned"]
     templatelist = ["Beast","Changeling","Mortal","Mortal+","Mage","Werewolf","Vampire","Mummy","Demon","Promethean"]
     mortalplus = ["Ghoul","Wolfblood","Proximus","Fae-Touched","Hunter"]
     mplusmerits = ["Psychic Vampirism","Damn Lucky","Carrier","The Protocol","Plain Reader","Subliminal Conditioning"]
@@ -945,6 +945,10 @@ class MeritHandler(DefaultScript):
             werewolf.append(tuple(["Spiritual Blockage","2","WtF-109","Wisdom,2","Brawl,1","Occult,3","Wits,3"]))
             werewolf.append(tuple(["Tactical Shifting","1,2,3,4,5","WtF-110","Wits,3","Dexterity,3","Athletics,2"]))
             werewolf.append(tuple(["Warcry","2","WtF-110","Glory,2","Presence,3","Expression,2","Intimidation,2"]))
+            werewolf.append(tuple(["Den","1,2,3,4,5","TP-29"]))
+            werewolf.append(tuple(["Directed Rage","3,4,5","TP-30"]))
+            werewolf.append(tuple(["Magnanimous Totem","2,3,4","TP-30"]))
+            werewolf.append(tuple(["Territorial Advantage","1,2,3,4,5","TP-31"]))
         if len(wolfblood) == 0:
             wolfblood.append(tuple(["Fenris-Ur's Blood","2","WtF-304"]))
             wolfblood.append(tuple(["Kamdis-Ur's Blood","2","WtF-304"]))
