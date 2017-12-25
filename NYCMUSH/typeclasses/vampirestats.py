@@ -204,7 +204,7 @@ class VampireStatHandler(DefaultScript):
             theban.append(tuple(["Pledge to the Worthless One","3","SotC-196","Transmutation,3"]))
             theban.append(tuple(["Great Prophecy","4","SotC-196","Divination,4"]))
             theban.append(tuple(["The Guiding Star","3","SotC-196","Protection,3"]))
-            theban.append(tuple(["Apocalypse","5","SotC-197","Trnasmutation,5"]))
+            theban.append(tuple(["Apocalypse","5","SotC-197","Transmutation,5"]))
             theban.append(tuple(["The Judgment Fast","5","SotC-197","Transmutation,5"]))
             theban.append(tuple(['Curse of Isolation','4','ATYoN-79']))
             theban.append(tuple(['Orison of Voices','4','ATYoN-79']))
@@ -230,8 +230,3 @@ class VampireStatHandler(DefaultScript):
         self.at_script_creation()
     def DisciplineList(self):
         return self.db.disciplines
-class Devotion(object):
-#Used to store devotions on characters.
-    def __init__(self, name, *disciplines):
-        self.name = name
-        self.disciplines = list(disciplines)
