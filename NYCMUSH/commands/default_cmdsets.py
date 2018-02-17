@@ -167,7 +167,6 @@ class AdminSet(CmdSet):
         super(AdminSet, self).at_cmdset_creation()
         self.add(command.MarkNPC())
         self.add(command.SpaceArchMastery())
-
         self.add(command.ApproveChar)
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):

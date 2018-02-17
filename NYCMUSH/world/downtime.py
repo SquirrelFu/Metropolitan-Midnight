@@ -28,9 +28,8 @@ class DownTime(default_cmds.MuxCommand):
         rhs = self.rhs
         lhs = self.lhs
         switches = self.switches
-        if args == "":
-            timebox = evtable.EvTable("Downtime",table=[self.caller.db.timelog])
-            self.caller.msg(timebox)
+        if not args:
+            self.caller.msg(evtable.EvTable("Downtime",table=self.caller.db.timelog))
             return
         elif self.IsInt(lhs):
             if rhs != "":
@@ -51,12 +50,14 @@ class DownTime(default_cmds.MuxCommand):
                     try:
                         for item in search.objects(arglist[0])[0].db.timelog:
                             timelog.append(item)
-                        timebox = StatBlock(str(search.objects(arglist[0])[0])+"'s time log.",False,timelog)
+                        timebox = StatBlock(str(search.objects(arglist[0])[0])+"'s time log",False,timelog)
                         timebox.SetColumns(1)
                         self.caller.msg(timebox.Show()+timebox.Footer())
                     except AttributeError:
                         self.caller.msg("Character not found!")
     def TimeLog(self, amount, where, event):
+        self.caller.msg("Timelog pinged")
+        return
         return str("On "+ time.strftime("%b") + " "+ time.strftime("%d")+" "+ time.strftime("%Y") +" you spent "+str(amount)+" hours for \""+event+"\" while in "+str(where))
     def IsInt(self,value):
         try:

@@ -4,8 +4,8 @@ All areas have two qualities: Mood and health. Mood dictates how happy the peopl
 
 For the commands of each template, their dicepools, and differences, please check one of the relevant files below.
 
-+help beast/sate
-+help changeling/harvest
-+help psychic_vampire/drain
-+help vampire/feed
-+help werewolf/siskur-dah
++help sate (Beasts)
++help harvest (Changelings)
++help drain (Psychic vampires)
++help feed (Vampires)
++help siskur-dah (Werewolves)

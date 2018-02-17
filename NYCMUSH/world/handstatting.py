@@ -964,7 +964,7 @@ class StatOther(default_cmds.MuxCommand):
                         self.caller.msg(lhs + " arcanum added to " + target.name + " at " + rhs + " dots.")
                         return
                     elif int(rhs) == 0:
-                        target.RemovePower(lhs)
+                        target.RemPower(lhs)
                         self.caller.msg(lhs + " arcanum removed from " + target.name)
                         return
                 else:

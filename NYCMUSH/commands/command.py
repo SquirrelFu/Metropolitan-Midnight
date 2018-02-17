@@ -2212,15 +2212,17 @@ class MUSHHelp(Command):
         #Pretty simple parser. Removes whitespace.
     def func(self):
         args = self.args
-        helpdirectory = ".\\helpfiles"
+        helpdirectory = "./helpfiles"
         outputString = ""
         fileLocation = ""
         fileIndex = os.walk(helpdirectory)
         try:
             screenWidth = self.caller.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+            if screenWidth < 156:
+                screenWidth = 156
         except (IndexError, AttributeError) as err:
             screenWidth = 156
-        if not args == "":
+        if args:
             if args.lower() == "main":
                 self.caller.msg('Please use just, "+help" instead.')
                 return
@@ -2228,11 +2230,11 @@ class MUSHHelp(Command):
                 for directory in dirs:
                     
                     if args.lower() == directory.lower():
-                        fileLocation = os.path.join(root + "\\" + directory)
+                        fileLocation = os.path.join(root + "/" + directory)
                         break
                 for item in files:
                     if args.lower() == item.replace('.txt','').lower():
-                        fileLocation = os.path.join(root + "\\" + item)
+                        fileLocation = os.path.join(root + "/" + item)
                         break
             if fileLocation == "":
                 self.caller.msg("Invalid helpfile!")
@@ -2244,16 +2246,16 @@ class MUSHHelp(Command):
         #folder will default to showing the text of the, 'Main.txt' file within it. It would
         #start borking things up if only the header were shown.
         if os.path.isdir(fileLocation):
-            if os.path.exists(fileLocation + "\\Main.txt"):
-                headerFile = open(fileLocation + "\\Main.txt",'r+').read()
+            if os.path.exists(fileLocation + "/Main.txt"):
+                headerFile = open(fileLocation + "/Main.txt",'r+').read()
             if args == "":
                 headerTitle = "Main"
             else:
                 headerTitle = args
             if len(headerTitle) % 2 == 1:
-                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(headerTitle)/2) + headerTitle.title() + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
+                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(headerTitle)/2) + headerTitle + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
             else:
-                boxHeader = "/" + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + headerTitle.title() + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
+                boxHeader = "/" + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + headerTitle + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
             outputString += boxHeader
             try:
                 headerWrap = wrap(headerFile,screenWidth/2 - 4)
@@ -2266,15 +2268,15 @@ class MUSHHelp(Command):
             subFiles = []
             subFolders = []
             for item in os.listdir(fileLocation):
-                if os.path.isfile(fileLocation + "\\" + item):
+                if os.path.isfile(fileLocation + "/" + item):
                     subFiles.append(item)
-                elif os.path.isdir(fileLocation + "\\" + item):
+                elif os.path.isdir(fileLocation + "/" + item):
                     subFolders.append(item)
             menuTally = 0
             if '__init__.py' in subFiles: subFiles.remove('__init__.py')
             if 'Main.txt' in subFiles: subFiles.remove('Main.txt')
             if 'main.txt' in subFiles: subFiles.remove('main.txt')
-            adminCheck = self.caller.locks.check_lockstring(self.caller,'dummy:perm(Admin)')
+            adminCheck = self.caller.locks.check_lockstring(self.caller,'dummy:perm(Developer)')
             if 'admin' in subFolders and not adminCheck: subFolders.remove('admin')
             if len(subFiles) > 0:
                 outputString += "\n+" + "-" * (screenWidth/4 - 4) + "Files" + "-" * (screenWidth/4 - 3) +  "+"
@@ -2285,11 +2287,11 @@ class MUSHHelp(Command):
                             menuTally = 0
                         outputString += "\n|| "
                     if helpfile != subFiles[-1] and menuTally + len(helpfile.replace('.txt','')) < (screenWidth/2 - 4):
-                        outputString += "|lc+help " + helpfile.replace('.txt','') + "|lt" + helpfile.replace('.txt','').title() + "|le, "
+                        outputString += "|lc+help " + helpfile.replace('.txt','') + "|lt" + helpfile.replace('.txt','') + "|le, "
                         menuTally += len(helpfile.replace('.txt','') + ", ")
                     else:
                         menuTally += len(helpfile.replace('.txt',''))
-                        outputString += "|lc+help " + helpfile.replace('.txt','')+ "|lt" + helpfile.replace('.txt','').title() + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
+                        outputString += "|lc+help " + helpfile.replace('.txt','')+ "|lt" + helpfile.replace('.txt','') + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
             menuTally = 0
             if len(subFolders) > 0:
                 outputString += "\n+" + "-" * (screenWidth/4 - 7) + "Subsections" + "-" * (screenWidth/4 - 6) + "+"
@@ -2298,27 +2300,30 @@ class MUSHHelp(Command):
                         outputString += "\n|| "
                     if subSection != subFolders[-1] and menuTally < (screenWidth/2 - 4):
                         menuTally += len(subSection + ", ")
-                        outputString += "|lc+help " + subSection + "|lt" + subSection.title() + "|le, "
+                        outputString += "|lc+help " + subSection + "|lt" + subSection + "|le, "
                     else:
                         menuTally += len(subSection)
-                        outputString += "|lc+help " + subSection + "|lt" + subSection.title() + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
+                        outputString += "|lc+help " + subSection + "|lt" + subSection + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
         if os.path.isfile(fileLocation):
             headerTitle = args
             if len(args) % 2 == 1:
-                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(args)/2) + headerTitle.title() + "-" * (screenWidth/4 - len(args)/2 - 1) + "\\"
+                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(args)/2) + headerTitle + "-" * (screenWidth/4 - len(args)/2 - 1) + "\\"
             else:
-                boxHeader = "/" + "-" * ((screenWidth/4) - 1 - len(args)/2) + headerTitle.title() + "-" * ((screenWidth/4) - 1 - len(args)/2) + "\\"
+                boxHeader = "/" + "-" * ((screenWidth/4) - 1 - len(args)/2) + headerTitle + "-" * ((screenWidth/4) - 1 - len(args)/2) + "\\"
             outputString += boxHeader
             fileWrap = open(fileLocation,'r+').read().replace("\t","    ").split("\n")
             for line in fileWrap:
+                if line == fileWrap[-1] and len(line) < (screenWidth/2 - 4):
+                    outputString += "\n|| " + line + " " * ((screenWidth/2 - 4) - len(line)) + " |"
+                    break         
                 if len(line) > (screenWidth/2 - 4):
                     lineWrap = wrap(line,screenWidth/2 - 4)
                     for segment in lineWrap:
                         outputString += "\n|| " + segment
                         if len(segment) <= (screenWidth/2 - 4):
-                            outputString += " " * ((screenWidth/2 - 4) - len(segment)) + " |"
+                            outputString += " " * ((screenWidth/2 - 3) - len(segment)) + "|"
                 else:
-                    outputString += "\n|| " + line + " " * ((screenWidth/2 - 4) - len(line)) + " |"
+                    outputString += "\n|| " + line + " " * ((screenWidth/2 - 3) - len(line)) + " |"
         outputString += "\n\\" + "-" * (screenWidth/2 - 2) + "/"
         self.caller.msg(outputString)
 class BackgroundCommand(default_cmds.MuxCommand):
@@ -2553,7 +2558,7 @@ class ApproveChar(Command):
     """
     key = "+approve"
     aliases = '+unapprove'
-    lock = "cmd:pperm(Admin)"
+    lock = "cmd:pperm(Developer)"
     help_category="Admin"
     def func(self):
         self.args = self.args.lstrip()
@@ -3185,7 +3190,7 @@ class TimeDesc(default_cmds.MuxCommand):
     +tdesc/<morning/afternoon/evening/night> <Description>
     """
     key = "+tdesc"
-    locks = "cmd:perm(Builders)"
+    locks = "cmd:pperm(Builder)"
     help_category="Admin"
     def func(self):
         switches = self.switches
@@ -3227,8 +3232,7 @@ class ShowStaff(Command):
                 adminlist.append(acc.name)
                 poslist.append(acc.db.position)
                 if not acc.is_connected:
-                    self.caller.msg(str(acc.sessions))
-                    timelist.append(utils.time_format(time.time() - acc.sessions.get()[0].cmd_last_visible,1))
+                    timelist.append('Offline')
                 else:
                     timelist.append('Currently Connected')
         stafftable = evtable.EvTable("Staff Name","Position","Online",table=[adminlist,poslist,timelist],width=78)
@@ -3272,7 +3276,7 @@ class TOS(Command):
                        " be performed with the express consent of headstaff, as a member of staff. Duplication and redistribution is allowed. By entering the next command, you"
                        " agree to not attack the server in any form.|/|/Input: PEACETREATY")
         self.tos3_string = ("Thirdly, you must give your word to not harass, abuse, or otherwise treat with malice staff or your fellow players. This game can only succeed through"
-                       "cooperation. If you wish to resolve matters with another player one on one you may, but must be willing to provide a log of the discussion as recorded during the discussion should the"
+                       " cooperation. If you wish to resolve matters with another player one on one you may, but must be willing to provide a log of the discussion as recorded during the discussion should the"
                        " situation escalate. Staff is not here to jump on your honest mistakes, nor are we here to play favorites. But if you do in fact try to abuse staff's"
                        " good will, you will be treated as any other breaker of our rules. As an addendum though not a formal rule, we will note that conflict of characters should"
                        " stay between characters, and conflict of players between players in a civil manner. Player characters conflicting is not forbidden, malicious exchanges"
@@ -3316,7 +3320,7 @@ class TOS(Command):
                        " please try using +tos again and input, 'COMMUNITY' in all caps without apostraphes next time.")
     def stage4(self, caller, prompt, callback):
         if callback == "DRAMALLAMA":
-            caller.msag("And that's it! Thank you for not bringing problems where they are not needed. Head through the exit to enter the game!")
+            caller.msg("And that's it! Thank you for not bringing problems where they are not needed. Head through the exit to enter the game!")
             caller.account.db.tos_agreed = True
         else:
             caller.msg("If you do not wish to agree to the ban on inter-MUSH drama, that is your choice. However, staff on Metropolitan Midnight asks that gossip be left alone and old wounds left to heal. "
@@ -3367,7 +3371,7 @@ class ManageSpheres(default_cmds.MuxCommand):
         switches = self.switches
         sphereList = ['werewolf','mage','beast','changeling','hunter','demon','promethean','atariya','infected','dreamer','lostboys','plain','psyvamp','vampire','geist']
         if args.lower() in sphereList:
-            calledSetting = getattr('settings',args.upper()+'_STATUS')
+            calledSetting = getattr(settings,args.upper()+'_STATUS')
             if switches[0].lower() == "open":
                 if calledSetting != "Open":
                     setattr(settings,self.args.upper() + '_STATUS','Open')
@@ -4821,6 +4825,10 @@ class SetPower(default_cmds.MuxCommand):
             for x in templist:
                 x.lower()
             if capwords(self.lhs) in self.caller.location.db.arcana.db.arcana:
+                if not self.rhs:
+                    caller.RemPower(self.lhs)
+                    self.caller.msg(lhs + " arcanum removed.")
+                    return
                 if 6 > int(self.rhs) > 0:
                     lhs = self.lhs
                     rhs = self.rhs
@@ -4828,7 +4836,7 @@ class SetPower(default_cmds.MuxCommand):
                     self.caller.msg(lhs +" arcanum added at " + rhs + " dots.")
                     return
                 elif int(self.rhs) == 0:
-                    caller.RemovePower(self.lhs)
+                    caller.RemPower(self.lhs)
                     self.caller.msg(lhs + " arcanum removed.")
                     return
             else:

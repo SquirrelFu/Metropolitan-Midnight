@@ -397,7 +397,7 @@ class Character(gendersub.GenderCharacter):
         else:
             return False
     def IsAccountAdmin(self):
-        if self.locks.check_lockstring(self, "dumm:pperm(Admin)") and self.dbid != 1:
+        if self.locks.check_lockstring(self, "dumm:pperm(Developer)") and self.dbid != 1:
             return True
         else:
             return False
@@ -464,8 +464,14 @@ class Character(gendersub.GenderCharacter):
                 self.Heal(3,1)
                 self.msg("You heal a point of aggravated damage from natural recovery.")
             self.db.next_agg = datetime.now() + timedelta(weeks=1)
+            has_biokinesis = False
+            has_newflesh = False
+            has_bulletman = False
             for merit in self.db.meritlist:
-                if merit[0] == "Biokinesis" and self.db.template == "Mortal":
+                if merit[0] == "Biokinesis":
+                    has_biokinesis = True
+                if merit[0] == 'The New Flesh':
+                    has_newfles = True
                     self.db.next_agg = datetime.now() + timedelta(days=3,hours=12)
             if self.db.template == 'Werewolf':
                 self.db.next_agg = datetime.now() + timedelta(days=3, hours=12)
@@ -489,7 +495,7 @@ class Character(gendersub.GenderCharacter):
             self.msg("You regain a point of willpower, and heal all bashing damage, as twenty-four hours have passed since your last refresh.")
             self.Heal(1,len(self.db.health_track) - 1)
         try:
-            if time.strftime("%A").lower() == "Sunday" and self.db.last_login.day + 7 <= datetime.now().day:
+            if time.strftime("%A").lower() == "Sunday" or self.db.last_login.day + 7 <= datetime.now().day:
                 self.caller.db.timelog = []
                 self.caller.msg("As a new week begins, your downtime log is cleared.")
                 self.caller.db.downtime = 25

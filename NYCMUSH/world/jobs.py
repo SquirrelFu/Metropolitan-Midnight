@@ -798,6 +798,13 @@ class JobCommand(default_cmds.MuxCommand):
             return
         
 class RequestCommand(default_cmds.MuxCommand):
+    """
+    Used to open a job to ask staff to do something be it spend your XP,
+    run a plot, or something else entirely.
+    
+    Usage:
+        +request/<
+    """
     key = "+request"
     aliases = "+req"
     def func(self):
@@ -814,7 +821,7 @@ class RequestCommand(default_cmds.MuxCommand):
         try:
             jobchan = search.channels('Jobs')[0]
         except IndexError:
-            jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Immortals);listen:perm(Wizards);send:false()')
+            jobchan = create_channel('Jobs',desc='A channel for announcing incoming jobs to staff.',locks='control:perm(Developer);listen:perm(Admin);send:false()')
         if args:
             if not switches:
                 date = time.strftime("%a") + " " + time.strftime("%b") + " " + time.strftime("%d")

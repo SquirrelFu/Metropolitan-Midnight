@@ -2,31 +2,19 @@
 {% load staticfiles %}
 <!DOCTYPE HTML>
 <html>
-<script>
-function refresh() {
-	  $.ajax({
-	  url: {{request.path}},
-	  data:{},
-	  success: function(data) {
-	    $.html(data);
-	  }
-	 });
-	};
-
-
-$(document).ready(function ($) {
-	refresh();
-	var int = setInterval("refresh()", 3000);
-}
-</script>
   <head>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <link rel="icon" type="image/x-icon" href="/static/website/images/evennia_logo.png" />
     <link rel='stylesheet' type='text/css' href='{% static "website/css/mainpage.css"%}'/>
     <title>{{game_name}}</title>
   </head>
-
-  <body class='header' background='{% static "website/images/NYC Skyline night.jpg" %}'>
+  <body class='header' background='{% static "website/images/NYC Skyline night.jpg" %}' onload='refresh_function();'>
+    <script>
+		function refresh_function()
+		{
+			setInterval(window.reload(),30000);
+		}
+    </script>
   <div class='headerdiv'>
     {% if request.user.is_staff %}
   <form action="{% url 'admin:index' %}">
@@ -45,7 +33,7 @@ $(document).ready(function ($) {
   <form action="/webclient">
 <input type="submit" value="Webclient" class=clientbutton>
 </form>
-  <h1 style='text-align:center; line-height:5vh; font-size:40px;'><a href='/' class='mainlogo'><image src="{% static 'website/images/evennia_logo.png' %}" /></a><a href='/' class='mainheader'>Metropolitan Midnight</a></h1>
+  <h1 style='text-align:center; line-height:5vh; font-size:40px;'><a href='/' class='mainlogo'><image src="{% static 'website/images/evennia_logo.png' %}" /></a><a href='/' class='mainheader'>Bleh4</a></h1>
   <table class='linktable'>
   <tr>
   <td><a href='/territory' class='headerlinks'>Territory System</a></td>

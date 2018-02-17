@@ -4,16 +4,21 @@ Room
 Rooms are simple containers that has no location of their own.
 
 """
-from evennia import DefaultRoom
-from evennia import default_cmds
-import commands.default_cmdsets
-from evennia import create_script
-from textwrap import wrap
 from datetime import datetime
 from datetime import timedelta
-from evennia.utils import inherits_from
 from evennia import DefaultCharacter
+from evennia import DefaultRoom
+from evennia import create_script
+from evennia import default_cmds
+from evennia.objects.objects import DefaultObject
+from evennia.utils import inherits_from
+from textwrap import wrap
+from dateutil.relativedelta import relativedelta
+from threading import Timer
+
+import commands.default_cmdsets
 from typeclasses.exits import Exit
+
 class Room(DefaultRoom):
     """
     Rooms are like any Object, except their location is None
@@ -86,7 +91,7 @@ class Room(DefaultRoom):
                     outputstring += "|115|||n" + " " * ((screenwidth/2) - 2) +"|115|||n\n"
                     for heat in noonwrap:
                         outputstring += "|115|||n " + heat + " " * ((screenwidth/2) - 1 - len("| " + heat)) + "|115|||n\n"
-        elif 17 > currenthour:
+        elif 24 > currenthour > 17:
             if self.db.eveningdesc:
                 if self.db.eveningdesc != "":
                     eveningwrap = wrap(self.db.eveningdesc,(screenwidth/2) - 3)
@@ -129,10 +134,7 @@ class Room(DefaultRoom):
                         outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115|||n\n"
                         exitstring = ""
                 else:
-                    if isinstance(exititer.destination,Location):
-                        exitstring += exititer.name + "   "
-                    else:
-                        exitstring+= exititer.name + " <" + exititer.aliases.get().upper() + ">          "
+                    exitstring += exititer.name + "   "        
                     if exititer == exitlist[-1] or ((exitlist.index(exititer) % 3 )== 0 and exitlist.index(exititer) != 0):
                         outputstring += exitstring
                         outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115||\n"
@@ -194,50 +196,28 @@ class Location(Room):
     def at_object_creation(self):
         super(Location, self).at_object_creation()
         self.cmdset.add(commands.default_cmdsets.LocationCmdSet(), permanent=True)
-class Hedge(Room):
-    def at_object_creation(self):
-        super(Hedge, self).at_object_creation()
-        self.tags.add("Hedge")
-class Underworld(Room):
-    def at_object_creation(self):
-        super(Underworld, self).at_object_creation()
-        self.tags.add("Underworld")
-class Locus(object):
+class Node(DefaultObject):
     
-    def __init__(self, rank):
-        self.rank = rank
-        self.maxessence = rank*3
-        self.essence = self.maxessence
+    def __init__(self, name, rank):
+        self.db.rank = rank
+        self.db.capacity = rank * 3
+        self.db.name = name
+        self.db.current = self.db.capacity
     def Drain(self, amount):
-        if amount > self.essence:
-            return -1
-        else:
-            self.essence -= amount
+        capacity = self.db.capacity
+        if capacity >= amount:
+            capacity -= amount
             return amount
+        elif capacity < amount:
+            return capacity
     def Update(self):
-        if self.essence != self.maxessence:
-            self.essence += self.rank
-            if self.essence > self.maxessence:
-                self.esesnce = self.maxessence
-class AddHallow(default_cmds.MuxCommand):
-    key = "+addhallow"
-    lock = "cmd:pperm(Admin)"
-    def func(self):
-        self.caller.location.db.features['Hallow'] = Hallow(1)
-class Hallow(object):
-    
-    def __init__(self, rank):
-        self.rank = rank
-        self.maxmana = rank*3
-        self.mana = self.maxmana
-    def Drain(self, amount):
-        if amount > self.mana:
-            return -1
-        else:
-            self.mana -= amount
-            return amount
-    def Update(self):
-        if self.mana != self.maxmana:
-            self.mana += self.rank
-            if self.mana > self.maxmana:
-                self.mana = self.maxmana
+        self.db.current += self.db.rank
+        if self.db.current > self.db.capacity:
+            self.db.current = self.db.capacity
+        now = datetime.now()
+        tomorrow = now + timedelta(days=1)
+        midnight = datetime(year=tomorrow.year,month=tomorrow.month,day=tomorrow.day,hour=0,minute=0,second=0)
+        interval = (midnight - datetime.now()).seconds
+        t = Timer(interval, self.Update)
+    def ChangeRank(self, rank):
+        self.db.rank = rank
