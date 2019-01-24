@@ -12,8 +12,6 @@ def beastpage(request):
     return render(request, 'beastpage/beastmain.html')
 def mpluspage(request):
     return render(request, 'mpluspage/mplusmain.html')
-def territorypage(request):
-    return render(request, 'territory/territorymain.html')
 def bookpage(request):
     return render(request, 'bookpage/bookmain.html')
 def magepage(request):

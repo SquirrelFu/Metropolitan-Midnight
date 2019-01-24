@@ -71,7 +71,7 @@ class SetChannelColor(default_cmds.MuxCommand):
         rhs = self.rhs
         channelList = DefaultChannel.objects.filter_family()
         for chan in channelList:
-            if chan.key.lower() == lhs:
+            if chan.key.lower() == lhs.lower():
                 if len(rhs) == 3:
                     try:
                         int(rhs)
@@ -1053,13 +1053,22 @@ class SpendPool(default_cmds.MuxCommand):
                         modaction = " spends "
                         if self.isint(arglist[0]):
                             if int(arglist[0]) >= 1:
-                                self.caller.Spend('Vitae',int(arglist[0]))
+                                self.caller.PoolSpend('Vitae',int(arglist[0]))
                             else:
                                 self.caller.msg("Please enter a value greater than zero.")
                                 return
                         else:
                             self.caller.msg("Please enter a valid value to spend.")
                             return
+                    elif switches[0].lower() == "gain":
+                        modaction = " gain "
+                        if self.isint(arglist[0]):
+                            if int(arglist[0]) >= 1:
+                                self.caller.PoolGain('Vitae',int(arglist[0]))
+                            else:
+                                self.caller.msg("Please enter a value greater than zero.")
+                        else:
+                            self.caller.msg("Please enter a valid value to gain.")
                 else:
                     self.caller.msg("As you are not a vampire or ghoul, you have no vitae to spend.")
                     return
@@ -1072,27 +1081,36 @@ class SpendPool(default_cmds.MuxCommand):
                         modaction = " spends "
                         if self.isint(arglist[0]):
                             if int(arglist[0]) >= 1:
-                                self.caller.Spend('Essence',int(arglist[0]))
+                                self.caller.PoolSpend('Essence',int(arglist[0]))
                             else:
                                 self.caller.msg("Please enter a value greater than zero.")
                                 return
                         else:
                             self.caller.msg("Please enter a valid value to spend.")
                             return
-                    elif switches[0].lower() == "locus":
-                        modaction = " spends "
+                    elif switches[0].lower() == "gain":
+                        modaction = " gain "
                         if self.isint(arglist[0]):
                             if int(arglist[0]) >= 1:
-                                for lair in self.caller.db.lairs:
-                                    for merit in lair:
-                                        if merit[0].lower() == "dedicated locus":
-                                            if lair.db.essence >= int(arglist[0]):
-                                                lair.db.essence -= int(arglist[0])
-                                            else:
-                                                self.caller.msg("Your dedicated locus doesn't have that much essence left!")
-                                        else:
-                                            self.caller.msg("You don't have a dedicated locus!")
-                                            return
+                                self.caller.PoolGain('Essence',int(arglist[0]))
+                            else:
+                                self.caller.msg("Please enter a value greater than zero.")
+                        else:
+                            self.caller.msg("Please enter a valid value to gain.")
+                    #elif switches[0].lower() == "locus":
+                    #    modaction = " spends "
+                    #    if self.isint(arglist[0]):
+                    #        if int(arglist[0]) >= 1:
+                    #            for lair in self.caller.db.lairs:
+                    #                for merit in lair:
+                    #                    if merit[0].lower() == "dedicated locus":
+                    #                        if lair.db.essence >= int(arglist[0]):
+                    #                            lair.db.essence -= int(arglist[0])
+                    #                        else:
+                    #                            self.caller.msg("Your dedicated locus doesn't have that much essence left!")
+                    #                    else:
+                    #                        self.caller.msg("You don't have a dedicated locus!")
+                    #                        return
                     else:
                         self.caller.msg("That's not a valid switch. Only spending is supported.")
                         return
@@ -1105,13 +1123,23 @@ class SpendPool(default_cmds.MuxCommand):
                         modaction = " spends "
                         if self.isint(arglist[0]):
                             if int(arglist[0]) >= 1:
-                                self.caller.spend('Mana',int(arglist[0]))
+                                self.caller.PoolSpend('Mana',int(arglist[0]))
                             else:
                                 self.caller.msg("Please enter a value greater than zero.")
                                 return
                         else:
                             self.caller.msg("Please enter a valid value to spend.")
                             return
+                    
+                    elif switches[0].lower() == "gain":
+                        modaction = " gain "
+                        if self.isint(arglist[0]):
+                            if int(arglist[0]) >= 1:
+                                self.caller.PoolGain('Mana',int(arglist[0]))
+                            else:
+                                self.caller.msg("Please enter a value greater than zero.")
+                        else:
+                            self.caller.msg("Please enter a valid value to gain.")
                     else:
                         self.caller.msg("That switch is not supported.")
                         return
@@ -1124,7 +1152,7 @@ class SpendPool(default_cmds.MuxCommand):
                         modaction = " spends "
                         if self.isint(arglist[0]):
                             if int(arglist[0]) >=1:
-                                self.caller.Spend('Glamour',int(arglist[0]))
+                                self.caller.PoolSpend('Glamour',int(arglist[0]))
                             else:
                                 self.caller.msg("Please enter a positive value to spend.")
                                 return
@@ -1140,7 +1168,7 @@ class SpendPool(default_cmds.MuxCommand):
                         modaction = " spends "
                         if self.isint(arglist[0]):
                             if int(arglist[0]) >= 1:
-                                self.caller.Spend('Pyros',int(arglist[0]))
+                                self.caller.PoolSpend('Pyros',int(arglist[0]))
                             else:
                                 self.caller.msg("Please enter a positive value to spend.")
                                 return
@@ -1158,6 +1186,7 @@ class SpendPool(default_cmds.MuxCommand):
                         else:
                             self.caller.msg("Invalid value.")
                             return
+                    
                     else:
                         self.caller.msg("Invalid switch.")
                         return
@@ -1175,12 +1204,23 @@ class SpendPool(default_cmds.MuxCommand):
                                     return
                                 else:
                                     self.caller.db.sanity -= int(arglist[0])
+                                    self.caller.UpdateSatiety()
                             else:
                                 self.caller.msg("Please enter a positive value to spend.")
                                 return
                         else:
                             self.caller.msg("Invalid value.")
                             return
+                    elif switches[0].lower() == "gain":
+                        modaction = " gain "
+                        if self.isint(arglist[0]):
+                            if int(arglist[0]) >= 1:
+                                self.caller.db.sanity += int(arglist[0])
+                                self.caller.UpdateSatiety()
+                            else:
+                                self.caller.msg("Please enter a value greater than zero.")
+                        else:
+                            self.caller.msg("Please enter a valid value to gain.")
                     else:
                         self.caller.msg("Invalid switch.")
                         return
@@ -1262,6 +1302,15 @@ class SpendPool(default_cmds.MuxCommand):
                         else:
                             self.caller.msg("Please enter a number when spending.")
                             return
+                    elif switches[0].lower() == "gain":
+                        modaction = " gain "
+                        if self.isint(arglist[0]):
+                            if int(arglist[0]) >= 1:
+                                self.caller.PoolGain('Mana',int(arglist[0]))
+                            else:
+                                self.caller.msg("Please enter a value greater than zero.")
+                        else:
+                            self.caller.msg("Please enter a valid value to gain.")
                     else:
                         self.caller.msg("Invalid switch.")
                         return
@@ -2253,9 +2302,9 @@ class MUSHHelp(Command):
             else:
                 headerTitle = args
             if len(headerTitle) % 2 == 1:
-                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(headerTitle)/2) + headerTitle + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
+                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(headerTitle)/2) + headerTitle.title() + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
             else:
-                boxHeader = "/" + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + headerTitle + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
+                boxHeader = "/" + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + headerTitle.title() + "-" * (screenWidth/4 - len(headerTitle)/2 - 1) + "\\"
             outputString += boxHeader
             try:
                 headerWrap = wrap(headerFile,screenWidth/2 - 4)
@@ -2283,33 +2332,36 @@ class MUSHHelp(Command):
                 for helpfile in subFiles:
                     if helpfile == subFiles[0] or menuTally == 0 or menuTally + len(helpfile.replace('.txt','')) >= (screenWidth/2 - 4):
                         if helpfile != subFiles[0]:
-                            outputString += " " * ((screenWidth/4) - menuTally - 4) + "  |"
+                            outputString += " " * ((screenWidth/2) - menuTally - 4) + "  |"
                             menuTally = 0
                         outputString += "\n|| "
                     if helpfile != subFiles[-1] and menuTally + len(helpfile.replace('.txt','')) < (screenWidth/2 - 4):
-                        outputString += "|lc+help " + helpfile.replace('.txt','') + "|lt" + helpfile.replace('.txt','') + "|le, "
+                        outputString += "|lc+help " + helpfile.replace('.txt','') + "|lt" + helpfile.replace('.txt','').replace("_"," ") + "|le, "
                         menuTally += len(helpfile.replace('.txt','') + ", ")
                     else:
                         menuTally += len(helpfile.replace('.txt',''))
-                        outputString += "|lc+help " + helpfile.replace('.txt','')+ "|lt" + helpfile.replace('.txt','') + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
+                        outputString += "|lc+help " + helpfile.replace('.txt','')+ "|lt" + helpfile.replace('.txt','').replace("_"," ") + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
             menuTally = 0
             if len(subFolders) > 0:
                 outputString += "\n+" + "-" * (screenWidth/4 - 7) + "Subsections" + "-" * (screenWidth/4 - 6) + "+"
                 for subSection in subFolders:
-                    if subSection == subFolders[0] or menuTally == 0:
+                    if subSection == subFolders[0] or menuTally == 0 or menuTally + len(subSection) >= (screenWidth/2 - 4):
+                        if subSection != subFolders[0]:
+                            outputString += " " * ((screenWidth/2) - menuTally - 4) + " |"
+                            menuTally = 0
                         outputString += "\n|| "
                     if subSection != subFolders[-1] and menuTally < (screenWidth/2 - 4):
                         menuTally += len(subSection + ", ")
-                        outputString += "|lc+help " + subSection + "|lt" + subSection + "|le, "
+                        outputString += "|lc+help " + subSection + "|lt" + subSection.replace("_"," ").title() + "|le, "
                     else:
                         menuTally += len(subSection)
-                        outputString += "|lc+help " + subSection + "|lt" + subSection + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
+                        outputString += "|lc+help " + subSection + "|lt" + subSection.replace("_"," ").title() + "|le" + " " * (screenWidth/2 - 4 - menuTally) + " |"
         if os.path.isfile(fileLocation):
             headerTitle = args
             if len(args) % 2 == 1:
-                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(args)/2) + headerTitle + "-" * (screenWidth/4 - len(args)/2 - 1) + "\\"
+                boxHeader = "/" + "-" * ((screenWidth/4) - 2 - len(args)/2) + headerTitle.replace("_"," ").title() + "-" * (screenWidth/4 - len(args)/2 - 1) + "\\"
             else:
-                boxHeader = "/" + "-" * ((screenWidth/4) - 1 - len(args)/2) + headerTitle + "-" * ((screenWidth/4) - 1 - len(args)/2) + "\\"
+                boxHeader = "/" + "-" * ((screenWidth/4) - 1 - len(args)/2) + headerTitle.replace("_"," ").title() + "-" * ((screenWidth/4) - 1 - len(args)/2) + "\\"
             outputString += boxHeader
             fileWrap = open(fileLocation,'r+').read().replace("\t","    ").split("\n")
             for line in fileWrap:
@@ -2558,7 +2610,7 @@ class ApproveChar(Command):
     """
     key = "+approve"
     aliases = '+unapprove'
-    lock = "cmd:pperm(Developer)"
+    lock = "cmd:pperm(developer)"
     help_category="Admin"
     def func(self):
         self.args = self.args.lstrip()
@@ -3305,7 +3357,7 @@ class TOS(Command):
             caller.msg("If you meant to confirm, please use +tos again and input, 'VERIFIEDGEEZER' in all caps without apostraphes. Otherwise, we hope you can find a better MU* to play on.")
     def stage2(self, caller, prompt, callback):
         if callback == "PEACETREATY":
-            caller.msg("Thank you for agreeing not to harm the server. Use +tos once more to proceed to the final step.")
+            caller.msg("Thank you for agreeing not to harm the server. Use +tos once more to proceed to the second-to-last step.")
             caller.db.tos_stage = 2
         else:
             caller.msg("If you meant to confirm, please use +tos again and input, 'PEACETREATY' in all caps without apostraphes during the second step. If you did not, we do not condone malicious abuse "
@@ -3411,7 +3463,7 @@ class SphereStatus(Command):
     help_category="OOC"
     def func(self):
         sphereList = ['vampire','werewolf','mage','changeling','beast','hunter','promethean','mummy','demon','atariya',
-                      'dreamer','plain','infected','psyvampires','sin-eaters']
+                      'dreamer','plain','infected','lostboys','psyvampires','sin-eaters']
         statuses = []
         for sphere in sphereList:
             if sphere != 'sin-eaters' and sphere != 'psyvampires':
@@ -6572,7 +6624,7 @@ class PrometheanInfo(Command):
     key = "prometheaninfo"
     lock = "cmd:all()"
     infostring = ("Attempts at creating or restoring life gone wrong, Prometheans are almost universally reviled by the world around them and spread blight wherever they go. "
-                  "theirs is not a happy lot, yet their goal remains almost universally the same: Humanity. The great work of alchemy in creation of the philosopher's stone is "
+                  "Theirs is not a happy lot, yet their goal remains almost universally the same: Humanity. The great work of alchemy in creation of the philosopher's stone is "
                   "generally taken by the Created to be a metaphor for self-improvement which they have ultimately embraced. The Promethean sphere is currently "
                   "closed indefinitely, as the extremely story-focused progression of prometheans is not an amount of attention that staff can devote to single characters. Plans "
                   "may be made in the future however, to house-rule their mechanics to a more experience based progression.")

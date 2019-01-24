@@ -1,52 +1,20 @@
+* {
+  margin: 0; padding: 0;
+  overflow:hidden;
+  text-decoration:none;
+  }
+div.bodytext
+{
+	width: 80vw;
+	font-family:arial;
+	margin:auto;
+	background:white;
+	height:85vh;
+	overflow-y:auto;
+}
 .headerdiv
 {
-	background-color:white;
-	position:fixed;
-	width:100vw;
-	top:0px;
+	font-family:arial;
+	background:white;
 	height:15vh;
-	
-}
-.header
-{
-	padding:0;
-	margin:0;
-	overflow-y:hidden;
-}
-.mainheader
-{
-	text-decoration:none;
-	color:black;
-	font-weight:bold;
-	font-family:Helvetica, sans-serif;
-	font-size:16;
-}
-.logbutton, .clientbutton
-{
-	background-color:black;
-	border-radius:8px;
-	color:white;
-	right:15px;
-	position:fixed;
-	padding:15px 30px;
-	font-family:Helvetica;
-}
-.clientbutton
-{
-	top:60px;
-}
-.mainlogo
-{
-	position:absolute;
-	left:30px;
-}
-.bodytext
-{
-	background-color:white;
-	width:80vw;
-	top:15vh;
-	position:absolute;
-	height:85vh;
-	left:10vw;
-	overflow-y:scroll;
 }

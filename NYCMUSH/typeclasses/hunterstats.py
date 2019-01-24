@@ -59,7 +59,7 @@ class HunterHandler(DefaultScript):
         if len(castigation) == 0:
             castigation.append(tuple(["Calling forth the Pit","HtV-164"]))
             castigation.append(tuple(["Familiar","HtV-165"]))
-            castigation.append(tuple(["Gaze of the Pentient","HtV-167"]))
+            castigation.append(tuple(["Gaze of the Penitent","HtV-167"]))
             castigation.append(tuple(["Gulf of Hades","MR-30"]))
             castigation.append(tuple(["Hellfire","HtV-168"]))
             castigation.append(tuple(["Infernal Visions","HtV-168"]))

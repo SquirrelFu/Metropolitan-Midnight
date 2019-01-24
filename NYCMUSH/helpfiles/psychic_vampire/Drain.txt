@@ -1,6 +1,0 @@
-Psychic vampires much like their undead counterparts, require the vitality of average mortals to sustain themselves. However unlike vampires, they have the luxury of acting during the day and are not obvious in what they do. A psychic vampire's less obvious feedings take less from an area's health, yet still negatively impacts it as the emotional and sometimes physical strain of being fed on is felt. Raw population is predominantly the factor here, as is the population's openness to being approached and interacted with. Like vampires as noted below, they may ambush their prey, seduce their prey, or employ a third option of skimming off brief contact with their prey. This is a roll of Wits + Occult + Psychic Vampirism - 3. The breath stealer merit however, adds the lower of 2 dice or your ranks in the merit to this dicepool.
-
-Commands:
-	+drain/ambush (Strength + Streetwise + Psychic Vampirism - 3)
-	+drain/seduce (Manipulation + Persuasion + Psychic Vampirism - 3)
-	+drain/skim (Wits + Occult + Psychic Vampirism - 3)

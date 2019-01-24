@@ -61,6 +61,7 @@ class Character(gendersub.GenderCharacter):
                 return self.name + "\n" + self.db.desc
             else:
                 return self.name + "\nThis character seems particularly unremarkable."
+    
     def at_post_puppet(self):
         super(Character, self).at_post_puppet()
         try:
@@ -68,8 +69,6 @@ class Character(gendersub.GenderCharacter):
                 self.db.last_login = datetime.now()
                 if self.db.last_login.hour == 0 and self.db.approved:
                     self.Refresh()
-                elif not self.db.approved:
-                    pass
             else:
                 if self.db.last_login.day < datetime.now().day:
                     if self.db.approved:
@@ -174,8 +173,6 @@ class Character(gendersub.GenderCharacter):
             self.db.health_track.append(0)
             counter += 1
         self.db.tos_stage = 0
-        if self.IsAdmin():
-            self.cmdset.add(default_cmdsets.AdminSet(),permanent=True)
     def Resolve(self, cond):
         for item in self.db.conditions:
             if item.lower() == cond.lower():

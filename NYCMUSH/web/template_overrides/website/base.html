@@ -4,11 +4,14 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+	<meta http-equiv="Pragma" content="no-cache"/>
+	<meta http-equiv="Expires" content="0"/>
     <link rel="icon" type="image/x-icon" href="/static/website/images/evennia_logo.png" />
     <link rel='stylesheet' type='text/css' href='{% static "website/css/mainpage.css"%}'/>
     <title>{{game_name}}</title>
   </head>
-  <body class='header' background='{% static "website/images/NYC Skyline night.jpg" %}' onload='refresh_function();'>
+  <body class='header' background='{% static "website/images/NYC Skyline.jpg" %}' onload='refresh_function();'>
     <script>
 		function refresh_function()
 		{
@@ -33,17 +36,16 @@
   <form action="/webclient">
 <input type="submit" value="Webclient" class=clientbutton>
 </form>
-  <h1 style='text-align:center; line-height:5vh; font-size:40px;'><a href='/' class='mainlogo'><image src="{% static 'website/images/evennia_logo.png' %}" /></a><a href='/' class='mainheader'>Bleh4</a></h1>
+  <h1 style='text-align:center; line-height:5vh; font-size:40px;'><a href='/' class='mainlogo'><image src="{% static 'website/images/evennia_logo.png' %}" /></a><a href='/' class='mainheader'>Metropolitan Midnight</a></h1>
   <table class='linktable'>
   <tr>
-  <td><a href='/territory' class='headerlinks'>Territory System</a></td>
   <td><a href='/booklist' class='headerlinks'>Books in Use</a></td>
   <td><a href='/character/' class='headerlinks'>Characters</a></td>
   </tr>
   </table>
   
   </div>
-<div class='bodytext' style='font-family:arial;'>
+<div class='bodytext'>
   {% block content %}
   {% endblock %}
 </div>

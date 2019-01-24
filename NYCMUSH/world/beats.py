@@ -65,8 +65,8 @@ class BeatAwarder(DefaultScript):
             charlist = DefaultCharacter.objects.filter_family()
             for char in charlist:
                 last_duration = curtime.day - char.db.last_login.day
-                if char.db.approved and last_duration <= 7:
-                    char.db.experience += 1
+                if char.db.approved and last_duration >= 1:
+                    char.db.beats += 1
                     if char.has_player:
                         char.msg("You've been awarded a beat as your daily alottment.")
         else:

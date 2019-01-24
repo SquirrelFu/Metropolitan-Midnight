@@ -82,7 +82,7 @@ class MummyHandler(DefaultScript):
             affinities.append(tuple(["Night Creature","Sheut","2","MtC-107"]))
             affinities.append(tuple(["Nihilist Awakening","Ba","3","MtC-107"]))
             affinities.append(tuple(["Paragon Shames the Weak","Ka","3","MtC-107"]))
-            affinities.append(tuple(["Pharoah Reigns Anew","Ab","3","MtC-107"]))
+            affinities.append(tuple(["Pharaoh Reigns Anew","Ab","3","MtC-107"]))
             affinities.append(tuple(["Radiant Lifeforce","Ren","1","MtC-108"]))
             affinities.append(tuple(["Retributive Curse","Ka","2","MtC-108"]))
             affinities.append(tuple(["Rouse the Khaibit","Sheut","2","MtC-108"]))

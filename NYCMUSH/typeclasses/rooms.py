@@ -42,14 +42,11 @@ class Room(DefaultRoom):
         currenttime = datetime.now() - timedelta(hours=5)
         currenthour = currenttime.hour
         try:
-            try:
-                if looker.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
-                    screenwidth = looker.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
-                else:
-                    screenwidth = 156
-            except IndexError:
+            if looker.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0] >= 156:
+                screenwidth = looker.account.sessions.get()[0].protocol_flags['SCREENWIDTH'][0]
+            else:
                 screenwidth = 156
-        except AttributeError:
+        except (AttributeError, IndexError, KeyError) as e:
             screenwidth = 156
         
         leftmargin = (screenwidth/4) - 1 - len(self.name)/2
@@ -57,7 +54,7 @@ class Room(DefaultRoom):
             rightmargin = leftmargin
         else:
             rightmargin = leftmargin - 1
-        outputstring = "|115/" + "-" * leftmargin + "|n" + self.name + "|115" + "-" * rightmargin + "\\\n"
+        outputstring = "|115/" + "-" * leftmargin + "|n|555" + self.name + "|115" + "-" * rightmargin + "\\\n"
         wrapstring = ""
         if self.db.desc:
             if looker.db.hisil:
@@ -98,11 +95,14 @@ class Room(DefaultRoom):
                     outputstring += "|115|||n" + " " * ((screenwidth/2) - 2) + "|115|||n\n"
                     for moon in eveningwrap:
                         outputstring += "|115|||n " + moon + " " *((screenwidth/2) - 1 - len("| " + moon)) + "|115|||n\n"
-        if len(self.db.envirotilts) > 0:
-            outputstring += "|115+" + "-" * 48 + "|nEnvironmental Tilts|115" + "-" * 49 + "+\n"
-            for tilt in self.db.envirotilts:
-                outputstring += "|||n " + tilt + " " * ((screenwidth/2) - 1 - len("| " + tilt)) + "|115||\n"
-        outputstring += "|115+" + "-" * (screenwidth/4 - len("Characters")/2 - 1) + "|nCharacters|115" + "-" * (screenwidth/4 - len("Characters")/2 - 1) + "+\n"
+        try:
+            if len(self.db.envirotilts) > 0:
+                outputstring += "|115+" + "-" * 48 + "|555Environmental Tilts|115" + "-" * 49 + "+\n"
+                for tilt in self.db.envirotilts:
+                    outputstring += "|||n " + tilt + " " * ((screenwidth/2) - 1 - len("| " + tilt)) + "|115||\n"
+        except TypeError:
+            pass
+        outputstring += "|115+" + "-" * (screenwidth/4 - len("Characters")/2 - 1) + "|555Characters|115" + "-" * (screenwidth/4 - len("Characters")/2 - 1) + "+\n"
         for char in self.contents:
             if inherits_from(char, DefaultCharacter):
                 if char.db.hidden:
@@ -110,15 +110,15 @@ class Room(DefaultRoom):
                         continue
                 if char.db.shortdesc:
                     if char.db.shortdesc != "" and char.has_account:
-                        outputstring += "|||n " + char.name + ": " + char.db.shortdesc + " " * ((screenwidth/2) - 1 - len("| " + char.name + ": "+ char.db.shortdesc)) + "|115||\n"
+                        outputstring += "|115|||n " + char.name + ": " + char.db.shortdesc + " " * ((screenwidth/2) - 1 - len("| " + char.name + ": "+ char.db.shortdesc)) + "|115||\n"
                     elif char.has_account:
-                        outputstring += "|||n " + char.name + " " * ((screenwidth)/2 - 1 - len("| " + char.name )) + "|115||\n" 
+                        outputstring += "|115|||n " + char.name + " " * ((screenwidth)/2 - 1 - len("| " + char.name )) + "|115||\n" 
                 elif char == looker:
-                    outputstring += "|||n " + char.name + ": |111Set your short description with +shortdesc!" + " " * ((screenwidth)/2 - 1 - len("| " + char.name + ": Set your short description with +shortdesc!")) + "|115||\n" 
+                    outputstring += "|115|||n " + char.name + ": |111Set your short description with +shortdesc!" + " " * ((screenwidth)/2 - 1 - len("| " + char.name + ": Set your short description with +shortdesc!")) + "|115||\n" 
                 elif char.has_account:
-                    outputstring += "|||n " + char.name + " " * ((screenwidth)/2 - 1 - len("| " + char.name )) + "|115||\n" 
+                    outputstring += "|115|||n " + char.name + " " * ((screenwidth)/2 - 1 - len("| " + char.name )) + "|115||\n" 
         if len(self.exits) > 0:
-            outputstring += "|115+" + "-" * (screenwidth/4 - len("Characters")/2 + 2) + "|nExits|115" + "-" * (screenwidth/4 - len("Characters")/2 + 1) + "+\n"
+            outputstring += "|115+" + "-" * (screenwidth/4 - len("Characters")/2 + 2) + "|555Exits|115" + "-" * (screenwidth/4 - len("Characters")/2 + 1) + "+\n"
             exitstring = ""
             exitlist = sorted(self.exits)
             for exititer in exitlist:
@@ -129,6 +129,15 @@ class Room(DefaultRoom):
                         exitstring += exititer.name + " |222<" + exititer.aliases.get().upper() + ">|n   "
                     else:
                         exitstring+= exititer.name + " <" + exititer.aliases.get().upper() + ">   "
+                    if exititer == exitlist[-1] or ((exitlist.index(exititer) % 3) == 0 and exitlist.index(exititer) != 0):
+                        outputstring += exitstring
+                        outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115|||n\n"
+                        exitstring = ""
+                elif isinstance(exititer.aliases.get(),list):
+                    if isinstance(exititer.destination, Location):
+                        exitstring += exititer.name + " |222<" + exititer.aliases.get()[0].upper() + ">|n   "
+                    else:
+                        exitstring += exititer.name + " <" + exititer.aliases.get()[0].upper() + ">   "
                     if exititer == exitlist[-1] or ((exitlist.index(exititer) % 3) == 0 and exitlist.index(exititer) != 0):
                         outputstring += exitstring
                         outputstring += " " * ((screenwidth/2) - 3 - len(exitstring.replace("|222","").replace("|n",""))) + "|115|||n\n"

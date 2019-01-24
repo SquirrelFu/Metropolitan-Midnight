@@ -34,7 +34,6 @@ from world.handstatting import StatOther, ManageXP
 from world.beats import BeatCommand
 from world.aspirations import AspireCmd
 from command import OOCMasq
-from world.territory import Hunt
 from world.territory import Extract
 from command import ManageSpheres
 from command import SetChannelColor
@@ -90,7 +89,6 @@ class LocationCmdSet(CmdSet):
 class GridCmdSet(CmdSet):
 #Used for commands attached to neighborhood rooms. Not specific locations, not overarching boroughs or NYC itself.
     def at_cmdset_creation(self):
-        self.add(Hunt)
         self.add(Extract)
         super(GridCmdSet, self).at_cmdset_creation()
 class ChargenCmdSet(CmdSet):
@@ -157,17 +155,12 @@ class AccountCmdSet(default_cmds.AccountCmdSet):
         self.add(command.OpenAll())
         self.add(command.SetStatus)
         self.add(command.MUSHHelp())
-        #
-        # any commands you add below will overload the default ones.
-        #
-            
-class AdminSet(CmdSet):
-    key = "AdminSet"
-    def at_cmdset_creation(self):
-        super(AdminSet, self).at_cmdset_creation()
         self.add(command.MarkNPC())
         self.add(command.SpaceArchMastery())
-        self.add(command.ApproveChar)
+        self.add(command.ApproveChar())
+        #
+        # any commands you add below will overload the default ones.
+        #   
 
 class UnloggedinCmdSet(default_cmds.UnloggedinCmdSet):
     """

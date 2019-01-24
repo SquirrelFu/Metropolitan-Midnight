@@ -10,7 +10,6 @@ from evennia.web.urls import urlpatterns
 from web.site.views import mplusrules
 from web.site.views import beastpage
 from web.site.views import mpluspage
-from web.site.views import territorypage
 from web.site.views import bookpage
 from web.charwiki.views import charlist
 from web.charwiki.views import charpage
@@ -24,7 +23,6 @@ custom_patterns = [
     url(r'^mplus/rules/$', mplusrules),
     url(r'^beast/$', beastpage),
     url(r'^mplus/$',mpluspage),
-    url(r'^territory/$',territorypage),
     url(r'booklist/$',bookpage),
     url(r'^character/$', charlist),
     url(r'^character/(?P<charname>.+)/$',charpage,name='characterpage'),
@@ -32,7 +30,7 @@ custom_patterns = [
     url(r'^mage/rules/$', magerules),
     url(r'^demon/$',demonpage),
     url(r'^beast/customs/$',beastcustom),
-    url(r'^beast/rules/$',beastrules)
+    url(r'^beast/rules/$',beastrules),
     ]
 
 # this is required by Django.

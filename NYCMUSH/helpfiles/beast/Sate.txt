@@ -1,9 +1,0 @@
-Beasts are the sorts to feed indirectly, as they do not strictly require more than the recognition of their horror that they have fulfilled whatever hunger is relevant to them. However, they also often have to take greater pains to sate themselves as their hunger's needs are more demanding than other supernaturals.
-
-The first command without a downtime parameter added, allows the beast to hunt with a single die. On a success, they gain 1 satiety. On a failure, none. This is not a chance die, but more dice can be added with downtime increasing by 1 for every downtime hour spent.
-
-The second command conversely, notes that the Beast has sated their hunger by watching another supernatural feed. This results in adding one satiety, but requires a reason to be logged in the downtime log as an action taking zero hours.
-
-Commands:
-	+sate [<downtime>]
-	+sate/family <reason>

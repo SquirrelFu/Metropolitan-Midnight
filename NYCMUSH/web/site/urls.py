@@ -3,7 +3,7 @@ Created on Jan 24, 2017
 
 @author: CodeKitty
 '''
-from django.conf.urls import url
-from web.site.views import sheet 
+from django.contrib import admin
+from django.urls import path, include
 urlpatterns = [
 ]
