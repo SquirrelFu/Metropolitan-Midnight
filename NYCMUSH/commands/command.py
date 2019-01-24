@@ -2332,7 +2332,7 @@ class MUSHHelp(Command):
                 for helpfile in subFiles:
                     if helpfile == subFiles[0] or menuTally == 0 or menuTally + len(helpfile.replace('.txt','')) >= (screenWidth/2 - 4):
                         if helpfile != subFiles[0]:
-                            outputString += " " * ((screenWidth/2) - menuTally - 4) + "  |"
+                            outputString += " " * ((screenWidth/2) - menuTally - 4) + " |"
                             menuTally = 0
                         outputString += "\n|| "
                     if helpfile != subFiles[-1] and menuTally + len(helpfile.replace('.txt','')) < (screenWidth/2 - 4):
