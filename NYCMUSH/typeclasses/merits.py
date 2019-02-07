@@ -9,11 +9,11 @@ from evennia import DefaultScript
 class MeritHandler(DefaultScript):
     key = "MeritHandler"
     persistent = True
-    bookshort = ["CoD","HL","VtR","SotC","WtF","MtA","CtL:PT","BtP","HtV","MR","MtC","DtD","CtL:PTM","PtC","TP","NH:CH","BS","HD",'ATYoN']
+    bookshort = ["CoD","HL","VtR","SotC","WtF","MtA","CtL:PT","BtP","HtV","MR","MtC","DtD","CtL:PTM","PtC","TP","NH:CH","BS","HD",'ATYoN','BPG']
     booklong = ["Chronicles of Darkness core","Hurt Locker","Vampire the Requiem: Second Edition","Secrets of the Covenants","Werewolf the Forsaken: Second Edition",
                 "Mage: The Awakening Second Edition","Changeling the Lost Playtest Documents","Beast: The Primordial","Hunter: The Vigil","Mortal Remains","Mummy: The Curse",
-                "Demon: The Descent","Chageling the Lost Playtest Documents - Merit and Contract Update","Promethean: The Created Second Edition","The Pack","Night Horrors:Conquering Heroes",
-                "Blood Sorcery: Sacraments and Blasphemies","Half-Damned",'A Thousand Years of Night']
+                "Demon: The Descent","Chageling the Lost Playtest Documents - Merit and Contract Update","Promethean: The Created Second Edition","The Pack","Night Horrors: Conquering Heroes",
+                "Blood Sorcery: Sacraments and Blasphemies","Half-Damned",'A Thousand Years of Night',"Beast Player's Guide"]
     templatelist = ["Beast","Changeling","Mortal","Mortal+","Mage","Werewolf","Vampire","Mummy","Demon","Promethean"]
     mortalplus = ["Ghoul","Wolfblood","Proximus","Fae-Touched","Hunter"]
     mplusmerits = ["Psychic Vampirism","Damn Lucky","Carrier","The Protocol","Plain Reader","Subliminal Conditioning"]
