@@ -3962,6 +3962,7 @@ class BookRef(default_cmds.MuxCommand):
             self.caller.msg("Unable to find werewolf stat index. Please contact staff.")
             return
         bookref = []
+        prefixes = []
         booksout = ""
         modpower = demonsearch.db.modifications
         techpower = demonsearch.db.technologies
@@ -3974,180 +3975,232 @@ class BookRef(default_cmds.MuxCommand):
         socmerit = meritsearch.db.social
         supermerit = meritsearch.db.supernatural
         fightmerit = meritsearch.db.fighting
-        addmerit = meritsearch.db.addons
         luckmerit = meritsearch.db.atariya
         progmerit = meritsearch.db.dreamer
         sickmerit = meritsearch.db.infected
         if not switches and args:
             for phys in physmerit:
-                if args.lower() == phys[0].lower():
+                if args.lower() in phys[0].lower():
                     bookref.append(phys[2])
+                    prefixes.append("Physical merit (" + phys[0] +") found in: ")
             for ment in mentmerit:
-                if args.lower() == ment[0].lower():
+                if args.lower() in ment[0].lower():
                     bookref.append(ment[2])
+                    prefixes.append("Mental merit (" + ment[0] + ") found in: ")
             for soc in socmerit:
-                if args.lower() == soc[0].lower():
+                if args.lower() in soc[0].lower():
                     bookref.append(soc[2])
+                    prefixes.append("Social merit (" + soc[0] + ") found in: ")
             for fight in fightmerit:
-                if args.lower() == fight[0].lower():
+                if args.lower() in fight[0].lower():
                     bookref.append(fight[2])
+                    prefixes.append("Fighting merit (" + fight[0] + ") found in: ")
             for para in supermerit:
-                if args.lower() == para[0].lower():
+                if args.lower() in para[0].lower():
                     bookref.append(para[2])
-            for add in addmerit:
-                if args.lower() == add[0].lower():
-                    bookref.append(add[2])
+                    prefixes.append("Supernatural merit (" + para[0] + ") found in: ")
             for luck in luckmerit:
-                if args.lower() == luck[0].lower():
+                if args.lower() in luck[0].lower():
                     bookref.append(luck[2])
+                    prefixes.append("Atariya merit (" + luck[0] +" ) found in: ")
             for prog in progmerit:
-                if args.lower() == prog[0].lower():
+                if args.lower() in prog[0].lower():
                     bookref.append(prog[2])
+                    prefixes.append("Dreamer merit (" + prog[0] + ") found in: ")
             for sick in sickmerit:
-                if args.lower() == sick[0].lower():
+                if args.lower() in sick[0].lower():
                     bookref.append(sick[2])
+                    prefixes.append("Infected merit (" + sick[0] + ") found in: ")
             for lost in meritsearch.db.lostboy:
-                if args.lower() == lost[0].lower():
+                if args.lower() in lost[0].lower():
                     bookref.append(lost[2])
+                    prefixes.append("Lost Boys merit (" + lost[0] + ") found in: ")
             for peace in meritsearch.db.plain:
-                if args.lower() == peace[0].lower():
+                if args.lower() in peace[0].lower():
                     bookref.append(peace[2])
+                    prefixes.append("Plain merit (" + peace[0] + ") found in: ")
             for psy in meritsearch.db.psyvamp:
-                if args.lower() == psy[0].lower():
+                if args.lower() in psy[0].lower():
                     bookref.append(psy[2])
+                    prefixes.append("Psychic vampire merit (" + psy[0] + ") found in: ")
             for add in meritsearch.db.addons:
-                if args.lower() == add[0].lower():
+                if args.lower() in add[0].lower():
                     bookref.append(add[2])
+                    prefixes.append("Fighting addon merit (" + add[0] + ") found in: ")
             for vamp in meritsearch.db.vampire:
-                if args.lower() == vamp[0].lower():
+                if args.lower() in vamp[0].lower():
                     bookref.append(vamp[2])
+                    prefixes.append("Vampire merit (" + vamp[0] +") found in: ")
             for blud in meritsearch.db.ghoul:
-                if args.lower() == blud[0].lower():
+                if args.lower() in blud[0].lower():
                     bookref.append(blud[2])
+                    prefixes.append("Ghoul merit (" + blud[0] + ") found in: ")
             for were in meritsearch.db.werewolf:
-                if args.lower() == were[0].lower():
+                if args.lower() in were[0].lower():
                     bookref.append(were[2])
+                    prefixes.append("Werewolf merit (" + were[0] + ") found in: ")
             for grr in meritsearch.db.wolfblood:
-                if args.lower() == grr[0].lower():
+                if args.lower() in grr[0].lower():
                     bookref.append(grr[2])
+                    prefixes.append("Wolfblood merit (" + grr[0] +") found in: ")
             for poof in meritsearch.db.mage:
-                if args.lower() == poof[0].lower():
+                if args.lower() in poof[0].lower():
                     bookref.append(poof[2])
+                    prefixes.append("Mage merit (" + poof[0] + ") found in: ")
             for walk in meritsearch.db.sleepwalker:
-                if args.lower() == walk[0].lower():
+                if args.lower() in walk[0].lower():
                     bookref.append(walk[2])
+                    prefixes.append("Sleepwalker merit (" + walk[0] + ") found in: ")
             for ling in meritsearch.db.changeling:
-                if args.lower() == ling[0].lower():
+                if args.lower() in ling[0].lower():
                     bookref.append(ling[2])
+                    prefixes.append("Changeling merit (" + ling[0] + ") found in: ")
             for fae in meritsearch.db.faetouched:
-                if args.lower() == fae[0].lower():
+                if args.lower() in fae[0].lower():
                     bookref.append(fae[2])
+                    prefixes.append("Fae-Touched merit (" + fae[0] + ") found in: ")
             for rawr in meritsearch.db.beast:
-                if args.lower() == rawr[0].lower():
+                if args.lower() in rawr[0].lower():
                     bookref.append(rawr[2])
+                    prefixes.append("Beast merit (" + rawr[0] + ") found in: ")
             for fire in meritsearch.db.promethean:
-                if args.lower() == fire[0].lower():
+                if args.lower() in fire[0].lower():
                     bookref.append(fire[2])
+                    prefixes.append("Promethean merit (" + fire[0] +") found in: ")
             for gun in meritsearch.db.hunter:
-                if args.lower() == gun[0].lower():
+                if args.lower() in gun[0].lower():
                     bookref.append(gun[2])
+                    prefixes.append("Hunter merit (" + gun[0] + ") found in: ")
             for tut in meritsearch.db.mummy:
-                if args.lower() == tut[0].lower():
+                if args.lower() in tut[0].lower():
                     bookref.append(tut[2])
+                    prefixes.append("Mummy merit (" + tut[0] + ") found in: ")
             for hell in meritsearch.db.demon:
-                if args.lower() == hell[0].lower():
+                if args.lower() in hell[0].lower():
                     bookref.append(hell[2])
+                    prefixes.append("Demon merit (" + hell[0] + ") found in: ")
             for claw in beastsearch.db.atavisms:
-                if args.lower() == claw[0].lower():
+                if args.lower() in claw[0].lower():
                     bookref.append(claw[2])
+                    prefixes.append("Atavism (" + claw[0] + ") found in: ")
             for scare in beastsearch.db.nightmares:
-                if args.lower() == scare[0].lower():
+                if args.lower() in scare[0].lower():
                     bookref.append(scare[2])
+                    prefixes.append("Nightmare (" + scare[0] + ") found in: ")
             for pact in lingsearch.db.contracts:
-                if args.lower() == pact[0].lower():
+                if args.lower() in pact[0].lower():
                     bookref.append(pact[3])
+                    prefixes.append("Contract (" + pact[0] + ") found in: ")
             for mod in modpower:
-                if args.lower() == mod[0].lower():
+                if args.lower() in mod[0].lower():
                     bookref.append(mod[1])
+                    prefixes.append("Modification  (" + mod[0] + ") found in: ")
             for tech in techpower:
-                if args.lower() == tech[0].lower():
+                if args.lower() in tech[0].lower():
                     bookref.append(tech[1])
+                    prefixes.append("Technology (" + tech[0] + ") found in: ")
             for prop in proppower:
-                if args.lower() == prop[0].lower():
+                if args.lower() in prop[0].lower():
                     bookref.append(prop[1])
+                    prefixes.append("Propulsion (" + prop[0] + ") found in: ")
             for proc in procpower:
-                if args.lower() == proc[0].lower():
+                if args.lower() in proc[0].lower():
                     bookref.append(proc[1])
+                    prefixes.append("Process (" + proc[0] + ") found in: ")
             for embed in embedpower:
-                if args.lower() == embed[0].lower():
+                if args.lower() in embed[0].lower():
                     bookref.append(embed[1])
+                    prefixes.append("Embed (" + embed[0] + ") found in: ")
             for exploit in exploitpower:
-                if args.lower() == exploit[0].lower():
+                if args.lower() in exploit[0].lower():
                     bookref.append(exploit[1])
+                    prefixes.append("Exploit (" + exploit[0] + ") found in: ")
             for arm in huntsearch.db.advarmory:
-                if args.lower() == arm[0].lower():
+                if args.lower() in arm[0].lower():
                     bookref.append(arm[2])
+                    prefixes.append("Advanced Armory endowment(" + arm[0] + ") found in: ")
             for bless in huntsearch.db.benediction:
-                if args.lower() == bless[0].lower():
+                if args.lower() in bless[0].lower():
                     bookref.append(bless[1])
+                    prefixes.append("Benediction endowment (" + bless[0] + ") found in: ")
             for cast in huntsearch.db.castigation:
-                if args.lower() == cast[0].lower():
+                if args.lower() in cast[0].lower():
                     bookref.append(cast[1])
+                    prefixes.append("Castigation endowment (" + cast[0] + ") found in: ")
             for chem in huntsearch.db.elixir:
-                if args.lower() == chem[0].lower():
+                if args.lower() in chem[0].lower():
                     bookref.append(chem[2])
+                    prefixes.append("Elixirs endowment (" + chem[0] + ") found in: ")
             for old in huntsearch.db.relic:
-                if args.lower() == old[0].lower():
-                    bookref.append(old[2])
+                if args.lower() in old[0].lower():
+                    bookref.append(old[1])
+                    prefixes.append("Reliquary endowment(" + old[0] + ") found in: ")
             for bio in huntsearch.db.thaumatechnology:
-                if args.lower() == bio[0].lower():
+                if args.lower() in bio[0].lower():
                     bookref.append(bio[2])
+                    prefixes.append("Thaumatechnology endowment (" + bio[0] + ") found in: ")
             for tat in huntsearch.db.ink:
-                if args.lower() == tat[0].lower():
+                if args.lower() in tat[0].lower():
                     bookref.append(tat[1])
+                    prefixes.append("Ink endowment (" + tat[0] + ") found in: ")
             for aff in mummysearch.db.affinities:
-                if args.lower() == aff[0].lower():
+                if args.lower() in aff[0].lower():
                     bookref.append(aff[2])
+                    prefixes.append("Affinity (" + aff[0] + ")found in: ")
             for utt in mummysearch.db.utterances:
-                if args.lower() == utt[0].lower():
+                if args.lower() in utt[0].lower():
                     bookref.append(utt[3])
+                    prefixes.append("Utterance (" + utt[0] + ") found in: ")
             for rote in magesearch.db.rotes:
-                if args.lower() == rote[1].lower():
+                if args.lower() in rote[1].lower():
                     bookref.append(rote[4])
+                    prefixes.append(rote[0] +  " rote (" + rote[1] + ") found in: ")
             for change in promsearch.db.transmutations:
-                if args.lower() == change[0].lower():
+                if args.lower() in change[0].lower():
                     bookref.append(change[6])
+                    prefixes.append("Transmutation (" + change[0] + ") found in: ")
             for disc in vampsearch.db.disciplines:
-                if args.lower() == disc[0].lower():
+                if args.lower() in disc[0].lower():
                     bookref.append(disc[2])
+                    prefixes.append("Discipline (" + disc[0] + ") found in: ")
             for dev in vampsearch.db.devotions:
-                if args.lower() == dev[0].lower():
+                if args.lower() in dev[0].lower():
                     bookref.append(dev[1])
+                    prefixes.append("Devotion (" + dev[0] + ") found in: ")
             for theb in vampsearch.db.theban_rituals:
-                if args.lower() == theb[0].lower():
+                if args.lower() in theb[0].lower():
                     bookref.append(theb[2])
+                    prefixes.append("Theban Sorcery ritual (" + theb[0] + ") found in: ")
             for cru in vampsearch.db.cruac_rituals:
-                if args.lower() == cru[0].lower():
+                if args.lower() in cru[0].lower():
                     bookref.append(cru[2])
+                    prefixes.append("Cruac ritual (" + cru[0] +") found in: ")
             for sca in vampsearch.db.scales:
-                if args.lower() == sca[0].lower():
-                    bookref.append(sca[3])
+                if args.lower() in sca[0].lower():
+                    bookref.append(sca[2])
+                    prefixes.append("Scale of the Dragon (" + sca[0] + ") found in: ")
             for gift in wolfsearch.db.gifts:
-                if args.lower() == gift[0].lower():
+                if args.lower() in gift[0].lower():
                     bookref.append(gift[1])
+                    prefixes.append("Werwolf gift (" + gift[0] +  ") found in: ")
             for rite in wolfsearch.db.rites:
-                if args.lower() == rite[0].lower():
+                if args.lower() in rite[0].lower():
                     bookref.append(rite[3])
+                    prefixes.append("Werewolf rite (" + rite[0] + ") found in: ")
             for tell in wolfsearch.db.tells:
-                if args.lower() == tell[0].lower():
+                if args.lower() in tell[0].lower():
                     bookref.append(tell[1])
-        for reference in bookref:
+                    prefixes.append("Wolf-Blooded Tell (" + tell[0] + ")  found in: ")
+        for pref in prefixes:
             for shorthand in meritsearch.db.bookshort:
+                reference = bookref[prefixes.index(pref)]
                 if re.sub('-[0-9]*$','',reference) == shorthand:
-                    booksout += meritsearch.db.booklong[meritsearch.db.bookshort.index(shorthand)] + " page " + reference.split("-")[1]
-                    if reference != bookref[len(bookref) - 1]:
+                    booksout += prefixes[prefixes.index(pref)] + meritsearch.db.booklong[meritsearch.db.bookshort.index(shorthand)] + " page " + reference.split("-")[1]
+                    if pref != prefixes[-1]:
                         booksout += "\n"
         self.caller.msg(booksout)
+        if (booksout == ""):
+            self.caller.msg("Stat not found")
 class OOCMasq(Command):
     """
     This command is used to opt-in to the OOC masquerade, labeling your character on the website
@@ -6388,7 +6441,7 @@ class SetTemplate(Command):
                     self.caller.db.miscstats = []
                     self.caller.db.techniquelist = []
                     self.caller.db.powers = {}
-                    self.caller.db.miscname = ""
+                    self.caller.db.miscname = "Obcasus Rites"
                     self.caller.db.meritlist = []
                     self.caller.db.beats = 50
                     self.caller.Update()

@@ -9,11 +9,11 @@ from evennia import DefaultScript
 class MeritHandler(DefaultScript):
     key = "MeritHandler"
     persistent = True
-    bookshort = ["CoD","HL","VtR","SotC","WtF","MtA","CtL:PT","BtP","HtV","MR","MtC","DtD","CtL:PTM","PtC","TP","NH:CH","BS","HD",'ATYoN']
+    bookshort = ["CoD","HL","VtR","SotC","WtF","MtA","CtL:PT","BtP","HtV","MR","MtC","DtD","CtL:PTM","PtC","TP","NH:CH","BS","HD",'ATYoN','BPG']
     booklong = ["Chronicles of Darkness core","Hurt Locker","Vampire the Requiem: Second Edition","Secrets of the Covenants","Werewolf the Forsaken: Second Edition",
                 "Mage: The Awakening Second Edition","Changeling the Lost Playtest Documents","Beast: The Primordial","Hunter: The Vigil","Mortal Remains","Mummy: The Curse",
                 "Demon: The Descent","Chageling the Lost Playtest Documents - Merit and Contract Update","Promethean: The Created Second Edition","The Pack","Night Horrors:Conquering Heroes",
-                "Blood Sorcery: Sacraments and Blasphemies","Half-Damned",'A Thousand Years of Night']
+                "Blood Sorcery: Sacraments and Blasphemies","Half-Damned",'A Thousand Years of Night',"Beast Player's Guide"]
     templatelist = ["Beast","Changeling","Mortal","Mortal+","Mage","Werewolf","Vampire","Mummy","Demon","Promethean"]
     mortalplus = ["Ghoul","Wolfblood","Proximus","Fae-Touched","Hunter"]
     mplusmerits = ["Psychic Vampirism","Damn Lucky","Carrier","The Protocol","Plain Reader","Subliminal Conditioning"]
@@ -1002,7 +1002,7 @@ class MeritHandler(DefaultScript):
             sleepwalker.append(tuple(["Ritual Savvy","2","MtA-306","Occult,2"]))
             sleepwalker.append(tuple(["Slippery","2","MtA-306"]))
         if len(changeling) == 0:
-            changeling.append(tuple(["Acute Senses","1","CtL:PTM-41","Wits3/Composure,3","Sanity,>6"]))
+            changeling.append(tuple(["Acute Senses","1","CtL:PTM-41","Wits,3/Composure,3","Sanity,>6"]))
             changeling.append(tuple(["Arcadian Body","4","CtL:PTM-41"]))
             changeling.append(tuple(["Arcadian Metabolism","3","CtL:PTM-41"]))
             changeling.append(tuple(["Bedlam Bringer","1,2,3","CtL:PTM-42""Powerstat,>5"]))
@@ -1078,8 +1078,25 @@ class MeritHandler(DefaultScript):
             beast.append(tuple(["Iron Skin Advanced","1,2","BtP-117","Stamina,4"]))
             beast.append(tuple(["Iron Skin Epic","2","BtP-117","Stamina,5"]))
             beast.append(tuple(["Killer Instinct Advanced", "1,2,3","BtP-117","Killer Instinct,3"]))
-            beast.append(tuple(["Spoor","1,2,3,4,5","BtP-120"]))
+            beast.append(tuple(["Relentless Assault","1,2,3,4,5","BtP-118","Strength,3","Stamina,3","Brawl,2"]))
             beast.append(tuple(["Striking Looks Advanced", "1,2","BtP-121","Striking Looks,2"]))
+            beast.append(tuple(["Direct Dial","1","BPG-99","Direction Sense Advanced","Computer,2","Occult,2"]))
+            beast.append(tuple(["Infernal Machine","2","BPG-99"]))
+            beast.append(tuple(["Legendary Horror","1,2,3,4,5","BPG-99","Powerstat>3"]))
+            beast.append(tuple(["Obcasus Inititate","2","BPG-100"]))
+            beast.append(tuple(["Primordial Cult","2","BPG-100","Occult,2/Politics,2"]))
+            beast.append(tuple(["Connected Lair","2","BPG-100"]))
+            beast.append(tuple(["Trap Room","2","BPG-101"]))
+            beast.append(tuple(["Vast Lair","1,2,3","BPG-101"]))
+            beast.append(tuple(["Well-stocked Lair","1,2,3,4,5","BPG-101","Powerstat="]))
+            beast.append(tuple(["Know their falseness","2","BPG-102"]))
+            beast.append(tuple(["Feign death","1","BPG-102"]))
+            beast.append(tuple(["Look between worlds","2","BPG-102"]))
+            beast.append(tuple(["Sanguivore","2","BPG-102"]))
+            beast.append(tuple(["Scent your prey","1,2","BPG-102"]))
+            beast.append(tuple(["Scour your body","2","BPG-103"]))
+            beast.append(tuple(["Step sideways","3","BPG-103"]))
+            beast.append(tuple(["Walk lightly","2","BPG-103"]))
         if len(promethean) == 0:
             promethean.append(tuple(["Acid Stomach","1","PtC-111"]))
             promethean.append(tuple(["Azothic Object","1,2,3,4,5","PtC-112"]))

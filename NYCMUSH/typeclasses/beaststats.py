@@ -6,12 +6,13 @@ Created on Jan 14, 2017
 from evennia import DefaultScript
 class BeastStatHandler(DefaultScript):
     def at_script_creation(self):
-        self.db.families = ["Anakim","Makara","Namtaru","Eshmaki","Ugallu"]
-        self.db.hungers = ["Tyrant","Collector","Ravager","Nemesis","Predator"]
+        self.db.families = ["Anakim","Makara","Namtaru","Eshmaki","Ugallu","Inguma","Talassii"]
+        self.db.hungers = ["Tyrant","Collector","Ravager","Nemesis","Predator","Whisper","Enabler"]
         self.db.atavisms = []
         self.db.nightmares = []
         self.db.legends = ['Judgmental','Relentless','Unexpected','Seductive','Vicious','Watchful']
         self.db.lives = ['Parental','Shy','Cautious','Loyal','Honest','Selfless']
+        self.db.obcasus = []
         atavisms = self.db.atavisms
         nightmares = self.db.nightmares
         if len(atavisms) == 0:
@@ -35,6 +36,22 @@ class BeastStatHandler(DefaultScript):
             atavisms.append(tuple(["Titanic Blow","Anakim","BtP-131"]))
             atavisms.append(tuple(["Unbreakable","Namtaru","Btp-131"]))
             atavisms.append(tuple(["Wings of The Raptor","Ugallu","BtP-132"]))
+            atavisms.append(tuple(["Alien Mindset","Inguma","BPG-82"]))
+            atavisms.append(tuple(["Caught in the Webs","Talassii","BPG-83"]))
+            atavisms.append(tuple(["Crushing Coils","Talassii","BPG-83"]))
+            atavisms.append(tuple(["Doppelganger","Inguma","BPG-83"]))
+            atavisms.append(tuple(["Enemy Within","Inguma","BPG-84"]))
+            atavisms.append(tuple(["Illusion of Safety","Talassii","BPG-84"]))
+            atavisms.append(tuple(["Lightning Strike","Ugallu","BPG-85"]))
+            atavisms.append(tuple(["Plague Bearer","Namtaru","BPG-85"]))
+            atavisms.append(tuple(["Ravenous Maw","Makara","BPG-86"]))
+            atavisms.append(tuple(["Shadow Stalker","Eshmaki","BPG-86"]))
+            atavisms.append(tuple(["Skin Deep","Namtaru","BPG-87"]))
+            atavisms.append(tuple(["Smashing Currents","Makara","BPG-87"]))
+            atavisms.append(tuple(["Terror's Friend","Anakim","BPG-88"]))
+            atavisms.append(tuple(["Death of Light","Eshmaki","BPG-88"]))
+            atavisms.append(tuple(["Vengeful Earth","Anakim","BPG-88"]))
+            atavisms.append(tuple(["Weakness Exposed","Ugallu","BPG-88"]))
         if len(nightmares) == 0:
             nightmares.append(tuple(["All Your Teeth Are Falling Out","Common","BtP-134"]))
             nightmares.append(tuple(["Behold, My True Form!","Common","BtP-134"]))
@@ -65,3 +82,25 @@ class BeastStatHandler(DefaultScript):
             nightmares.append(tuple(["You can't take it with you","Sin-Eater,Bonepicker","BtP-142"]))
             nightmares.append(tuple(["Tabula Rasa","Mummy","BtP-142"]))
             nightmares.append(tuple(["Cursed Object","Mummy,Maa-Kep","BtP-142"]))
+            nightmares.append(tuple(["The walls have eyes","Common","BPG-89"]))
+            nightmares.append(tuple(["They don't love you","Common","BPG-89"]))
+            nightmares.append(tuple(["They put something in your food","Common","BPG-89"]))
+            nightmares.append(tuple(["They walk among us","Common","BPG-90"]))
+            nightmares.append(tuple(["This is due tomorrow","Common","BPG-90"]))
+            nightmares.append(tuple(["We're going down!","Common","BPG-91"]))
+            nightmares.append(tuple(["You can't dig it out","Common","BPG-91"]))
+            nightmares.append(tuple(["You don't have a face","Common","BPG-91"]))
+            nightmares.append(tuple(["You're one of us","Common","BPG-91"]))
+            nightmares.append(tuple(["You were never right","Common","BPG-92"]))
+            nightmares.append(tuple(["Checking it twice","Changeling,Wizened","BPG-92"]))
+            nightmares.append(tuple(["Everything you know is a lie","Mage","BPG-92"]))
+            nightmares.append(tuple(["Evil doll","Unfleshed,Promethean","BPG-93"]))
+            nightmares.append(tuple(["Family is forever","Vampire","BPG-93"]))
+            nightmares.append(tuple(["The water won't last forever","Hunters in Darkness,Werewolf","BPG-93"]))
+            nightmares.append(tuple(["You are a meat machine","Promethean","BPG-93"]))
+            nightmares.append(tuple(["You have foreseen this","Acanthus,Mage","BPG-94"]))
+            nightmares.append(tuple(["You should fade away","Silent,Sin-Eater","BPG-94"]))
+            nightmares.append(tuple(["You will be the first against the wall","Carthian,Vampire","BPG-94"]))
+            nightmares.append(tuple(["Your struggle won't matter","Torn,Sin-Eater","BPG-94"]))
+            nightmares.append(tuple(["You are running out of time","Vampire","BPG-96"]))
+            nightmares.append(tuple(["God is testing you","Lancea et Sanctum,Vampire","BPG-96"]))
