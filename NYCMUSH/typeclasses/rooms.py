@@ -124,11 +124,9 @@ class Room(DefaultRoom):
             for exititer in exitlist:
                 if exitstring == "":
                     outputstring += "|115|||n "
-                tempstring = ""
                 if isinstance(exititer.aliases.get(),str):
                     if isinstance(exititer.destination, Location):
-                        tempstring = exititer.name + " |222<" + exititer.aliases.get().upper() + ">|n   "
-                        if len(exitstring + tempstring)
+                        exitstring += exititer.name + " |222<" + exititer.aliases.get().upper() + ">|n   "
                     else:
                         exitstring+= exititer.name + " <" + exititer.aliases.get().upper() + ">   "
                     if exititer == exitlist[-1] or ((exitlist.index(exititer) % 3) == 0 and exitlist.index(exititer) != 0):

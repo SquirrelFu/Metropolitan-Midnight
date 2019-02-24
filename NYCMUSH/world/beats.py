@@ -73,3 +73,13 @@ class BeatAwarder(DefaultScript):
             nexttime = curtime + datetime.timedelta(days=1)
             nexttime.replace(hour=0,second=0,minute=0,microsecond=0)
             self.interval = (nexttime - curtime).total_seconds()
+    def at_repeat(self):
+        curtime = datetime.datetime.now()
+        charlist = DefaultCharacter.objects.filter_family()
+        for char in charlist:
+            last_duration = curtime.day - char.db.last_login.day
+            if char.db.approved and last_duration >= 1:
+                char.db.beats += 1
+                if char.has_player:
+                    char.msg("You've been awarded a beat as your daily alottment.")
+        
