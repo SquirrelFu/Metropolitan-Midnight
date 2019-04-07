@@ -431,18 +431,19 @@ class MeritHandler(DefaultScript):
                         else:
                             break
                 for searchmerit in character.db.meritlist:
-                    if reqstat.lower() == searchmerit.name.lower():
+                    if reqstat.lower() == searchmerit[0].lower():
                     #Checks to see if the merit is held by the character at all.
-                        if reqnote != "" and searchmerit.note.lower() != reqnote:
+                        if reqnote != "" and searchmerit[2].lower() != reqnote:
                         #Checks to see if the proper note is there or not.
                             return False
                         else:
-                            if int(reqscore) > int(searchmerit.score):
+                            if int(reqscore) > int(searchmerit[1]):
                                 return False
                             else:
                                 break
                     else:
-                        return False      
+                        return False
+            return True   
     def CompareMeritStat(self, stat, comparison, base):
             compstat = stat.replace(comparison,"")
             if comparison == "+":
@@ -1073,7 +1074,7 @@ class MeritHandler(DefaultScript):
             beast.append(tuple(["Fist of Nightmares","2","BtP-115","Brawl,2","Occult,2"]))
             beast.append(tuple(["Giant Advanced","2","BtP-116","Giant"]))
             beast.append(tuple(["Guilty Pleasure","1","BtP-116"]))
-            beast.append(tuple(["Hunter Management","1,2,3","BtP-116","Resolve,3"]))
+            beast.append(tuple(["Hunger Management","1,2,3","BtP-116","Resolve,3"]))
             beast.append(tuple(["Iron Skin","1,2","BtP-117","Brawl,2","Stamina,2"]))
             beast.append(tuple(["Iron Skin Advanced","1,2","BtP-117","Stamina,4"]))
             beast.append(tuple(["Iron Skin Epic","2","BtP-117","Stamina,5"]))

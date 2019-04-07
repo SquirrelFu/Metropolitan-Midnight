@@ -8,6 +8,7 @@ class MageStatHandler(DefaultScript):
     arcana = ["Fate","Forces","Matter","Prime","Spirit","Death","Life","Mind","Space","Time"]
     pathlist = ["Obrimos","Thrysus","Mastigos","Moros","Acanthus"]
     orderlist = ["Free Council","Mysterium","Adamantine Arrow","Silver Ladder","Guardians of the Veil"]
+    legacylist = ["Eleventh Question"]
     arcana.sort()
     arcana_ratings = [1,2,3,4,5]
     def GetSkills(self, rotein):
@@ -23,6 +24,7 @@ class MageStatHandler(DefaultScript):
         self.db.arcana_ratings = self.arcana_ratings
         self.db.paths = self.pathlist
         self.db.orders = self.orderlist
+        self.db.leagcies = self.legacylist
         arcana = self.db.arcana
         rotes = self.db.rotes
         if len(arcana) == 0:

@@ -617,6 +617,7 @@ class Character(gendersub.GenderCharacter):
         self.db.init_bonus = 0
         self.db.speed_bonus = 0
         self.db.visibility = 0
+        self.db.size = 5
         for x in self.db.meritlist:
             if x[0] == "Fleet of Foot":
                 self.db.speed_bonus = int(x[1])
@@ -629,7 +630,33 @@ class Character(gendersub.GenderCharacter):
             if x[0] == "Fame" or x[0] == "Fame Advanced":
                 self.db.visibility += int(x[1])
             if x[0] == "Giant":
-                self.db.size += 1
+                if self.db.template.lower() != "werewolf":
+                    self.db.size = 6
+                else:
+                    if self.db.currentform == "Hishu":
+                        self.db.size = 6
+                    elif self.db.currentform == "Dalu":
+                        self.db.size = 7
+                    elif self.db.currentform == "Gauru":
+                        self.db.size = 8
+                    elif self.db.currentform == "Urshul":
+                        self.db.size = 7
+                    elif self.db.currentform == "Urhan":
+                        self.db.size = 5
+            elif x[0] == "Small-Framed":
+                if self.db.tempalte.lower() != "werewolf":
+                    self.db.size = 4
+                else:
+                    if self.db.currentform == "Hishu":
+                        self.db.size = 4
+                    elif self.db.currentform == "Dalu":
+                        self.db.size = 5
+                    elif self.db.currentform == "Gauru":
+                        self.db.size = 6
+                    elif self.db.currentform == "Urshul":
+                        self.db.size = 4
+                    elif self.db.currentform == "Urhan":
+                        self.db.size = 3
             if x[0] == "Psychic Vampirism":
                 for y in self.db.meritlist:
                     if y[0] == "Ephemeral Battery":
@@ -651,6 +678,16 @@ class Character(gendersub.GenderCharacter):
         self.db.speed = attributes['Strength'] + attributes['Dexterity'] + self.db.size + self.db.speed_bonus
         self.db.defense = min(attributes['Dexterity'], attributes['Wits']) + physskills['Athletics']
         self.db.pools['Willpower'] = str(attributes['Resolve'] + attributes['Composure']) + "," + str(attributes['Resolve'] + attributes['Composure']) 
+        if self.db.template.lower() == "vampire":
+            currentBlood = self.db.pools['Vitae'] = self.db.pools['Vitae'].split(",")[0]
+            if currentBlood > self.db.powerlist[self.db.powerstat - 1]:
+                currentBlood = self.db.powerlist[self.db.powerstat - 1]            
+            self.db.pools['Vitae'] = str(currentBlood) + "," + str(self.db.powerlist[self.db.powerstat - 1])
+        if self.db.template.lower() == "mage":
+            currentMana = self.db.pools['Mana'] = self.db.pools['Mana'].split(",")[0]
+            if currentMana > self.db.powerlist[self.db.powerstat - 1]:
+                currentMana = self.db.powerlist[self.db.powerstat - 1]
+            self.db.pools['Mana'] = str(currentMana) + "," + str(self.db.powerlist[self.db.powerstat - 1])
     def AddPlus(self, merit):
         if merit in self.db.plusmerits:
             if merit == "Subliminal Conditioning":

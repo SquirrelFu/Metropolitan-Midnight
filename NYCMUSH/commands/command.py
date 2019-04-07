@@ -3421,7 +3421,7 @@ class ManageSpheres(default_cmds.MuxCommand):
     def func(self):
         args = self.args.strip()
         switches = self.switches
-        sphereList = ['werewolf','mage','beast','changeling','hunter','demon','promethean','atariya','infected','dreamer','lostboys','plain','psyvamp','vampire','geist']
+        sphereList = ['werewolf','mage','beast','changeling','hunter','demon','promethean','mummy','atariya','infected','dreamer','lostboys','plain','psyvamp','vampire','geist']
         if args.lower() in sphereList:
             calledSetting = getattr(settings,args.upper()+'_STATUS')
             if switches[0].lower() == "open":
@@ -3460,6 +3460,7 @@ class SphereStatus(Command):
     """
     key = "+spherestatus"
     lock = "cmd:all()"
+    aliases = ["+spheres"]
     help_category="OOC"
     def func(self):
         sphereList = ['vampire','werewolf','mage','changeling','beast','hunter','promethean','mummy','demon','atariya',
@@ -5068,12 +5069,16 @@ class SetPower(default_cmds.MuxCommand):
                     #Check and see if the key exists. If not, add the power.
                         powers[smash[0]] = "0"
                         self.caller.msg(smash[0] + " added.")
+                        return
             for zoinks in eek:
             #Iterate through the library of nightmares.
-                if zoinks[0] == self.arglist[0]:
+                if zoinks[0].lower() == self.arglist[0].lower():
                 #If the nightmare is found, add it to the caller's database of techniques.
                     caller.AddTech(zoinks[0])
                     self.caller.msg(zoinks[0] + " added.")
+                    return
+            self.caller.msg("Invalid nightmare or atavism")
+            return
         if template == "Hunter":
             advarmory = caller.location.db.endowments.db.advarmory
             benediction = caller.location.db.endowments.db.benediction
@@ -5564,6 +5569,15 @@ class SetStat(default_cmds.MuxCommand):
                 if arglist:
                     try:
                         if int(arglist[0]) >= 0 and int(arglist[0]) < 3:
+                            if int(arglist[0]) == 0:
+                                if self.caller.db.powerstat == 1:
+                                    self.caller.msg("You have no powerstat purchase to remove.")
+                                    return
+                                self.caller.msg("Powerstat purchase removed.")
+                                self.caller.db.meritlimit = 10
+                                self.caller.db.powerstat = 1
+                                self.caller.Update()
+                                return
                             merittotal = 0
                             for scoremerit in self.caller.db.meritlist:
                                 merittotal += int(scoremerit[1])
@@ -5571,16 +5585,10 @@ class SetStat(default_cmds.MuxCommand):
                                 self.caller.msg("You have too few merit dots remaining to purchase a dot of powerstat!")
                                 return
                             self.caller.db.powerstat = int(arglist[0]) + 1
+                            self.caller.Update()
                             if int(arglist[0]) > 0:
                                 self.caller.db.meritlimit = 10 - (int(arglist[0])*5)
                                 self.caller.msg(arglist[0] + " dots of "+ self.caller.db.powerstatname + " purchased with merits.")
-                                return
-                            elif int(arglist[0]) == 0:
-                                if self.caller.db.powerstat == 1:
-                                    self.caller.msg("You have no powerstat purchase to remove.")
-                                    return
-                                self.caller.msg("Powerstat purchase removed.")
-                                self.caller.db.meritlimit = 10
                                 return
                             else:
                                 self.caller.msg("Please select whether to purchase one or two dots of powerstat with merit points, or enter 0 to remove any previous purchase.")
@@ -5594,7 +5602,7 @@ class SetStat(default_cmds.MuxCommand):
                               
             if switches[0] == "merit":
                 try:
-                    int(arglist[0])
+                    int(self.rhs[0])
                 except (ValueError, TypeError) as error:
                     self.caller.msg("Invalid rating, please enter a positive number from one to five.")
                     return
@@ -5962,6 +5970,14 @@ class SetStat(default_cmds.MuxCommand):
                             self.caller.msg("Tribe set to " + tribe)
                             return
                     self.caller.msg("Invalid tribe.")
+                    return
+                elif self.caller.db.template == "Mage" and switches[0].lower() == "order":
+                    for order in self.caller.location.db.arcana.db.orders:
+                        if order.lower() == self.args.lower():
+                            self.caller.db.ysplat = order
+                            self.caller.msg("Order set to " + order)
+                            return
+                    self.caller.msg("Invalid order.")
                     return
             elif switches[0].lower() in zsplatlist:
                 if self.caller.db.template == "Changeling" and switches[0].lower() == "entitlement":
